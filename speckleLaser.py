@@ -7,5 +7,11 @@ m = np.array(data['video_data']).transpose(1,2,0)
 
 a = np.array(ds.diferenciasPromediadas(m))
 b = np.array(ds.fujii(m))
+c = np.array(ds.entropiaShannon(m))
+
 
 print(b)
+
+
+print("ENTROPIA DE SHANNON")
+print(c)
