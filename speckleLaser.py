@@ -6,5 +6,6 @@ data = sio.loadmat('matrizmoneda10.mat')
 m = np.array(data['video_data']).transpose(1,2,0)
 
 a = np.array(ds.diferenciasPromediadas(m))
+b = np.array(ds.fujii(m))
 
-print(a.round(2))
+print(b)
