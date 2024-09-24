@@ -18,6 +18,7 @@ ds.setearFrames(4)
 #g = np.array(ds.frecuenciaMedia(m))
 #h = np.array(ds.entropiaShannon1(m))
 
+
 #print(timeit.timeit("ds.autoCorrelacion(m)",globals=globals(),number=1))
 #print(timeit.timeit("ds.autocorrelacionFFT(m)",globals=globals(),number=1))
 
@@ -32,3 +33,7 @@ np.set_printoptions(suppress=True,precision=2)
 
 #print (ds.fuzzy(tensor,10))
 print(ds.frecuenciaCorte(tensor))
+
+#print(tensor[:,:,0:4])
+print(np.array(ds.entropiaShannon(tensor)))
+
