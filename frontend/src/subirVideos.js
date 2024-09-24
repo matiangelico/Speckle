@@ -2,19 +2,20 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const UploadVideo = () => {
-    console.log("Componente UploadVideo montado");
     const [video, setVideo] = useState(null);
     const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleFileChange = (event) => {
-        console.log("Archivo seleccionado:", event.target.files[0]);
         setVideo(event.target.files[0]);
     };
 
     const handleUpload = async () => {
-        console.log("llame a handleUpload");
+
         const formData = new FormData();
         formData.append('video', video);
+
+        setLoading(true);
 
         try {
             const response = await axios.post('http://localhost:5000/upload', formData);
@@ -22,6 +23,8 @@ const UploadVideo = () => {
         } catch (error) {
             console.error('Error uploading video:', error);
             setMessage('Ha ocurrido un error.');
+        } finally {
+            setLoading(false); 
         }
     };
 
@@ -29,7 +32,7 @@ const UploadVideo = () => {
     return (
         <div>
             <input type="file" accept="video/avi" onChange={handleFileChange} />
-            <button onClick={handleUpload}>Subir Video</button>
+            <button onClick={handleUpload} disabled={loading}>{loading ? 'Cargando...' : 'Subir Video'}</button>
             {message && <p>{message}</p>} {}
         </div>
     );
