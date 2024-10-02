@@ -1,21 +1,22 @@
 import numpy as np
+from scipy.signal import welch
 from scipy.stats import entropy
+from scipy.signal import ellip, sosfilt, ellipord
 
-frames = 0
-
-def setearFrames (nroFrames):
+def setearDimensiones (tensor):
     global frames
-    frames = nroFrames
+    global alto
+    global ancho
+    ancho = tensor.shape[0]
+    alto = tensor.shape[1]
+    frames = tensor.shape[2]
 
 def diferenciasPesadas(tensor):
-    alto = tensor.shape[0]
-    ancho = tensor.shape[1]
     peso = 5
-    difPesadas = np.zeros((alto,ancho,frames-peso))
-    for c in range(frames - peso):
-        difPesadas[:, :, c] = np.abs(tensor[:, :, c] * (peso - 1) - np.sum(tensor[:, :, c+1:c+peso+1], axis=2))
+    difPesadas = np.zeros((alto,ancho-peso))
+    for c in range (ancho-peso):
+        difPesadas[:, c] = np.sum(np.abs(tensor[:, c,:] * (peso - 1) - np.sum(tensor[:, c+1:c+peso+1,:])),axis=-1)
     return difPesadas
-
 
 def diferenciasPromediadas(tensor):
     return np.sum(np.abs(tensor[:,:,0:frames-1]-tensor[:,:,1:frames]),axis=2)/(frames-1)
@@ -50,66 +51,140 @@ def desviacionEstandar(tensor):
     return np.std(tensor[:,:,0:frames],axis=2)
 
 def contrasteTemporal(tensor):
-    return np.std(tensor[:,:,0:frames],axis=2)/media(tensor)
+    return np.std(tensor[:,:,0:frames],axis=2)/np.mean(tensor, axis=2)
 
-def media(tensor):
+def media(tensor):  #devuelve un tensor (ancho, alto, 1) por keepdims
     return np.mean(tensor,axis=2, keepdims=True)
 
-def autocorrelacionFFT(tensor): #tarda un 25% menos que haciendo los dos ciclos for
-    from numpy.fft import fft, ifft 
-    tensor_fft = fft(tensor, n=2*frames-1, axis=2)
-    result = np.real(ifft(tensor_fft * np.conj(tensor_fft),axis=2))
-    return np.concatenate((result[:,:,frames:],result[:,:,:frames]),axis=2)
-
 def autoCorrelacion(tensor):
-    auto_corr = np.zeros((tensor.shape[0],tensor.shape[1],frames*2-1))
-    for i in range(tensor.shape[0]):
-        for j in range(tensor.shape[1]):
-            auto_corr[i, j, :] = np.correlate(tensor[i, j, :], tensor[i, j, :], mode='full')
-        
+    auto_corr = np.zeros((ancho,alto))
+    for i in range(ancho):
+        X = tensor[:,i,:]
+        desac = np.zeros(alto)
+        for j in range(alto):
+            x = X[j,: ]- np.mean(X[j,:])
+            ac = np.correlate(x,x, mode='full')
+            i = len(x)
+            ac_aux = np.where(ac[i:]<(ac[i]/2))[0]
+            
+            if ac_aux.size == 0:
+                desac[j] = 0  
+            else:
+                desac[j]= ac_aux[0] 
+            
+        auto_corr[:,j]=desac
     return auto_corr
 
 def fuzzy(tensor,threshold):
-    diff = np.abs(np.diff(tensor, axis=2))
-    return np.where(diff > threshold, 1, 0)
+    diff = np.mean(np.abs(np.diff(tensor, axis=2)),axis=2)
+    return np.where(diff < threshold, 1, 0)
 
 def frecuenciaMedia(tensor):
-    from scipy.signal import welch
     f, Pxx = welch(tensor)
     return np.sum(Pxx * f, axis=2) /np.sum(Pxx, axis=2)
 
 
 def entropiaShannon1(tensor):
-    from scipy.signal import welch
     _, Pxx = welch(tensor, axis=2)
     return -np.sum ((Pxx /np.sum(Pxx, axis=2, keepdims =True))* np.log2(Pxx/np.sum(Pxx, axis=2, keepdims=True )+ 1e-12), axis=2)
 
+
 def frecuenciaCorte(tensor):
-    from scipy.signal import welch
-    #f , Pxx = welch(tensor - media(tensor))
-    #f_welch, x_PSD = welch(x - np.mean(x))
-    '''
-    Pxx_half = np.expand_dims(Pxx[1], axis=0) / 2
-    return 0 if np.all(Pxx[1] <= 0) else (
-        f[-1] if len(np.where(Pxx) - Pxx_half <= 0)[0] == 0 
-        else f[np.where(Pxx - Pxx_half <= 0)[0][0] + 1]
-    )
-    '''
-    f_welch, x_PSD = welch(tensor - np.mean(tensor))
     
-    # Verificar si el segundo valor de x_PSD es <= 0
-    if np.all(x_PSD[1] <= 0,axis=2):
-        return 0
-    else:
-        # Calcular la diferencia del PSD con respecto a la mitad del segundo valor
-        D_PS = x_PSD - x_PSD[1] / 2
-        # Encontrar la primera frecuencia donde D_PS es menor o igual a 0
-        ll = np.where(D_PS[1:] <= 0)[0]
+    desc_fc = np.zeros((ancho, alto))
+
+    for w in range(ancho):
+
+        X = tensor[:, w, :]
+        X_mean = X - np.mean(X, axis=1, keepdims=True)
+        freqs, Pxx = welch(X_mean, axis=1)
+        D_PS = Pxx - (Pxx[:, 1:2] / 2)
         
-        if len(ll) == 0:
-            # Si no se encuentra ninguna frecuencia, usar la última frecuencia disponible
-            return f_welch[-1]
-        else:
-            # Devolver la frecuencia correspondiente
-            return f_welch[ll[0] + 1]
-    #return -np.sum ((Pxx /np.sum(Pxx, axis=2, keepdims =True))* np.log2(Pxx/np.sum(Pxx, axis=2, keepdims=True )+ 1e-12), axis=2)
+        indice = np.argmax(D_PS[:, 1:] <= 0, axis=1) + 1
+        
+        desc_fc[w, :] = np.where(Pxx[:, 1] <= 0, 0, freqs[indice])
+
+    return desc_fc #np.where(Pxx[:, 1] <= 0, 0, freqs[indice])
+
+def waveletEntropy(tensor, wavelet='db2', level=5):
+    import pywt
+
+    desc_ew = np.zeros((ancho, alto))
+
+    def entropia_por_columnas(x):
+        # Realiza la descomposición wavelet
+        coeffs = pywt.wavedec(x, wavelet, level=level)
+        
+        # Coeficiente de aproximación (low-pass) está en coeffs[0]
+        # Coeficientes de detalle (high-pass) están en coeffs[1:] para cada nivel
+        Ew = np.zeros(level + 1)
+        Ew[level] = np.sum(coeffs[0] ** 2)  # Coeficiente de aproximación
+        
+        for l in range(1, level + 1):
+            Ew[level - l] = np.sum(coeffs[l] ** 2)  # Coeficientes de detalle
+        
+        # Normaliza la energía
+        Ew_norm = Ew / np.sum(Ew)
+        
+        # Calcula la entropía de Shannon
+        return -np.sum(Ew_norm * np.log(Ew_norm + 1e-12))
+
+    # Aplica la función a cada fila del tensor
+    for w in range(ancho):
+        desc_ew[w, :] = np.apply_along_axis(entropia_por_columnas, 1, tensor[:, w, :])
+
+    return desc_ew
+
+import numpy as np
+from scipy.signal import welch
+
+def highLowRatio(tensor, fs=1.0):
+    
+    desc_hlr = np.zeros((ancho, alto))
+    
+    def hlr_per_column(x):
+    
+        f, Pxx = welch(x, fs=fs)
+        
+        energiabaja = np.sum(Pxx[:int(len(f) * 0.25)])
+        energiaalta = np.sum(Pxx[int(len(f) * 0.25)+1:])
+        
+        return energiaalta / energiabaja if energiabaja != 0 else 0
+
+    for w in range(ancho):
+        desc_hlr[w, :] = np.apply_along_axis(hlr_per_column, 1, tensor[:, w, :])
+    return desc_hlr
+
+def energiaFiltrada(x,sos):
+        filtered_signal = sosfilt(sos, x- np.mean(x,axis=-1,keepdims=True), axis=-1)  
+        return np.sum(np.abs(filtered_signal) ** 2, axis=-1) / filtered_signal.shape[-1] 
+
+def filtroBajo(tensor, fmin=0.015, fmax=0.05, at_paso=1, at_rechazo=40, fs=1.0):
+    
+    # Diseño del filtro
+    wp = np.array([fmin, fmax]) * 2 / fs
+    ws = np.array([fmin - 0.01, fmax + 0.01]) * 2 / fs
+    nfe, fne = ellipord(wp, ws, at_paso, at_rechazo)
+    sos = ellip(nfe, at_paso, at_rechazo, fne, btype='band', output='sos')
+    
+    return np.apply_along_axis(energiaFiltrada, 2, tensor,sos)
+
+def filtroMedio(tensor, fmin=0.05, fmax=0.25, at_paso=1, at_rechazo=40, fs=1.0):
+    
+    # Diseño del filtro
+    wp = np.array([fmin, fmax]) * 2 / fs
+    ws = np.array([fmin - 0.01, fmax + 0.01]) * 2 / fs
+    nfe, fne = ellipord(wp, ws, at_paso, at_rechazo)
+    sos = ellip(nfe, at_paso, at_rechazo, fne, btype='band', output='sos')
+    
+    return np.apply_along_axis(energiaFiltrada, 2, tensor,sos)
+
+def filtroAlto(tensor, fmin=0.025, fmax=0.4, at_paso=1, at_rechazo=40, fs=1.0):
+    
+    # Diseño del filtro
+    wp = np.array([fmin, fmax]) * 2 / fs
+    ws = np.array([fmin - 0.01, fmax + 0.01]) * 2 / fs
+    nfe, fne = ellipord(wp, ws, at_paso, at_rechazo)
+    sos = ellip(nfe, at_paso, at_rechazo, fne, btype='band',output='sos')
+    
+    return np.apply_along_axis(energiaFiltrada, 2, tensor,sos)
