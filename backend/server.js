@@ -74,7 +74,12 @@ app.post('/upload', upload.single('video'), (req, res) => {
     // Ejecutar todas las promesas y enviar la respuesta una vez que todas se completen
     Promise.all(processingPromises)
         .then(imageUrls => {
-            res.json({ result: 'Videos procesados correctamente', imageUrls });
+            const result = imageUrls.map((url, index) => ({
+                url,
+                descriptor: descriptors[index]  // Agrega el nombre del descriptor aquí
+            }));
+    
+            res.json({ result: 'Videos procesados correctamente', images: result });
         })
         .catch(error => {
             console.error(error);

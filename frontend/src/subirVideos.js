@@ -66,7 +66,7 @@ const UploadVideo = () => {
             });
             console.log(response.data);
             setMessage(response.data.result);
-            setImageUrls(Array.isArray(response.data.imageUrls) ? response.data.imageUrls : []);
+            setImageUrls(Array.isArray(response.data.images) ? response.data.images : []);
         } catch (error) {
             console.error('Error uploading video:', error);
             setMessage('Ha ocurrido un error.');
@@ -124,12 +124,15 @@ const UploadVideo = () => {
                 {loading ? 'Cargando...' : 'Enviar Descriptores'}
             </button>
             {message && <p>{message}</p>}
-            {imageUrls.length > 0 && imageUrls.map((url, index) => (
+            {imageUrls.length > 0 && imageUrls.map((image, index) => (
                 <div key={index}>
-                    <img src={`http://localhost:5000${url}`} alt={`Mapa de colores generado ${index}`} />
-                    <a href={`http://localhost:5000${url}`} download>Descargar imagen {index + 1}</a>
+                    <h5>{image.descriptor}</h5> {/* Título con el nombre del descriptor */}
+                    <img src={`http://localhost:5000${image.url}`} alt={`Mapa de colores generado ${index}`} />
+                    <a href={`http://localhost:5000${image.url}`} download>Descargar imagen de {image.descriptor}</a>
                 </div>
             ))}
+
+
         </div>
     );
 };
