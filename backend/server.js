@@ -21,6 +21,11 @@ app.post('/upload', upload.single('video'), (req, res) => {
 
     const filePath = req.file.path;  // Ruta del archivo subido
     let descriptors = req.body.descriptors;
+    let descriptorParams = req.body.params;
+
+    if (descriptorParams) {
+        descriptorParams = JSON.parse(descriptorParams);
+    }
 
     // Limpiar descriptores: Quitar corchetes y comillas si existen
     descriptors = descriptors.replace(/[\[\]"]/g, '').split(',').map(descriptor => descriptor.trim());
@@ -31,11 +36,21 @@ app.post('/upload', upload.single('video'), (req, res) => {
         // Limpiar caracteres no deseados en el nombre del descriptor
         const sanitizedDescriptor = descriptor.replace(/[^a-zA-Z0-9_-]/g, '');
 
+
         const outputMatPath = path.join(__dirname, 'uploads', `${req.file.filename}_${sanitizedDescriptor}.mat`);
         const outputImgPath = path.join(__dirname, 'uploads', `${req.file.filename}_${sanitizedDescriptor}.png`);
 
-        const command = `python ./descriptores/convertirAviaMat.py "${filePath}" "${outputMatPath}" "${outputImgPath}" "${sanitizedDescriptor}"`;
+        const params = descriptorParams[sanitizedDescriptor] || {};
 
+        // Convertir los parámetros en una cadena de argumentos para pasar al comando de Python
+        const paramArgs = Object.keys(params)
+            .map(key => `${key}=${params[key]}`)
+            .join(' '); // Por ejemplo, 'threshold=120'
+
+        console.log(`Parámetros para ${sanitizedDescriptor}:, ${paramArgs}`);
+
+        const command = `python ./descriptores/convertirAviaMat.py "${filePath}" "${outputMatPath}" "${outputImgPath}" "${sanitizedDescriptor}" ${paramArgs}`;
+        console.log(`Ejecutando comando: ${command}`);
         return new Promise((resolve, reject) => {
             exec(command, (error, stdout, stderr) => {
                 console.log(`Procesamiento de video con descriptor ${sanitizedDescriptor} iniciado`);

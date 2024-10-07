@@ -34,7 +34,7 @@ def video_to_mat_grayscale(video_path, output_path):
     sio.savemat(output_path, {'video_data': video_data})
 
 
-def apply_descriptor(tensor, descriptor):
+def apply_descriptor(tensor, descriptor, params=None):
     #Aplica un descriptor sobre el tensor de video y devuelve el tensor resultante."""
     descriptor_functions = {
         "DiferenciasPesadas": diferenciasPesadas,
@@ -50,7 +50,6 @@ def apply_descriptor(tensor, descriptor):
         "FrecuenciaCorte":frecuenciaCorte,
         "WaveletEntropy":waveletEntropy,
         "HighLowRatio":highLowRatio,
-        "EnergiaFiltrada":energiaFiltrada,
         "FiltroBajo":filtroBajo,
         "FiltroMedio":filtroMedio,
         "FiltroAlto":filtroAlto
@@ -58,7 +57,7 @@ def apply_descriptor(tensor, descriptor):
 
     if descriptor in descriptor_functions:
         print(f"Aplicando descriptor: {descriptor}")
-        return descriptor_functions[descriptor](tensor)
+        return descriptor_functions[descriptor](tensor, **(params if params else {}))
     else:
         raise ValueError(f"Error: El descriptor '{descriptor}' no existe.")
 
@@ -84,19 +83,24 @@ if __name__ == "__main__":
     data = sio.loadmat(output_mat_path)
     tensor = np.array(data['video_data']).transpose(1, 2, 0)
     setearDimensiones(tensor)
-    print(f"La cantidad de frames es : {tensor.shape[2]}")
+
+    params = {}
+    if len(sys.argv) > 5:
+        for param in sys.argv[5:]:
+            key, value = param.split('=')
+            if key == "threshold":
+                params[key] = float(value)
+            else:
+                params[key] = value
 
 
     try:
-        print("ENTRE 1")
-        result_tensor = apply_descriptor(tensor, descriptor)
-        print("ENTRE 2")
+        result_tensor = apply_descriptor(tensor, descriptor,params)
         generate_color_map(result_tensor, output_image_path)
     except ValueError as e:
         print(f"hola:{e}")
         sys.exit(1)
 
-# Ejemplo de uso
 
 
 

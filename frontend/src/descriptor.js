@@ -1,18 +1,19 @@
-// Descriptor.js
+// descriptor.js
 import React from 'react';
 
 const Descriptor = ({ name, checked, onChange }) => {
     return (
-        <label>
-            <input 
-                type="checkbox" 
-                name={name} 
-                checked={checked} 
-                onChange={onChange} 
+        <div>
+            <input
+                type="checkbox"
+                name={name}
+                checked={checked}
+                onChange={onChange}
             />
-            {name}
-        </label>
+            <label>{name}</label>
+        </div>
     );
 };
 
 export default Descriptor;
+
