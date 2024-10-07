@@ -3,41 +3,68 @@ const express = require('express');
 const multer = require('multer');
 const { exec } = require('child_process');
 const path = require('path');
-
 const app = express();
+const fs = require('fs');
 
 app.use(cors());
 
 const upload = multer({ dest: 'uploads/' }); // Carpeta temporal para los archivos subidos
 
-// Ruta para subir el video
+// Configurar el middleware para servir archivos estáticos desde la carpeta uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.post('/upload', upload.single('video'), (req, res) => {
-
-
     if (!req.file) {
-        console.log("No se recibio ningun archivo");
-        return res.status(400).json({ error: 'No se recibio ningun archivo' });
+        console.log("No se recibió ningún archivo");
+        return res.status(400).json({ error: 'No se recibió ningún archivo' });
     }
 
     const filePath = req.file.path;  // Ruta del archivo subido
-    console.log(`Archivo subido: ${req.file.originalname}, Guardado en: ${filePath}`);
+    let descriptors = req.body.descriptors;
 
-    // Ejecutar tu analizador de video
-    const outputPath = path.join(__dirname, 'uploads', `${req.file.filename}.mat`);
-    exec(`python ./convertirAviaMat.py "${filePath}" "${outputPath}"`, (error, stdout, stderr) => {
-        console.log("ENTRE1");
-        if (error) {
-            console.error(`Error al ejecutar el analizador: ${error}`);
-            return res.status(500).json({ error: 'Error al procesar el video' });
-        }
+    // Limpiar descriptores: Quitar corchetes y comillas si existen
+    descriptors = descriptors.replace(/[\[\]"]/g, '').split(',').map(descriptor => descriptor.trim());
+    
 
-        console.log(stdout);
-        console.error(stderr); 
+    // Mapa de promesas para el procesamiento de cada descriptor
+    const processingPromises = descriptors.map(descriptor => {
+        // Limpiar caracteres no deseados en el nombre del descriptor
+        const sanitizedDescriptor = descriptor.replace(/[^a-zA-Z0-9_-]/g, '');
 
-        const resultMessage = `Video procesado y guardado como: ${outputPath}`;
-        console.log(resultMessage); // Imprimir el mensaje en la consola del servidor
-        res.json({ result: resultMessage });
+        const outputMatPath = path.join(__dirname, 'uploads', `${req.file.filename}_${sanitizedDescriptor}.mat`);
+        const outputImgPath = path.join(__dirname, 'uploads', `${req.file.filename}_${sanitizedDescriptor}.png`);
+
+        const command = `python ./descriptores/convertirAviaMat.py "${filePath}" "${outputMatPath}" "${outputImgPath}" "${sanitizedDescriptor}"`;
+
+        return new Promise((resolve, reject) => {
+            exec(command, (error, stdout, stderr) => {
+                console.log(`Procesamiento de video con descriptor ${sanitizedDescriptor} iniciado`);
+                if (error) {
+                    console.error(`Error al ejecutar el analizador para el descriptor ${sanitizedDescriptor}: ${error}`);
+                    reject(`Error al procesar el video para descriptor ${sanitizedDescriptor}`);
+                }
+                console.log(stdout);
+                console.error(stderr);
+
+                // Verificar si la imagen se generó correctamente
+                if (fs.existsSync(outputImgPath)) {
+                    resolve(`/uploads/${req.file.filename}_${sanitizedDescriptor}.png`);
+                } else {
+                    reject(`Error al generar la imagen para ${sanitizedDescriptor}`);
+                }
+            });
+        });
     });
+
+    // Ejecutar todas las promesas y enviar la respuesta una vez que todas se completen
+    Promise.all(processingPromises)
+        .then(imageUrls => {
+            res.json({ result: 'Videos procesados correctamente', imageUrls });
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(500).json({ error: 'Hubo un error al procesar algunos descriptores' });
+        });
 });
 
 // Iniciar el servidor

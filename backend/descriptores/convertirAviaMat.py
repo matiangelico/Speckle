@@ -1,0 +1,102 @@
+import cv2
+import sys
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.io as sio
+from descriptores import *
+
+
+def video_to_mat_grayscale(video_path, output_path):
+    # Abrir el video
+    cap = cv2.VideoCapture(video_path)
+    
+    # Obtener el número de frames, ancho y alto del video
+    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    # Crear una matriz para almacenar todos los frames en escala de grises
+    video_data = np.empty((frame_count, frame_height, frame_width), dtype=np.uint8)
+    
+    frame_idx = 0
+    
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+        # Convertir el frame a escala de grises
+        video_data[frame_idx] = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # Convertir a escala de grises
+        frame_idx += 1
+    
+    cap.release()
+    
+    # Guardar la matriz en un archivo .mat
+    sio.savemat(output_path, {'video_data': video_data})
+
+
+def apply_descriptor(tensor, descriptor):
+    #Aplica un descriptor sobre el tensor de video y devuelve el tensor resultante."""
+    descriptor_functions = {
+        "DiferenciasPesadas": diferenciasPesadas,
+        "DiferenciasPromediadas": diferenciasPromediadas,
+        "Fujii": fujii,
+        "DesviacionEstandar":desviacionEstandar,
+        "ContrasteTemporal":contrasteTemporal,
+        "Media":media,
+        "Autocorrelacion":autoCorrelacion,
+        "Fuzzy":fuzzy,
+        "FrecuenciaMedia":frecuenciaMedia,
+        "EntropiaShannon1":entropiaShannon1,   
+        "FrecuenciaCorte":frecuenciaCorte,
+        "WaveletEntropy":waveletEntropy,
+        "HighLowRatio":highLowRatio,
+        "EnergiaFiltrada":energiaFiltrada,
+        "FiltroBajo":filtroBajo,
+        "FiltroMedio":filtroMedio,
+        "FiltroAlto":filtroAlto
+    }
+
+    if descriptor in descriptor_functions:
+        print(f"Aplicando descriptor: {descriptor}")
+        return descriptor_functions[descriptor](tensor)
+    else:
+        raise ValueError(f"Error: El descriptor '{descriptor}' no existe.")
+
+def generate_color_map(tensor, output_image_path):
+    # Visualiza directamente el tensor bidimensional
+    plt.imshow(tensor, cmap='jet')
+    plt.colorbar()
+    plt.savefig(output_image_path)
+    plt.close()  # Cierra el gráfico para evitar superposiciones en futuras ejecuciones
+    print(f"Imagen guardada como: {output_image_path}")
+
+
+if __name__ == "__main__":
+    input_video_path = sys.argv[1]
+    output_mat_path = sys.argv[2]  # Salida para el archivo .mat
+    output_image_path = sys.argv[3]  # Salida para el archivo de imagen
+    descriptor = sys.argv[4]
+
+    # Convertir el video a una matriz y guardarlo
+    video_to_mat_grayscale(input_video_path, output_mat_path)
+
+    # Cargar la matriz desde el archivo .mat
+    data = sio.loadmat(output_mat_path)
+    tensor = np.array(data['video_data']).transpose(1, 2, 0)
+    setearDimensiones(tensor)
+    print(f"La cantidad de frames es : {tensor.shape[2]}")
+
+
+    try:
+        print("ENTRE 1")
+        result_tensor = apply_descriptor(tensor, descriptor)
+        print("ENTRE 2")
+        generate_color_map(result_tensor, output_image_path)
+    except ValueError as e:
+        print(f"hola:{e}")
+        sys.exit(1)
+
+# Ejemplo de uso
+
+
+

@@ -4,11 +4,13 @@ import descriptores as ds
 
 data = sio.loadmat('matrizmoneda10.mat')
 m = np.array(data['video_data']).transpose(1,2,0)
+<<<<<<< Updated upstream
 ds.setearDimensiones(m)
 
 tensor = np.array([[[1,2,3,14],[42,5,6,7],[6,27,8,9]],[[110,11,12,13],[132,14,15,16],[172,17,18,19]],[[20,1,22,23],[23,24,25,26],[26,27,28,29]]])
 #ds.setearDimensiones(tensor)
 
+<<<<<<< HEAD
 #a1 = np.array(ds.diferenciasPesadas(m))
 #b2 = np.array(ds.diferenciasPromediadas(m))
 #c3 = np.array(ds.fujii(m))
@@ -24,6 +26,38 @@ i9 = np.array(ds.entropiaShannon(m))
 #n13 = np.array(ds.filtroBajo(m))
 #o14 = np.array(ds.filtroMedio(m))
 #p15 = np.array(ds.filtroAlto(m))
+=======
+a1 = np.array(ds.diferenciasPesadas(m))
+b2 = np.array(ds.diferenciasPromediadas(m))
+c3 = np.array(ds.fujii(m))
+d4 = np.array(ds.desviacionEstandar(m))
+e5 = np.array(ds.contrasteTemporal(m))
+f6 = np.array(ds.autoCorrelacion(m))
+g7 = np.array(ds.fuzzy(m,120))
+h8 = np.array(ds.frecuenciaMedia(m))
+i9 = np.array(ds.entropiaShannon1(m))
+j10 = np.array(ds.frecuenciaCorte(m))
+k11 = np.array(ds.waveletEntropy(m))
+l12 = np.array(ds.highLowRatio(m))
+n13 = np.array(ds.filtroBajo(m))
+o14 = np.array(ds.filtroMedio(m))
+p15 = np.array(ds.filtroAlto(m))
+=======
+ds.setearFrames(m.shape[2])
+
+#tensor = np.array([[[1,2,3,14],[42,5,6,7],[6,27,8,9]],[[110,11,12,13],[132,14,15,16],[172,17,18,19]],[[20,1,22,23],[23,24,25,26],[26,27,28,29]]])
+#ds.setearFrames(4)
+
+a = np.array(ds.diferenciasPromediadas(m))
+#b = np.array(ds.fujii(m))
+#c = np.array(ds.entropiaShannon(m))
+#d = np.array(ds.diferenciasPesadas(m))
+#e = np.array(ds.autocorrelacionFFT(m))
+#f = np.array(ds.autoCorrelacion(m))
+#g = np.array(ds.frecuenciaMedia(m))
+#h = np.array(ds.entropiaShannon1(m))
+>>>>>>> Stashed changes
+>>>>>>> 7ef00f5707218e9759194a6d42a54a62f30a4ad6
 
 
 #print(timeit.timeit("ds.autoCorrelacion(m)",globals=globals(),number=1))
