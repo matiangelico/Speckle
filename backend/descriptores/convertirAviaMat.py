@@ -4,9 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.io as sio
 from descriptores import *
-from scipy.signal import welch
-from scipy.stats import entropy
-from scipy.signal import ellip, sosfilt, ellipord
+
 
 def video_to_mat_grayscale(video_path, output_path):
     # Abrir el video
@@ -85,7 +83,7 @@ if __name__ == "__main__":
     # Cargar la matriz desde el archivo .mat
     data = sio.loadmat(output_mat_path)
     tensor = np.array(data['video_data']).transpose(1, 2, 0)
-    setearFrames(tensor.shape[2])
+    setearDimensiones(tensor)
     print(f"La cantidad de frames es : {tensor.shape[2]}")
 
 

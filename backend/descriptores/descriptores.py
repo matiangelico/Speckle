@@ -3,24 +3,39 @@ from scipy.signal import welch
 from scipy.stats import entropy
 from scipy.signal import ellip, sosfilt, ellipord
 
-def setearFrames (nroFrames):
+def setearDimensiones (tensor):
     global frames
-    frames = nroFrames
+    global alto
+    global ancho
+    ancho = tensor.shape[0]
+    alto = tensor.shape[1]
+    frames = tensor.shape[2]
 
 def diferenciasPesadas(tensor):
-    alto = tensor.shape[0]
-    ancho = tensor.shape[1]
     peso = 5
-    difPesadas = np.zeros((alto,ancho,frames-peso))
-    for c in range(frames - peso):
-        difPesadas[:, :, c] = np.abs(tensor[:, :, c] * (peso - 1) - np.sum(tensor[:, :, c+1:c+peso+1], axis=2))
+    difPesadas = np.zeros((alto,ancho-peso))
+    for c in range(ancho - peso):
+        difPesadas[:, c] = np.abs(tensor[:, :, c] * (peso - 1) - np.sum(tensor[:, c+1:c+peso+1,:], axis=-1))
     return difPesadas
 
+'''
+def diferenciasPesadas(tensor):
+    peso = 5
+    alto, ancho, _ = tensor.shape  # Altura, ancho y profundidad del tensor
+    difPesadas = np.zeros((alto, ancho - peso))  # Matriz resultante
+
+    for c in range(ancho - peso):
+        # Aquí estamos sumando el tensor a lo largo de la profundidad para obtener una matriz 2D
+        suma_tensor = np.sum(tensor[:, c+1:c+peso+1, :], axis=-1)
+        difPesadas[:, c] = np.abs(tensor[:, :, c] * (peso - 1) - suma_tensor)
+
+    return difPesadas
+'''
 
 def diferenciasPromediadas(tensor): 
     print("Forma del tensor original:", tensor.shape)  # Muestra la forma del tensor antes de procesar
     # Asegúrate de que solo se modifique una copia o el resultado, no el tensor original
-    resultado = np.sum(np.abs(tensor[:,:,0:tensor.shape[2]-1] - tensor[:,:,1:tensor.shape[2]]), axis=2) / (tensor.shape[2] - 1)
+    resultado = np.sum(np.abs(tensor[:,:,0:frames-1]-tensor[:,:,1:frames]),axis=2)/(frames-1)
     print("Forma del resultado (matriz bidimensional):", resultado.shape)
     return resultado
 
