@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.signal import welch
-from scipy.stats import entropy
 from scipy.signal import ellip, sosfilt, ellipord
 
 def setearDimensiones (tensor):
@@ -11,41 +10,28 @@ def setearDimensiones (tensor):
     alto = tensor.shape[1]
     frames = tensor.shape[2]
 
-def diferenciasPesadas(tensor):
-    peso = 5
-    difPesadas = np.zeros((alto,ancho-peso))
-    for c in range (ancho-peso):
-        difPesadas[:, c] = np.sum(np.abs(tensor[:, c,:] * (peso - 1) - np.sum(tensor[:, c+1:c+peso+1,:])),axis=-1)
+def diferenciasPesadas(tensor, peso=5):
+    tensor = tensor[:, :, :frames].astype(np.float64)
+    difPesadas = np.zeros((alto,ancho))
+    for c in range (ancho):
+        X = tensor[:,c,:]
+        a = np.zeros(alto)
+        for f in range (frames-peso):
+            a += np.abs(X[:,f] * (peso - 1) - np.sum(X[:, f+1:f+peso+1],axis=1))
+        difPesadas[:,c]= a
     return difPesadas
 
 def diferenciasPromediadas(tensor):
+    tensor = tensor[:, :, :frames].astype(np.float64)
     return np.sum(np.abs(tensor[:,:,0:frames-1]-tensor[:,:,1:frames]),axis=2)/(frames-1)
 
+
 def fujii(tensor):
-    x1 =np.abs(tensor[:,:,0:frames-1]-tensor[:,:,1:frames])
-    x2 =np.abs(tensor[:,:,0:frames-1]+tensor[:,:,1:frames])
+    tensor = tensor[:, :, :frames].astype(np.float64)
+    x1 =np.abs(tensor[:,:,1:frames]-tensor[:,:,0:frames-1])
+    x2 =np.abs(tensor[:,:,1:frames]+tensor[:,:,0:frames-1])
     x2[x2 == 0] = 1
     return np.sum(x1/x2,axis=2)
-
-def entropiaShannon(tensor):
-    
-    # Inicializar una matriz para almacenar la entropía de Shannon para cada píxel
-    entropy_matrix = np.zeros(tensor.shape[:2])
-    
-    # Iterar sobre cada píxel de la imagen (en las dos primeras dimensiones)
-    for i in range(tensor.shape[0]):  # Recorrer filas
-        for j in range(tensor.shape[1]):  # Recorrer columnas
-            # Extraer la señal (valores de los frames) para el píxel (i,j)
-            signal = tensor[i, j, :]
-
-            # Calcular la distribución de probabilidad de la señal
-            hist, _ = np.histogram(signal, bins=256, range=(0, 256), density=True)
-            hist = hist[hist > 0]  # Eliminar ceros para evitar problemas con log2
-            
-            # Calcular la entropía de Shannon
-            entropy_matrix[i, j] = entropy(hist, base=2)
-    
-    return entropy_matrix
 
 def desviacionEstandar(tensor):
     return np.std(tensor[:,:,0:frames],axis=2)
@@ -63,16 +49,12 @@ def autoCorrelacion(tensor):
         desac = np.zeros(alto)
         for j in range(alto):
             x = X[j,: ]- np.mean(X[j,:])
-            ac = np.correlate(x,x, mode='full')
-            i = len(x)
-            ac_aux = np.where(ac[i:]<(ac[i]/2))[0]
-            
+            ac = np.correlate(x,x,mode='full')
+            ac_aux = np.where(ac[frames-1:frames*2-2]<=(ac[frames-1]/2))[0]
             if ac_aux.size == 0:
-                desac[j] = 0  
-            else:
-                desac[j]= ac_aux[0] 
-            
-        auto_corr[:,j]=desac
+                ac_aux = 0  
+            desac[j]= ac_aux[0]+1
+        auto_corr[:,i]=desac
     return auto_corr
 
 def fuzzy(tensor,threshold):
@@ -84,30 +66,53 @@ def frecuenciaMedia(tensor):
     return np.sum(Pxx * f, axis=2) /np.sum(Pxx, axis=2)
 
 
-def entropiaShannon1(tensor):
-    _, Pxx = welch(tensor, axis=2)
-    return -np.sum ((Pxx /np.sum(Pxx, axis=2, keepdims =True))* np.log2(Pxx/np.sum(Pxx, axis=2, keepdims=True )+ 1e-12), axis=2)
-
+def entropiaShannon(tensor):
+    '''
+    tensor = tensor[:, :, :frames].astype(np.float64)
+    _,Pxx = welch(tensor,fs=12, window='hamming', nperseg=256, noverlap= 256//2, scaling='density', detrend='constant')
+    prob = Pxx /np.sum(Pxx, axis=-1,keepdims =True)
+    '''
+    entropia = np.zeros((alto,ancho))
+    entropiaShannon = np.zeros((alto,ancho))
+    for w in range(ancho):
+        X = tensor[:,w,:]
+        #_,i = X.shape
+        for i in range(alto):
+            x = X[i,:]
+            _,Pxx = welch(x,fs=12.00, noverlap=256//2 )
+            prob = Pxx /(np.sum(Pxx)+1e-12)
+            entropia[i,w]= -np.sum (prob * np.log(prob +1e-12))
+        entropiaShannon[w,:]=entropia[:,w].T
+    return entropiaShannon
+    
+    #return -np.sum (prob * np.log(prob), axis=-1)
 
 def frecuenciaCorte(tensor):
+    tensor = tensor[:, :, :frames].astype(np.float64)
     
     desc_fc = np.zeros((ancho, alto))
 
     for w in range(ancho):
-
         X = tensor[:, w, :]
-        X_mean = X - np.mean(X, axis=1, keepdims=True)
-        freqs, Pxx = welch(X_mean, axis=1)
-        D_PS = Pxx - (Pxx[:, 1:2] / 2)
-        
-        indice = np.argmax(D_PS[:, 1:] <= 0, axis=1) + 1
-        
-        desc_fc[w, :] = np.where(Pxx[:, 1] <= 0, 0, freqs[indice])
-
-    return desc_fc #np.where(Pxx[:, 1] <= 0, 0, freqs[indice])
+        for i in range(alto):
+            x = X[i,:]
+            freqs, Pxx = welch(x - np.mean(x), noverlap= 256//2)        
+            
+            if Pxx[1]<= 0:
+                desc_fc[w,i]=0
+            else:
+                D_PS = Pxx - Pxx[1] / 2
+                indice = np.where(D_PS[1:] <= 0)[0]+1      
+                if indice.size==0:
+                    desc_fc[w,i]= freqs[-1]  
+                else: 
+                    desc_fc[w,i]= freqs[indice[0]]
+    return desc_fc
 
 def waveletEntropy(tensor, wavelet='db2', level=5):
     import pywt
+
+    tensor = tensor[:, :, :frames].astype(np.float64)
 
     desc_ew = np.zeros((ancho, alto))
 
@@ -134,9 +139,6 @@ def waveletEntropy(tensor, wavelet='db2', level=5):
         desc_ew[w, :] = np.apply_along_axis(entropia_por_columnas, 1, tensor[:, w, :])
 
     return desc_ew
-
-import numpy as np
-from scipy.signal import welch
 
 def highLowRatio(tensor, fs=1.0):
     
