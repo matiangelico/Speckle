@@ -23,49 +23,56 @@ app.post('/upload', upload.single('video'), (req, res) => {
     let descriptors = req.body.descriptors;
     let descriptorParams = req.body.params;
 
+
     if (descriptorParams) {
         descriptorParams = JSON.parse(descriptorParams);
+        console.log(`Los parametros de los descriptores ${JSON.stringify(descriptorParams)}`)
     }
 
     // Limpiar descriptores: Quitar corchetes y comillas si existen
     descriptors = descriptors.replace(/[\[\]"]/g, '').split(',').map(descriptor => descriptor.trim());
+
+    console.log(`Los descriptores limpios son ${descriptors}`);
     
 
     // Mapa de promesas para el procesamiento de cada descriptor
     const processingPromises = descriptors.map(descriptor => {
         // Limpiar caracteres no deseados en el nombre del descriptor
-        const sanitizedDescriptor = descriptor.replace(/[^a-zA-Z0-9_-]/g, '');
+        //const descriptor = descriptor.replace(/[^a-zA-Z0-9_-]/g, '');
+
+        console.log(`El descriptor sanitizado es ${descriptor}`);
 
 
-        const outputMatPath = path.join(__dirname, 'uploads', `${req.file.filename}_${sanitizedDescriptor}.mat`);
-        const outputImgPath = path.join(__dirname, 'uploads', `${req.file.filename}_${sanitizedDescriptor}.png`);
+        const outputMatPath = path.join(__dirname, 'uploads', `${req.file.filename}_${descriptor}.mat`);
+        const outputImgPath = path.join(__dirname, 'uploads', `${req.file.filename}_${descriptor}.png`);
 
-        const params = descriptorParams[sanitizedDescriptor] || {};
+        const params = descriptorParams[descriptor] || {};
 
         // Convertir los parámetros en una cadena de argumentos para pasar al comando de Python
         const paramArgs = Object.keys(params)
             .map(key => `${key}=${params[key]}`)
             .join(' '); // Por ejemplo, 'threshold=120'
 
-        console.log(`Parámetros para ${sanitizedDescriptor}:, ${paramArgs}`);
+        console.log(`LO ejecutamos con los parametros :, ${paramArgs}`);
+        console.log(`Parámetros para ${descriptor}:, ${paramArgs}`);
 
-        const command = `python ./descriptores/convertirAviaMat.py "${filePath}" "${outputMatPath}" "${outputImgPath}" "${sanitizedDescriptor}" ${paramArgs}`;
+        const command = `python ./descriptores/convertirAviaMat.py "${filePath}" "${outputMatPath}" "${outputImgPath}" "${descriptor}" ${paramArgs}`;
         console.log(`Ejecutando comando: ${command}`);
         return new Promise((resolve, reject) => {
             exec(command, (error, stdout, stderr) => {
-                console.log(`Procesamiento de video con descriptor ${sanitizedDescriptor} iniciado`);
+                console.log(`Procesamiento de video con descriptor ${descriptor} iniciado`);
                 if (error) {
-                    console.error(`Error al ejecutar el analizador para el descriptor ${sanitizedDescriptor}: ${error}`);
-                    reject(`Error al procesar el video para descriptor ${sanitizedDescriptor}`);
+                    console.error(`Error al ejecutar el analizador para el descriptor ${descriptor}: ${error}`);
+                    reject(`Error al procesar el video para descriptor ${descriptor}`);
                 }
                 console.log(stdout);
                 console.error(stderr);
 
                 // Verificar si la imagen se generó correctamente
                 if (fs.existsSync(outputImgPath)) {
-                    resolve(`/uploads/${req.file.filename}_${sanitizedDescriptor}.png`);
+                    resolve(`/uploads/${req.file.filename}_${descriptor}.png`);
                 } else {
-                    reject(`Error al generar la imagen para ${sanitizedDescriptor}`);
+                    reject(`Error al generar la imagen para ${descriptor}`);
                 }
             });
         });

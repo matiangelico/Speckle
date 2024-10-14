@@ -11,7 +11,7 @@ def setearDimensiones (tensor):
     alto = tensor.shape[1]
     frames = tensor.shape[2]
 
-def diferenciasPesadas(tensor,peso):
+def diferenciasPesadas(tensor, peso):
     tensor = tensor[:, :, :frames].astype(np.float64)
     difPesadas = np.zeros((alto,ancho))
     for c in range (ancho):
@@ -107,8 +107,9 @@ def frecuenciaCorte(tensor):
                     desc_fc[w,i]= freqs[indice[0]]
     return desc_fc
 
-def waveletEntropy(tensor, wavelet='db2', level=5):
+def waveletEntropy(tensor,wavelet, level):
     import pywt
+
 
     tensor = tensor[:, :, :frames].astype(np.float64)
 
@@ -138,7 +139,7 @@ def waveletEntropy(tensor, wavelet='db2', level=5):
 
     return desc_ew
 
-def highLowRatio(tensor, fs=1.0):
+def highLowRatio(tensor, fs):
     
     desc_hlr = np.zeros((ancho, alto))
     
@@ -159,7 +160,7 @@ def energiaFiltrada(x,sos):
         filtered_signal = sosfilt(sos, x- np.mean(x,axis=-1,keepdims=True), axis=-1)  
         return np.sum(np.abs(filtered_signal) ** 2, axis=-1) / filtered_signal.shape[-1] 
 
-def filtroBajo(tensor, fmin=0.015, fmax=0.05, at_paso=1, at_rechazo=40, fs=1.0):
+def filtroBajo(tensor, fmin, fmax, at_paso, at_rechazo, fs):
     
     # Diseño del filtro
     wp = np.array([fmin, fmax]) * 2 / fs
@@ -169,7 +170,7 @@ def filtroBajo(tensor, fmin=0.015, fmax=0.05, at_paso=1, at_rechazo=40, fs=1.0):
     
     return np.apply_along_axis(energiaFiltrada, 2, tensor,sos)
 
-def filtroMedio(tensor, fmin=0.05, fmax=0.25, at_paso=1, at_rechazo=40, fs=1.0):
+def filtroMedio(tensor, fmin, fmax, at_paso, at_rechazo, fs):
     
     # Diseño del filtro
     wp = np.array([fmin, fmax]) * 2 / fs
@@ -179,7 +180,7 @@ def filtroMedio(tensor, fmin=0.05, fmax=0.25, at_paso=1, at_rechazo=40, fs=1.0):
     
     return np.apply_along_axis(energiaFiltrada, 2, tensor,sos)
 
-def filtroAlto(tensor, fmin=0.025, fmax=0.4, at_paso=1, at_rechazo=40, fs=1.0):
+def filtroAlto(tensor, fmin, fmax, at_paso, at_rechazo, fs):
     
     # Diseño del filtro
     wp = np.array([fmin, fmax]) * 2 / fs

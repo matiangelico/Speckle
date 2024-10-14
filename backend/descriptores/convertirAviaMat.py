@@ -35,24 +35,25 @@ def video_to_mat_grayscale(video_path, output_path):
 
 
 def apply_descriptor(tensor, descriptor, params=None):
+    params = convert_params(params)
     #Aplica un descriptor sobre el tensor de video y devuelve el tensor resultante."""
     descriptor_functions = {
-        "DiferenciasPesadas": diferenciasPesadas,
-        "DiferenciasPromediadas": diferenciasPromediadas,
+        "Diferencias Pesadas": diferenciasPesadas,
+        "Diferencias Promediadas": diferenciasPromediadas,
         "Fujii": fujii,
-        "DesviacionEstandar":desviacionEstandar,
-        "ContrasteTemporal":contrasteTemporal,
+        "Desviacion Estandar":desviacionEstandar,
+        "Contraste Temporal":contrasteTemporal,
         "Media":media,
         "Autocorrelacion":autoCorrelacion,
         "Fuzzy":fuzzy,
-        "FrecuenciaMedia":frecuenciaMedia,
-        "EntropiaShannon1":entropiaShannon1,   
-        "FrecuenciaCorte":frecuenciaCorte,
-        "WaveletEntropy":waveletEntropy,
-        "HighLowRatio":highLowRatio,
-        "FiltroBajo":filtroBajo,
-        "FiltroMedio":filtroMedio,
-        "FiltroAlto":filtroAlto
+        "Frecuencia Media":frecuenciaMedia,
+        "Entropia Shannon":entropiaShannon,   
+        "Frecuencia Corte":frecuenciaCorte,
+        "Wavelet Entropy":waveletEntropy,
+        "High Low Ratio":highLowRatio,
+        "Filtro Bajo":filtroBajo,
+        "Filtro Medio":filtroMedio,
+        "Filtro Alto":filtroAlto
     }
 
     if descriptor in descriptor_functions:
@@ -68,6 +69,24 @@ def generate_color_map(tensor, output_image_path):
     plt.savefig(output_image_path)
     plt.close()  # Cierra el gráfico para evitar superposiciones en futuras ejecuciones
     print(f"Imagen guardada como: {output_image_path}")
+
+def convert_params(params):
+    for key, value in params.items():
+        try:
+            if 'peso' in key or 'level' in key or 'threshold' in key or 'at_paso' in key or 'at_rechazo' in key :
+                # Convertir a int si el parámetro contiene 'peso' o 'cantidad'
+                params[key] = int(value)
+            elif 'wavelet' in key:
+                params[key] = str(value)
+            else:
+                # Convertir a float en otros casos
+                params[key] = float(value)
+        except ValueError:
+            # Si no se puede convertir, puedes decidir qué hacer (ejemplo: dar un valor por defecto)
+            raise ValueError(f"El parámetro {key} con valor '{value}' no se pudo convertir a float.")
+    return params
+
+
 
 
 if __name__ == "__main__":

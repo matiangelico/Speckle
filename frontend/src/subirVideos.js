@@ -11,10 +11,6 @@ const UploadVideo = () => {
     const [descriptorsVisible, setDescriptorsVisible] = useState(false);
     const [descriptorParams, setDescriptorParams] = useState({});
     
-    const defaultValues = {
-        'Fuzzy': { 'threshold': '120' }, 
-        'Diferencias Pesadas': { 'peso': '5' }, 
-    };
 
     const handleFileChange = (event) => {
         setVideo(event.target.files[0]);
@@ -87,6 +83,17 @@ const UploadVideo = () => {
         }
     };
 
+    const defaultValues = {
+        'Diferencias Pesadas': { 'peso': '5' }, 
+        'Fuzzy': { 'threshold': '120' },  
+        'Wavelet Entropy': { 'wavelet':'db2','level': '5' },
+        'High Low Ratio': { 'fs': '1.0' },
+        'Filtro Bajo':{'fmin': '0.015' , 'fmax':'0.05', 'at_paso':'1', 'at_rechazo':'40', 'fs':'1.0'},
+        'Filtro Medio':{'fmin': '0.05' , 'fmax':'0.25', 'at_paso':'1', 'at_rechazo':'40', 'fs':'1.0'},
+        'Filtro Alto':{'fmin': '0.025' , 'fmax':'0.4', 'at_paso':'1', 'at_rechazo':'40', 'fs':'1.0'},
+          
+    };
+
     const descriptorList = [
         { name: 'Diferencias Pesadas', params: ['peso'] },
         { name: 'Diferencias Promediadas', params: [] },
@@ -99,11 +106,11 @@ const UploadVideo = () => {
         { name: 'Frecuencia Media', params: [] },
         { name: 'Entropia Shannon', params: [] },
         { name: 'Frecuencia Corte', params: [] },
-        { name: 'Wavelet Entropy', params: [] },
-        { name: 'High Low Ratio', params: [] },
-        { name: 'Filtro Bajo', params: [] },
-        { name: 'Filtro Medio', params: [] },
-        { name: 'Filtro Alto', params: [] },
+        { name: 'Wavelet Entropy', params: ['wavelet','level'] },
+        { name: 'High Low Ratio', params: ['fs'] },
+        { name: 'Filtro Bajo', params: ['fmin','fmax','at_paso','at_rechazo','fs'] },
+        { name: 'Filtro Medio', params: ['fmin','fmax','at_paso','at_rechazo','fs'] },
+        { name: 'Filtro Alto', params: ['fmin','fmax','at_paso','at_rechazo','fs'] },
     ];
 
     const isAnyDescriptorSelected = Object.values(selectedDescriptors).some(checked => checked);
@@ -152,5 +159,6 @@ const UploadVideo = () => {
 };
 
 export default UploadVideo;
+
 
 
