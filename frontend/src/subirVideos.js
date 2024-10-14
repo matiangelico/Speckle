@@ -10,6 +10,11 @@ const UploadVideo = () => {
     const [selectedDescriptors, setSelectedDescriptors] = useState({});
     const [descriptorsVisible, setDescriptorsVisible] = useState(false);
     const [descriptorParams, setDescriptorParams] = useState({});
+    
+    const defaultValues = {
+        'Fuzzy': { 'threshold': '120' }, 
+        'Diferencias Pesadas': { 'peso': '5' }, 
+    };
 
     const handleFileChange = (event) => {
         setVideo(event.target.files[0]);
@@ -22,8 +27,15 @@ const UploadVideo = () => {
             ...prev,
             [name]: checked,
         }));
-        // Reset parameters when descriptor is unchecked
-        if (!checked) {
+        
+        // Si el descriptor es seleccionado, establecer valores por defecto
+        if (checked && defaultValues[name]) {
+            setDescriptorParams((prev) => ({
+                ...prev,
+                [name]: defaultValues[name],
+            }));
+        } else if (!checked) {
+            // Reset parameters when descriptor is unchecked
             setDescriptorParams((prev) => ({
                 ...prev,
                 [name]: {},
@@ -76,15 +88,16 @@ const UploadVideo = () => {
     };
 
     const descriptorList = [
-        { name: 'Diferencias Pesadas', params: [] },
+        { name: 'Diferencias Pesadas', params: ['peso'] },
         { name: 'Diferencias Promediadas', params: [] },
         { name: 'Fujii', params: [] },
+        { name: 'Desviacion Estandar', params: [] },
         { name: 'Contraste Temporal', params: [] },
         { name: 'Media', params: [] },
         { name: 'Autocorrelacion', params: [] },
-        { name: 'Fuzzy', params: ['threshold'] },
+        { name: 'Fuzzy', params: ['threshold'] },  // Ejemplo con parámetro "threshold"
         { name: 'Frecuencia Media', params: [] },
-        { name: 'Entropia Shannon 1', params: [] },
+        { name: 'Entropia Shannon', params: [] },
         { name: 'Frecuencia Corte', params: [] },
         { name: 'Wavelet Entropy', params: [] },
         { name: 'High Low Ratio', params: [] },
@@ -112,6 +125,7 @@ const UploadVideo = () => {
                                     <label>{param}:</label>
                                     <input 
                                         type="text" 
+                                        value={descriptorParams[descriptor.name]?.[param] || ''} // Mostrar valor por defecto o vacío
                                         onChange={(e) => handleParamChange(descriptor.name, param, e.target.value)} 
                                     />
                                 </div>
