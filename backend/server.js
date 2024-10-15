@@ -7,11 +7,36 @@ const app = express();
 const fs = require('fs');
 
 app.use(cors());
+app.use(express.json()); // Middleware para parsear JSON en las solicitudes
 
 const upload = multer({ dest: 'uploads/' }); // Carpeta temporal para los archivos subidos
 
 // Configurar el middleware para servir archivos estáticos desde la carpeta uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Ruta para obtener el contenido del archivo JSON
+app.get('/api/descriptors', (req, res) => {
+    fs.readFile(path.join(__dirname, 'descriptors.json'), 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error al leer el archivo JSON' });
+        }
+        res.json(JSON.parse(data));
+    });
+});
+
+// Ruta para actualizar el contenido del archivo JSON
+app.post('/api/descriptors', (req, res) => {
+    const newData = req.body;
+    console.log('Datos recibidos:', newData); // Verifica qué datos están llegando
+
+    fs.writeFile(path.join(__dirname, 'descriptors.json'), JSON.stringify(newData, null, 2), (err) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error al escribir en el archivo JSON' });
+        }
+        res.status(200).json({ message: 'Archivo JSON actualizado correctamente' });
+    });
+});
+
 
 app.post('/upload', upload.single('video'), (req, res) => {
     if (!req.file) {
@@ -23,7 +48,6 @@ app.post('/upload', upload.single('video'), (req, res) => {
     let descriptors = req.body.descriptors;
     let descriptorParams = req.body.params;
 
-
     if (descriptorParams) {
         descriptorParams = JSON.parse(descriptorParams);
         console.log(`Los parametros de los descriptores ${JSON.stringify(descriptorParams)}`)
@@ -33,15 +57,10 @@ app.post('/upload', upload.single('video'), (req, res) => {
     descriptors = descriptors.replace(/[\[\]"]/g, '').split(',').map(descriptor => descriptor.trim());
 
     console.log(`Los descriptores limpios son ${descriptors}`);
-    
 
     // Mapa de promesas para el procesamiento de cada descriptor
     const processingPromises = descriptors.map(descriptor => {
-        // Limpiar caracteres no deseados en el nombre del descriptor
-        //const descriptor = descriptor.replace(/[^a-zA-Z0-9_-]/g, '');
-
         console.log(`El descriptor sanitizado es ${descriptor}`);
-
 
         const outputMatPath = path.join(__dirname, 'uploads', `${req.file.filename}_${descriptor}.mat`);
         const outputImgPath = path.join(__dirname, 'uploads', `${req.file.filename}_${descriptor}.png`);
@@ -99,4 +118,5 @@ const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
+
 

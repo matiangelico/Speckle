@@ -1,0 +1,100 @@
+{
+  "defaultValues": {
+    "Fuzzy": {
+      "threshold": "119"
+    }
+  },
+  "descriptorList": [
+    {
+      "name": "Diferencias Pesadas",
+      "params": [
+        "peso"
+      ]
+    },
+    {
+      "name": "Diferencias Promediadas",
+      "params": []
+    },
+    {
+      "name": "Fujii",
+      "params": []
+    },
+    {
+      "name": "Desviacion Estandar",
+      "params": []
+    },
+    {
+      "name": "Contraste Temporal",
+      "params": []
+    },
+    {
+      "name": "Media",
+      "params": []
+    },
+    {
+      "name": "Autocorrelacion",
+      "params": []
+    },
+    {
+      "name": "Fuzzy",
+      "params": [
+        "threshold"
+      ]
+    },
+    {
+      "name": "Frecuencia Media",
+      "params": []
+    },
+    {
+      "name": "Entropia Shannon",
+      "params": []
+    },
+    {
+      "name": "Frecuencia Corte",
+      "params": []
+    },
+    {
+      "name": "Wavelet Entropy",
+      "params": [
+        "wavelet",
+        "level"
+      ]
+    },
+    {
+      "name": "High Low Ratio",
+      "params": [
+        "fs"
+      ]
+    },
+    {
+      "name": "Filtro Bajo",
+      "params": [
+        "fmin",
+        "fmax",
+        "at_paso",
+        "at_rechazo",
+        "fs"
+      ]
+    },
+    {
+      "name": "Filtro Medio",
+      "params": [
+        "fmin",
+        "fmax",
+        "at_paso",
+        "at_rechazo",
+        "fs"
+      ]
+    },
+    {
+      "name": "Filtro Alto",
+      "params": [
+        "fmin",
+        "fmax",
+        "at_paso",
+        "at_rechazo",
+        "fs"
+      ]
+    }
+  ]
+}

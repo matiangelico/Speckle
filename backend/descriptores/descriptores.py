@@ -107,7 +107,7 @@ def frecuenciaCorte(tensor):
                     desc_fc[w,i]= freqs[indice[0]]
     return desc_fc
 
-def waveletEntropy(tensor,wavelet, level):
+def waveletEntropy(tensor,wavelet,level):
     import pywt
 
 
