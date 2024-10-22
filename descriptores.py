@@ -96,7 +96,7 @@ def fuzzy(tensor):
 
             ff = fn.copy()
 
-            desc = np.sum(act, axis=1) / 300
+            desc = np.sum(act, axis=1) / frames
     
         fuzzy[:,c] = desc 
     return fuzzy
@@ -173,11 +173,11 @@ def waveletEntropy(tensor, wavelet='db2', level=5):
         return -np.sum(Ew_norm * np.log(Ew_norm + 1e-12))
 
     for w in range(ancho):
-        desc_ew[:] = np.apply_along_axis(entropia_por_columnas, 1, tensor[:, w, :])
+        desc_ew[:,w] = np.apply_along_axis(entropia_por_columnas, 1, tensor[:, w, :])
 
     return desc_ew
 
-def highLowRatio(tensor):
+def highLowRatio(tensor, fs=1.0):
 
     tensor = tensor[:, :, :]
     desc_hlr = np.zeros((ancho, alto))
@@ -186,7 +186,7 @@ def highLowRatio(tensor):
         X = tensor[:, w, :]
         for i in range(alto):
             x = X[i,:]
-            freqs, Pxx = welch(x)
+            freqs, Pxx = welch(x, fs=fs)
             energiabaja = np.sum(Pxx[:int(len(freqs) * 0.25)])
             energiaalta = np.sum(Pxx[int(len(freqs) * 0.25)+1:])
             desc_hlr[i,w]= (energiaalta / energiabaja) 
