@@ -1,6 +1,7 @@
 {
   "defaultValues": {
     "Diferencias Pesadas": {
+<<<<<<< Updated upstream
     "peso": "5"
   },
   "Fuzzy": {
@@ -33,6 +34,50 @@
     "at_paso": "1",
     "at_rechazo": "40",
     "fs": "1.0"}
+=======
+      "peso": "5"
+    },
+    "Diferencias Promediadas": {},
+    "Fujii": {},
+    "Desviacion Estandar": {},
+    "Contraste Temporal": {},
+    "Media": {},
+    "Autocorrelacion": {},
+    "Fuzzy": {
+      "threshold": "119"
+    },
+    "Frecuencia Media": {},
+    "Entropia Shannon": {},
+    "Frecuencia Corte": {},
+    "Wavelet Entropy": {
+      "wavelet": "db2",
+      "level": "5"
+    },
+    "High Low Ratio": {
+      "fs": "1.0"
+    },
+    "Filtro Bajo": {
+      "fmin": "0.015",
+      "fmax": "0.05",
+      "at_paso": "1",
+      "at_rechazo": "40",
+      "fs": "1.0"
+    },
+    "Filtro Medio": {
+      "fmin": "0.05",
+      "fmax": "0.25",
+      "at_paso": "1",
+      "at_rechazo": "40",
+      "fs": "1.0"
+    },
+    "Filtro Alto": {
+      "fmin": "0.025",
+      "fmax": "0.4",
+      "at_paso": "1",
+      "at_rechazo": "40",
+      "fs": "1.0"
+    }
+>>>>>>> Stashed changes
   },
   "descriptorList": [
     {

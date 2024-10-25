@@ -13,7 +13,7 @@ const DefaultValuesManager = () => {
     const [descriptorParams, setDescriptorParams] = useState({});
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/descriptors')
+        fetch('http://localhost:5000/descriptor')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error en la red');
@@ -21,13 +21,40 @@ const DefaultValuesManager = () => {
                 return response.json();
             })
             .then(data => {
-                setDefaultValues(data.defaultValues);
-                setDescriptorList(data.descriptorList);
+                const transformedData = transformResponse(data);
+                setDefaultValues(transformedData.defaultValues);
+                setDescriptorList(transformedData.descriptorList);
+
+                // Inicializar selectedDescriptors y descriptorParams
+                const initialSelectedDescriptors = {};
+                const initialDescriptorParams = {};
+
+                transformedData.descriptorList.forEach(descriptor => {
+                    initialSelectedDescriptors[descriptor.name] = false; // Todos descriptores deseleccionados inicialmente
+                    initialDescriptorParams[descriptor.name] = transformedData.defaultValues[descriptor.name] || {}; // Cargar los valores por defecto
+                });
+
+                setSelectedDescriptors(initialSelectedDescriptors);
+                setDescriptorParams(initialDescriptorParams);
             })
             .catch(error => {
                 console.error('Error al cargar los descriptores:', error);
             });
     }, []);
+
+
+    const transformResponse = (response) => {
+        const result = {
+            defaultValues: {},
+            descriptorList: []
+        };
+
+        const firstItem = response[0]; // Asumiendo que solo hay un objeto en el arreglo
+        result.defaultValues = firstItem.defaultValues;
+        result.descriptorList = firstItem.descriptorList;
+
+        return result;
+    };
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);

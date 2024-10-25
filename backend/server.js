@@ -5,6 +5,8 @@ const { exec } = require('child_process');
 const path = require('path');
 const app = express();
 const fs = require('fs');
+const mongoose = require('mongoose');
+const descriptorRoutes = require('./routes/descriptorRoutes');
 
 app.use(cors());
 app.use(express.json()); // Middleware para parsear JSON en las solicitudes
@@ -13,6 +15,17 @@ const upload = multer({ dest: 'uploads/' }); // Carpeta temporal para los archiv
 
 // Configurar el middleware para servir archivos estáticos desde la carpeta uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+mongoose.connect('mongodb://localhost:27017/speckle')
+    .then(() => {
+        console.log('Conectado a MongoDB');
+    })
+    .catch(error => {
+        console.error('Error al conectar a MongoDB', error);
+    });
+    
+//Rutas
+app.use('/descriptor', descriptorRoutes);
 
 // Ruta para obtener el contenido del archivo JSON
 app.get('/api/descriptors', (req, res) => {

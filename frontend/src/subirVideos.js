@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import DescriptorSelection from './DescriptorSelection';
+import DescriptorSelection from './DescriptorSelection'; // Asegúrate de que este sea el camino correcto
 
 const UploadVideo = () => {
     const [defaultValues, setDefaultValues] = useState({});
@@ -14,22 +14,51 @@ const UploadVideo = () => {
     const [descriptorParams, setDescriptorParams] = useState({});
 
     const handleFileChange = async (event) => {
-        setVideo(event.target.files[0]);
+        const selectedVideo = event.target.files[0];
+        setVideo(selectedVideo);
 
         try {
             // Hacer la solicitud para obtener los descriptores solo después de seleccionar el video
-            const response = await fetch('http://localhost:5000/api/descriptors');
+            const response = await fetch('http://localhost:5000/descriptor');
             if (!response.ok) {
                 throw new Error('Error en la red');
             }
             const data = await response.json();
-            setDefaultValues(data.defaultValues);
-            setDescriptorList(data.descriptorList);
+            const transformedData = transformResponse(data);
+            setDefaultValues(transformedData.defaultValues);
+            setDescriptorList(transformedData.descriptorList);
             setDescriptorsVisible(true);  // Mostrar la lista de descriptores después de cargar los datos
+
+            // Inicializar selectedDescriptors y descriptorParams
+            const initialSelectedDescriptors = {};
+            const initialDescriptorParams = {};
+
+            transformedData.descriptorList.forEach(descriptor => {
+                initialSelectedDescriptors[descriptor.name] = false; // Todos descriptores deseleccionados inicialmente
+                initialDescriptorParams[descriptor.name] = transformedData.defaultValues[descriptor.name] || {}; // Cargar los valores por defecto
+            });
+
+            setSelectedDescriptors(initialSelectedDescriptors);
+            setDescriptorParams(initialDescriptorParams);
+
         } catch (error) {
             console.error('Error al cargar los descriptores:', error);
             setMessage('Error al cargar los descriptores.');
         }
+    };
+
+    // Función para transformar la respuesta
+    const transformResponse = (response) => {
+        const result = {
+            defaultValues: {},
+            descriptorList: []
+        };
+
+        const firstItem = response[0]; // Asumiendo que solo hay un objeto en el arreglo
+        result.defaultValues = firstItem.defaultValues;
+        result.descriptorList = firstItem.descriptorList;
+
+        return result;
     };
 
     const handleDescriptorChange = (event) => {
@@ -124,6 +153,7 @@ const UploadVideo = () => {
 };
 
 export default UploadVideo;
+
 
 
 
