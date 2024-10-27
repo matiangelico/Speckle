@@ -1,10 +1,14 @@
-// import { useState } from 'react'
+import UploadVideo from "./subirVideos";
+import DefaultValuesManager from "./DefaultValuesManager";
 
-function App() {
-
+const App = () => {
   return (
-   <></>
-  )
-}
+    <div>
+      <h1>Subir Video AVI</h1>
+      <DefaultValuesManager />
+      <UploadVideo />
+    </div>
+  );
+};
 
-export default App
+export default App;
