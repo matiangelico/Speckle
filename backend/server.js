@@ -69,7 +69,7 @@ app.post('/upload', upload.single('video'), (req, res) => {
 
     if (descriptorParams) {
         descriptorParams = JSON.parse(descriptorParams);
-        console.log(`Los parametros de los descriptores ${JSON.stringify(descriptorParams)}`)
+        console.log(`Los parametros de los descriptores ${JSON.stringify(descriptorParams)}`);
     }
 
     // Limpiar descriptores: Quitar corchetes y comillas si existen
@@ -84,12 +84,11 @@ app.post('/upload', upload.single('video'), (req, res) => {
         const outputMatPath = path.join(__dirname, 'uploads', `${req.file.filename}_${descriptor}.mat`);
         const outputImgPath = path.join(__dirname, 'uploads', `${req.file.filename}_${descriptor}.png`);
 
-        const params = descriptorParams[descriptor] || {};
+        // Asegúrate de que params sea un array
+        const params = descriptorParams[descriptor] ? Object.values(descriptorParams[descriptor]) : [];
 
         // Convertir los parámetros en una cadena de argumentos para pasar al comando de Python
-        const paramArgs = Object.keys(params)
-            .map(key => `${key}=${params[key]}`)
-            .join(' '); // Por ejemplo, 'threshold=120'
+        const paramArgs = params.map(param => `${param.paramName}=${param.value}`).join(' '); // Ajuste aquí
 
         console.log(`LO ejecutamos con los parametros :, ${paramArgs}`);
         console.log(`Parámetros para ${descriptor}:, ${paramArgs}`);
@@ -131,6 +130,7 @@ app.post('/upload', upload.single('video'), (req, res) => {
             res.status(500).json({ error: 'Hubo un error al procesar algunos descriptores' });
         });
 });
+
 
 // Iniciar el servidor
 const PORT = 5000;
