@@ -11,6 +11,12 @@ const descriptorRoutes = require('./routes/descriptorRoutes');
 app.use(cors());
 app.use(express.json()); // Middleware para parsear JSON en las solicitudes
 
+app.use((req, res, next) => {
+    console.log(`Método: ${req.method}, Ruta: ${req.originalUrl}`);
+    next();
+});
+
+
 const upload = multer({ dest: 'uploads/' }); // Carpeta temporal para los archivos subidos
 
 // Configurar el middleware para servir archivos estáticos desde la carpeta uploads

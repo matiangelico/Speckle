@@ -1,10 +1,10 @@
-// routes/descriptorRoutes.js
 const express = require('express');
 const router = express.Router();
-const descriptorController = require('../controllers/descriptorController');
+const { getAllDescriptors, updateDefaultValues } = require('../controllers/descriptorController');
 
-// Ruta para obtener todos los defaultValues
-router.get('/', descriptorController.getAllDescriptors);
+router.get('/', getAllDescriptors);
+router.post('/update-default-values',updateDefaultValues);
+
 
 module.exports = router;
 

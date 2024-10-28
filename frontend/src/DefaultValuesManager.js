@@ -7,7 +7,6 @@ Modal.setAppElement('#root');
 
 const DefaultValuesManager = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [defaultValues, setDefaultValues] = useState({});
     const [descriptorList, setDescriptorList] = useState([]);
     const [selectedDescriptors, setSelectedDescriptors] = useState({});
     const [descriptorParams, setDescriptorParams] = useState({});
@@ -21,19 +20,15 @@ const DefaultValuesManager = () => {
                 return response.json();
             })
             .then(data => {
-                const transformedData = transformResponse(data);
-                setDefaultValues(transformedData.defaultValues);
-                setDescriptorList(transformedData.descriptorList);
-
-                // Inicializar selectedDescriptors y descriptorParams
                 const initialSelectedDescriptors = {};
                 const initialDescriptorParams = {};
 
-                transformedData.descriptorList.forEach(descriptor => {
+                data.forEach(descriptor => {
                     initialSelectedDescriptors[descriptor.name] = false; // Todos descriptores deseleccionados inicialmente
-                    initialDescriptorParams[descriptor.name] = transformedData.defaultValues[descriptor.name] || {}; // Cargar los valores por defecto
+                    initialDescriptorParams[descriptor.name] = descriptor.params; // Cargar los parámetros
                 });
 
+                setDescriptorList(data);
                 setSelectedDescriptors(initialSelectedDescriptors);
                 setDescriptorParams(initialDescriptorParams);
             })
@@ -41,20 +36,6 @@ const DefaultValuesManager = () => {
                 console.error('Error al cargar los descriptores:', error);
             });
     }, []);
-
-
-    const transformResponse = (response) => {
-        const result = {
-            defaultValues: {},
-            descriptorList: []
-        };
-
-        const firstItem = response[0]; // Asumiendo que solo hay un objeto en el arreglo
-        result.defaultValues = firstItem.defaultValues;
-        result.descriptorList = firstItem.descriptorList;
-
-        return result;
-    };
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
@@ -67,12 +48,14 @@ const DefaultValuesManager = () => {
             [name]: checked,
         }));
 
-        if (checked && defaultValues[name]) {
+        if (checked) {
+            // Si se selecciona un descriptor, se inicializan sus parámetros
             setDescriptorParams((prev) => ({
                 ...prev,
-                [name]: defaultValues[name],
+                [name]: descriptorParams[name], // Cargar parámetros por defecto
             }));
-        } else if (!checked) {
+        } else {
+            // Si se deselecciona, eliminamos los parámetros de descriptor
             setDescriptorParams((prev) => {
                 const { [name]: _, ...rest } = prev;
                 return rest;
@@ -83,24 +66,39 @@ const DefaultValuesManager = () => {
     const handleParamChange = (descriptor, param, value) => {
         setDescriptorParams((prev) => ({
             ...prev,
-            [descriptor]: {
-                ...prev[descriptor],
-                [param]: value,
-            },
+            [descriptor]: prev[descriptor].map(p =>
+                p.paramName === param ? { ...p, value } : p
+            ),
         }));
     };
 
     const handleSaveDefaultValues = () => {
-        console.log('Datos enviados:', { defaultValues: descriptorParams, descriptorList });
-
-        fetch('http://localhost:5000/api/descriptors', {
+        
+        // Convertir descriptorParams al formato esperado por el backend
+        const body = descriptorList.map(descriptor => {
+            const params = descriptorParams[descriptor.name] || []; // Obtener los parámetros del descriptor
+            return {
+                id: descriptor._id, // Asegúrate de que descriptor tenga un _id
+                params: params.map(param => ({
+                    paramName: param.paramName, // Usa paramName como clave
+                    value: param.value || '' // Asegúrate de que haya un valor, aunque sea vacío
+                }))
+            };
+        });
+    
+        fetch('http://localhost:5000/descriptor/update-default-values', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ defaultValues: descriptorParams, descriptorList }),
+            body: JSON.stringify(body), // Enviar el body modificado
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.json();
+        })
         .then(data => {
             console.log('Éxito:', data);
             toggleModal(); // Cierra el modal después de guardar
@@ -109,6 +107,7 @@ const DefaultValuesManager = () => {
             console.error('Error:', error);
         });
     };
+    
 
     return (
         <div>
@@ -130,8 +129,3 @@ const DefaultValuesManager = () => {
 };
 
 export default DefaultValuesManager;
-
-
-
-
-

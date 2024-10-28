@@ -1,31 +1,38 @@
 import React from 'react';
 
 const DescriptorSelection = ({ descriptorList, selectedDescriptors, descriptorParams, onDescriptorChange, onParamChange }) => {
+    console.log('descriptorParams en DescriptorSelection:', descriptorParams);
+
     return (
         <div>
-            {descriptorList.map((descriptor, index) => (
-                <div key={index}>
+            {descriptorList.map(descriptor => (
+                <div key={descriptor.name}>
                     <label>
-                        <input 
-                            type="checkbox" 
-                            name={descriptor.name} 
-                            checked={selectedDescriptors[descriptor.name] || false} 
-                            onChange={onDescriptorChange} 
+                        <input
+                            type="checkbox"
+                            name={descriptor.name}
+                            checked={selectedDescriptors[descriptor.name] || false}
+                            onChange={onDescriptorChange}
                         />
                         {descriptor.name}
                     </label>
-                    {selectedDescriptors[descriptor.name] && descriptor.params && descriptor.params.length > 0 && (
+                    {selectedDescriptors[descriptor.name] && (
                         <div>
-                            {descriptor.params.map((param, i) => (
-                                <div key={i}>
-                                    <label>{param}:</label>
-                                    <input 
-                                        type="text" 
-                                        value={descriptorParams[descriptor.name]?.[param] || ''} 
-                                        onChange={(e) => onParamChange(descriptor.name, param, e.target.value)} 
-                                    />
-                                </div>
-                            ))}
+                            {descriptorParams[descriptor.name] && Object.keys(descriptorParams[descriptor.name]).map(key => {
+                                const param = descriptorParams[descriptor.name][key]; // Obtener el parámetro
+                                return (
+                                    <div key={param.paramName}>
+                                        <label>
+                                            {param.paramName}:
+                                            <input
+                                                type="text"
+                                                value={param.value} // Usar el valor por defecto
+                                                onChange={(e) => onParamChange(descriptor.name, param.paramName, e.target.value)}
+                                            />
+                                        </label>
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </div>
@@ -35,5 +42,8 @@ const DescriptorSelection = ({ descriptorList, selectedDescriptors, descriptorPa
 };
 
 export default DescriptorSelection;
+
+
+
 
 

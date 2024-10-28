@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
 import axios from 'axios';
 import DescriptorSelection from './DescriptorSelection'; // Asegúrate de que este sea el camino correcto
 
 const UploadVideo = () => {
-    const [defaultValues, setDefaultValues] = useState({});
+    const [defaultValues, setDefaultValues] = useState([]);
     const [descriptorList, setDescriptorList] = useState([]);
     const [video, setVideo] = useState(null);
     const [message, setMessage] = useState('');
@@ -18,7 +18,6 @@ const UploadVideo = () => {
         setVideo(selectedVideo);
 
         try {
-            // Hacer la solicitud para obtener los descriptores solo después de seleccionar el video
             const response = await fetch('http://localhost:5000/descriptor');
             if (!response.ok) {
                 throw new Error('Error en la red');
@@ -29,13 +28,15 @@ const UploadVideo = () => {
             setDescriptorList(transformedData.descriptorList);
             setDescriptorsVisible(true);  // Mostrar la lista de descriptores después de cargar los datos
 
-            // Inicializar selectedDescriptors y descriptorParams
             const initialSelectedDescriptors = {};
             const initialDescriptorParams = {};
 
             transformedData.descriptorList.forEach(descriptor => {
                 initialSelectedDescriptors[descriptor.name] = false; // Todos descriptores deseleccionados inicialmente
-                initialDescriptorParams[descriptor.name] = transformedData.defaultValues[descriptor.name] || {}; // Cargar los valores por defecto
+                initialDescriptorParams[descriptor.name] = descriptor.params.reduce((acc, param) => {
+                    acc[param.paramName] = param.value; // Cargar los valores por defecto
+                    return acc;
+                }, {});
             });
 
             setSelectedDescriptors(initialSelectedDescriptors);
@@ -54,9 +55,17 @@ const UploadVideo = () => {
             descriptorList: []
         };
 
-        const firstItem = response[0]; // Asumiendo que solo hay un objeto en el arreglo
-        result.defaultValues = firstItem.defaultValues;
-        result.descriptorList = firstItem.descriptorList;
+        // Asumiendo que los descriptores vienen directamente en el formato que necesitas
+        response.forEach(item => {
+            result.descriptorList.push({
+                name: item.name,
+                params: Object.entries(item.params).map(([paramName, value]) => ({
+                    paramName,
+                    value
+                }))
+            });
+            result.defaultValues[item.name] = item.params; // Guardar los valores por defecto
+        });
 
         return result;
     };
@@ -68,12 +77,12 @@ const UploadVideo = () => {
             [name]: checked,
         }));
 
-        if (checked && defaultValues[name]) {
+        if (checked) {
             setDescriptorParams((prev) => ({
                 ...prev,
-                [name]: defaultValues[name],
+                [name]: descriptorParams[name] || {}, // Mantener los parámetros existentes
             }));
-        } else if (!checked) {
+        } else {
             setDescriptorParams((prev) => ({
                 ...prev,
                 [name]: {},
@@ -153,10 +162,3 @@ const UploadVideo = () => {
 };
 
 export default UploadVideo;
-
-
-
-
-
-
-
