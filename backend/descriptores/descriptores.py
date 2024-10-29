@@ -11,10 +11,10 @@ def setearDimensiones (tensor):
     frames = tensor.shape[2]
 
 def rangoDinamico(tensor):
-    return np.array(np.max(tensor, axis=-1)-np.min(tensor,axis=-1)).astype(np.float64)
+    return np.array(np.max(tensor, axis=-1)-np.min(tensor,axis=-1)).astype(np.float32)
 
 def diferenciasPesadas(tensor, peso=5):
-    tensor = tensor[:, :, :frames].astype(np.float64)
+    tensor = tensor[:, :, :frames].astype(np.float32)
     difPesadas = np.zeros((alto,ancho))
     for c in range (ancho):
         X = tensor[:,c,:]
@@ -25,12 +25,12 @@ def diferenciasPesadas(tensor, peso=5):
     return difPesadas
 
 def diferenciasPromediadas(tensor):
-    tensor = tensor[:, :, :frames].astype(np.float64)
+    tensor = tensor[:, :, :frames].astype(np.float32)
     return np.sum(np.abs(tensor[:,:,0:frames-1]-tensor[:,:,1:frames]),axis=2)/(frames-1)
 
 
 def fujii(tensor):
-    tensor = tensor[:, :, :frames].astype(np.float64)
+    tensor = tensor[:, :, :frames].astype(np.float32)
     x1 =np.abs(tensor[:,:,1:frames]-tensor[:,:,0:frames-1])
     x2 =np.abs(tensor[:,:,1:frames]+tensor[:,:,0:frames-1])
     x2[x2 == 0] = 1
@@ -80,7 +80,7 @@ def fuzzy(tensor):
     fuzzy = np.zeros((ancho,alto))
 
     for c in range(ancho):
-        X = tensor[:,c,:].astype(np.float64)
+        X = tensor[:,c,:].astype(np.float32)
         act = np.zeros((alto,3))
         ff = np.zeros((alto,3))
         for f in range (alto):
@@ -108,7 +108,7 @@ def frecuenciaMedia(tensor):
 
 def entropiaShannon(tensor):
     
-    tensor = tensor[:, :,:].astype(np.float64)
+    tensor = tensor[:, :,:].astype(np.float32)
     _,Pxx = welch(tensor,nperseg=256)
     prob = Pxx /np.sum(Pxx,axis=-1,keepdims =True)
     '''
@@ -152,7 +152,7 @@ def frecuenciaCorte(tensor):
 def waveletEntropy(tensor, wavelet='db2', level=5):
     import pywt
 
-    tensor = tensor[:, :, :frames].astype(np.float64)
+    tensor = tensor[:, :, :frames].astype(np.float32)
 
     desc_ew = np.zeros((ancho, alto))
 
