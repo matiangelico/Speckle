@@ -34,7 +34,7 @@ const UploadVideo = () => {
             transformedData.descriptorList.forEach(descriptor => {
                 initialSelectedDescriptors[descriptor.name] = false; // Todos descriptores deseleccionados inicialmente
                 initialDescriptorParams[descriptor.name] = descriptor.params.reduce((acc, param) => {
-                    acc[param.paramName] = param.value; // Cargar los valores por defecto
+                    acc[param.value.paramName] = param.value.value; // Cargar los valores por defecto
                     return acc;
                 }, {});
             });
@@ -55,16 +55,19 @@ const UploadVideo = () => {
             descriptorList: []
         };
 
-        // Asumiendo que los descriptores vienen directamente en el formato que necesitas
         response.forEach(item => {
+            const paramsArray = Object.entries(item.params).map(([paramName, value]) => ({
+                paramName,
+                value
+            }));
+
             result.descriptorList.push({
                 name: item.name,
-                params: Object.entries(item.params).map(([paramName, value]) => ({
-                    paramName,
-                    value
-                }))
+                params: paramsArray
             });
-            result.defaultValues[item.name] = item.params; // Guardar los valores por defecto
+
+            // Guardar los valores por defecto en un formato plano
+            result.defaultValues[item.name] = item.params;
         });
 
         return result;
@@ -112,6 +115,9 @@ const UploadVideo = () => {
         const descriptors = Object.keys(selectedDescriptors).filter(key => selectedDescriptors[key]);
         formData.append('descriptors', JSON.stringify(descriptors));
         formData.append('params', JSON.stringify(descriptorParams));
+        console.log("Los descriptores son",descriptors);
+        console.log("Los parametros son",descriptorParams)
+
 
         setLoading(true);
         setMessage('');
@@ -120,6 +126,7 @@ const UploadVideo = () => {
             const response = await axios.post('http://localhost:5000/uploadVideo', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
+            console.log("La respuesta es",formData);
             setMessage(response.data.result);
             setImageUrls(Array.isArray(response.data.images) ? response.data.images : []);
         } catch (error) {
@@ -162,3 +169,4 @@ const UploadVideo = () => {
 };
 
 export default UploadVideo;
+
