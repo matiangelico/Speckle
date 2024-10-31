@@ -31,8 +31,11 @@ exports.uploadVideo = (req, res) => {
         const outputMatPath = path.join(__dirname, '../../uploads', `${req.file.filename}_${descriptor}.mat`);
         const outputImgPath = path.join(__dirname, '../../uploads', `${req.file.filename}_${descriptor}.png`);
 
-        const params = descriptorParams[descriptor] ? Object.values(descriptorParams[descriptor]) : [];
-        const paramArgs = params.map(param => `${param.paramName}=${param.value}`).join(' ');
+        const params = descriptorParams[descriptor] ? Object.entries(descriptorParams[descriptor]) : [];
+        const paramArgs = params
+            .filter(([paramName, value]) => paramName && value) // Filtrar valores válidos
+            .map(([paramName, value]) => `${paramName}=${value}`)
+            .join(' ');
 
         const command = `python "${scriptPath}" "${filePath}" "${outputMatPath}" "${outputImgPath}" "${descriptor}" ${paramArgs}`;
         console.log(`Ejecutando comando: ${command}`);
