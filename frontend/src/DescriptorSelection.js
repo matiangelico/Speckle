@@ -2,6 +2,10 @@ import React from 'react';
 
 const DescriptorSelection = ({ descriptorList, selectedDescriptors, descriptorParams, onDescriptorChange, onParamChange }) => {
     console.log("descriptorList en DescriptorSelection", descriptorList);
+    console.log("selectedDescriptros en DescriptorSelection", selectedDescriptors);
+    console.log("descriptorParams en DescriptorSelection", descriptorParams);
+    console.log("onDescriptorChange en DescriptorSelection", onDescriptorChange);
+    console.log("onParamChange en DescriptorSelection", onParamChange);
     
     return (
         <div>

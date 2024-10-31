@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 import axios from 'axios';
 import DescriptorSelection from './DescriptorSelection'; // Asegúrate de que este sea el camino correcto
 
@@ -25,6 +25,7 @@ const UploadVideo = () => {
             const data = await response.json();
             const transformedData = transformResponse(data);
             setDefaultValues(transformedData.defaultValues);
+            console.log("Los default values son:", transformedData.defaultValues);
             setDescriptorList(transformedData.descriptorList);
             setDescriptorsVisible(true);  // Mostrar la lista de descriptores después de cargar los datos
 
@@ -33,10 +34,10 @@ const UploadVideo = () => {
 
             transformedData.descriptorList.forEach(descriptor => {
                 initialSelectedDescriptors[descriptor.name] = false; // Todos descriptores deseleccionados inicialmente
-                initialDescriptorParams[descriptor.name] = descriptor.params.reduce((acc, param) => {
-                    acc[param.paramName] = param.value; // Cargar los valores por defecto
-                    return acc;
-                }, {});
+                initialDescriptorParams[descriptor.name] = descriptor.params.map(param => ({ // Convertir a un array
+                    paramName: param.paramName,
+                    value: param.value
+                }));
             });
 
             setSelectedDescriptors(initialSelectedDescriptors);
@@ -56,7 +57,6 @@ const UploadVideo = () => {
         };
 
         response.forEach(item => {
-            // Se mantiene el _id en el nuevo formato
             const paramsArray = item.params.map(param => ({
                 paramName: param.paramName,
                 value: param.value
@@ -68,9 +68,10 @@ const UploadVideo = () => {
                 params: paramsArray
             });
 
-            // Guardar los valores por defecto en un formato plano
-            result.defaultValues[item.name] = item.params;
+            result.defaultValues[item.name] = item.params; // Aquí mantendremos el formato original
         });
+
+        console.log("La respuesta es ", response)
 
         return result;
     };
@@ -83,25 +84,26 @@ const UploadVideo = () => {
         }));
 
         if (checked) {
+            // Si se selecciona un descriptor, se inicializan sus parámetros
             setDescriptorParams((prev) => ({
                 ...prev,
-                [name]: descriptorParams[name] || {}, // Mantener los parámetros existentes
+                [name]: descriptorParams[name], // Cargar parámetros por defecto
             }));
         } else {
-            setDescriptorParams((prev) => ({
-                ...prev,
-                [name]: {},
-            }));
+            // Si se deselecciona, eliminamos los parámetros de descriptor
+            setDescriptorParams((prev) => {
+                const { [name]: _, ...rest } = prev;
+                return rest;
+            });
         }
     };
 
     const handleParamChange = (descriptor, param, value) => {
         setDescriptorParams((prev) => ({
             ...prev,
-            [descriptor]: {
-                ...prev[descriptor],
-                [param]: value,
-            },
+            [descriptor]: prev[descriptor].map(p =>
+                p.paramName === param ? { ...p, value } : p
+            ),
         }));
     };
 
