@@ -1,11 +1,12 @@
 import React from 'react';
 
 const DescriptorSelection = ({ descriptorList, selectedDescriptors, descriptorParams, onDescriptorChange, onParamChange }) => {
-    console.log("descruotorList en DescriptorSelection",descriptorList);
+    console.log("descriptorList en DescriptorSelection", descriptorList);
+    
     return (
         <div>
             {descriptorList.map(descriptor => (
-                <div key={descriptor.name}>
+                <div key={descriptor._id}> {/* Cambié key a descriptor._id si está disponible */}
                     <label>
                         <input
                             type="checkbox"
@@ -17,16 +18,21 @@ const DescriptorSelection = ({ descriptorList, selectedDescriptors, descriptorPa
                     </label>
                     {selectedDescriptors[descriptor.name] && (
                         <div>
-                            {descriptor.params.map(param => (
-                                <div key={param.paramName}>
-                                    <label>{param.value.paramName}:</label>
-                                    <input
-                                        type="text"
-                                        value={descriptorParams[descriptor.name]?.[param.value.paramName] || ''} // Acceder al valor correcto
-                                        onChange={(e) => onParamChange(descriptor.name, param.value.paramName, e.target.value)}
-                                    />
-                                </div>
-                            ))}
+                            {descriptorParams[descriptor.name] && Object.keys(descriptorParams[descriptor.name]).map(key => {
+                                const param = descriptorParams[descriptor.name][key]; // Obtener el parámetro
+                                return (
+                                    <div key={param.paramName}>
+                                        <label>
+                                            {param.paramName}:
+                                            <input
+                                                type="text"
+                                                value={param.value} // Usar el valor por defecto
+                                                onChange={(e) => onParamChange(descriptor.name, param.paramName, e.target.value)}
+                                            />
+                                        </label>
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </div>
