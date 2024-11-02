@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import DescriptorSelection from './DescriptorSelection'; // Asegúrate de que este sea el camino correcto
+import DescriptorSelection from './DescriptorSelection';
+import ImageDisplay from './ImageDisplay'; // Importa el nuevo componente
 
 const UploadVideo = () => {
     const [defaultValues, setDefaultValues] = useState([]);
@@ -13,65 +14,59 @@ const UploadVideo = () => {
     const [descriptorsVisible, setDescriptorsVisible] = useState(false);
     const [descriptorParams, setDescriptorParams] = useState({});
 
+    // Manejadores de eventos y funciones auxiliares
     const handleFileChange = async (event) => {
         const selectedVideo = event.target.files[0];
         setVideo(selectedVideo);
 
         try {
             const response = await fetch('http://localhost:5000/descriptor');
-            if (!response.ok) {
-                throw new Error('Error en la red');
-            }
+            if (!response.ok) throw new Error('Error en la red');
             const data = await response.json();
             const transformedData = transformResponse(data);
             setDefaultValues(transformedData.defaultValues);
-            console.log("Los default values son:", transformedData.defaultValues);
             setDescriptorList(transformedData.descriptorList);
-            setDescriptorsVisible(true);  // Mostrar la lista de descriptores después de cargar los datos
+            setDescriptorsVisible(true);
 
             const initialSelectedDescriptors = {};
             const initialDescriptorParams = {};
 
-            transformedData.descriptorList.forEach(descriptor => {
-                initialSelectedDescriptors[descriptor.name] = false; // Todos descriptores deseleccionados inicialmente
-                initialDescriptorParams[descriptor.name] = descriptor.params.map(param => ({ // Convertir a un array
+            transformedData.descriptorList.forEach((descriptor) => {
+                initialSelectedDescriptors[descriptor.name] = false;
+                initialDescriptorParams[descriptor.name] = descriptor.params.map(param => ({
                     paramName: param.paramName,
-                    value: param.value
+                    value: param.value,
                 }));
             });
 
             setSelectedDescriptors(initialSelectedDescriptors);
             setDescriptorParams(initialDescriptorParams);
-
         } catch (error) {
             console.error('Error al cargar los descriptores:', error);
             setMessage('Error al cargar los descriptores.');
         }
     };
 
-    // Función para transformar la respuesta
     const transformResponse = (response) => {
         const result = {
             defaultValues: {},
-            descriptorList: []
+            descriptorList: [],
         };
 
-        response.forEach(item => {
+        response.forEach((item) => {
             const paramsArray = item.params.map(param => ({
                 paramName: param.paramName,
-                value: param.value
+                value: param.value,
             }));
 
             result.descriptorList.push({
-                _id: item._id, // Agrega el _id aquí
+                _id: item._id,
                 name: item.name,
-                params: paramsArray
+                params: paramsArray,
             });
 
-            result.defaultValues[item.name] = item.params; // Aquí mantendremos el formato original
+            result.defaultValues[item.name] = item.params;
         });
-
-        console.log("La respuesta es ", response)
 
         return result;
     };
@@ -84,13 +79,11 @@ const UploadVideo = () => {
         }));
 
         if (checked) {
-            // Si se selecciona un descriptor, se inicializan sus parámetros
             setDescriptorParams((prev) => ({
                 ...prev,
-                [name]: descriptorParams[name], // Cargar parámetros por defecto
+                [name]: descriptorParams[name],
             }));
         } else {
-            // Si se deselecciona, eliminamos los parámetros de descriptor
             setDescriptorParams((prev) => {
                 const { [name]: _, ...rest } = prev;
                 return rest;
@@ -119,8 +112,6 @@ const UploadVideo = () => {
         const descriptors = Object.keys(selectedDescriptors).filter(key => selectedDescriptors[key]);
         formData.append('descriptors', JSON.stringify(descriptors));
         formData.append('params', JSON.stringify(descriptorParams));
-        console.log("Los descriptores son", descriptors);
-        console.log("Los parámetros son", descriptorParams)
 
         setLoading(true);
         setMessage('');
@@ -129,7 +120,6 @@ const UploadVideo = () => {
             const response = await axios.post('http://localhost:5000/uploadVideo', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-            console.log("La respuesta es", response.data);
             setMessage(response.data.result);
             setImageUrls(Array.isArray(response.data.images) ? response.data.images : []);
         } catch (error) {
@@ -146,8 +136,8 @@ const UploadVideo = () => {
             <input type="file" accept="video/avi" onChange={handleFileChange} />
 
             {descriptorsVisible && (
-                <DescriptorSelection 
-                    descriptorList={descriptorList} 
+                <DescriptorSelection
+                    descriptorList={descriptorList}
                     selectedDescriptors={selectedDescriptors}
                     descriptorParams={descriptorParams}
                     onDescriptorChange={handleDescriptorChange}
@@ -160,13 +150,7 @@ const UploadVideo = () => {
             </button>
 
             {message && <p>{message}</p>}
-            {imageUrls.length > 0 && imageUrls.map((image, index) => (
-                <div key={index}>
-                    <h5>{image.descriptor}</h5>
-                    <img src={`http://localhost:5000${image.url}`} alt={`Mapa de colores generado ${index}`} />
-                    <a href={`http://localhost:5000${image.url}`} download>Descargar imagen de {image.descriptor}</a>
-                </div>
-            ))}
+            <ImageDisplay imageUrls={imageUrls} /> {/* Usa el nuevo componente */}
         </div>
     );
 };

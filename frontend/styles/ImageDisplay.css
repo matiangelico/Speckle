@@ -1,0 +1,27 @@
+.image-display-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px; /* Espacio entre las imágenes */
+  justify-content: center; /* Centra las imágenes horizontalmente */
+}
+
+.image-item {
+  flex: 1 1 calc(33.33% - 16px); /* Las imágenes ocuparán un tercio del ancho con espacio entre ellas */
+  box-sizing: border-box; /* Asegúrate de que el padding y el margen no afecten el ancho total */
+  max-width: calc(33.33% - 16px); /* Limita el ancho máximo de cada imagen */
+}
+
+.image-item img {
+  width: 100%; /* Las imágenes se ajustan al ancho del contenedor */
+  height: auto; /* Mantiene la proporción de la imagen */
+  border-radius: 8px; /* Bordes redondeados, opcional */
+}
+
+.image-item img {
+  max-width: 100%;
+  height: auto;
+}
+
+.apply-ai-button {
+  margin-top: 20px;
+}
