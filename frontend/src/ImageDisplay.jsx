@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import ImageModal from './ImageModal'; // Asegúrate de tener este componente separado
 import '../styles/ImageDisplay.css'; // Importa el archivo CSS
 
 const ImageDisplay = ({ imageUrls, onApplyAI }) => {
     const [selectedImages, setSelectedImages] = useState({});
+    const [showModal, setShowModal] = useState(false);
+    const [currentImage, setCurrentImage] = useState(null);
 
     // Maneja la selección o deselección de las imágenes
     const handleImageSelect = (index) => {
@@ -11,6 +14,15 @@ const ImageDisplay = ({ imageUrls, onApplyAI }) => {
             [index]: !prev[index],
         }));
     };
+
+    // Abre el modal con la imagen seleccionada
+    const handleImageClick = (image) => {
+        setCurrentImage(image);
+        setShowModal(true);
+    };
+
+    // Cierra el modal
+    const handleCloseModal = () => setShowModal(false);
 
     // Verifica si al menos una imagen ha sido seleccionada
     const isAnyImageSelected = Object.values(selectedImages).some((selected) => selected);
@@ -39,10 +51,9 @@ const ImageDisplay = ({ imageUrls, onApplyAI }) => {
                         <img
                             src={`http://localhost:5000${image.url}`}
                             alt={`Mapa de colores generado ${index}`}
+                            onClick={() => handleImageClick(image)}
+                            className="image-with-border"
                         />
-                        <a href={`http://localhost:5000${image.url}`} download>
-                            Descargar imagen de {image.descriptor}
-                        </a>
                     </div>
                 ))}
             </div>
@@ -51,6 +62,10 @@ const ImageDisplay = ({ imageUrls, onApplyAI }) => {
                 <button className="apply-ai-button" onClick={handleApplyAI}>
                     Aplicar IA
                 </button>
+            )}
+
+            {showModal && (
+                <ImageModal image={currentImage} onClose={handleCloseModal} />
             )}
         </div>
     );

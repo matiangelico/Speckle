@@ -11,17 +11,15 @@
   max-width: calc(33.33% - 16px); /* Limita el ancho máximo de cada imagen */
 }
 
-.image-item img {
+.image-with-border {
   width: 100%; /* Las imágenes se ajustan al ancho del contenedor */
   height: auto; /* Mantiene la proporción de la imagen */
-  border-radius: 8px; /* Bordes redondeados, opcional */
+  border-radius: 8px; /* Bordes redondeados */
+  border: 2px solid black; /* Contorno negro */
+  cursor: pointer; /* Cambia el cursor al pasar por la imagen */
 }
 
-.image-item img {
-  max-width: 100%;
-  height: auto;
-}
-
+/* No necesitas repetir la clase para las imágenes si ya usas .image-with-border */
 .apply-ai-button {
   margin-top: 20px;
 }

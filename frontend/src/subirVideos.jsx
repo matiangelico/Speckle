@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import DescriptorSelection from './DescriptorSelection';
-import ImageDisplay from './ImageDisplay'; // Importa el nuevo componente
+import ImageDisplay from './ImageDisplay';
 
 const UploadVideo = () => {
     const [defaultValues, setDefaultValues] = useState([]);
