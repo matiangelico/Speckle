@@ -99,6 +99,7 @@ def fuzzy(tensor):
             desc = np.sum(act, axis=1) / frames
     
         fuzzy[:,c] = desc 
+
     return fuzzy
 
 def frecuenciaMedia(tensor):
@@ -108,8 +109,8 @@ def frecuenciaMedia(tensor):
 
 def entropiaShannon(tensor):
     
-    tensor = tensor[:, :,:].astype(np.float64)
-    _,Pxx = welch(tensor,nperseg=256)
+    #tensor = tensor[:, :,:].astype(np.float64)
+    _,Pxx = welch(tensor, window='hamming', nperseg= frames //8)
     prob = Pxx /np.sum(Pxx,axis=-1,keepdims =True)
     '''
     entropia = np.zeros((alto,ancho))
@@ -125,43 +126,40 @@ def entropiaShannon(tensor):
         entropiaShannon[w,:]=entropia[:,w]
     return entropiaShannon.transpose()
     '''
-    return -np.sum (prob * np.log10(prob), axis=-1)
+    return -np.sum (prob * np.log(prob), axis=-1)
 
 def frecuenciaCorte(tensor):
-    tensor = tensor[:, :, :frames]
+
     desc_fc = np.zeros((ancho, alto))
 
+    def frecuencia_por_columnas(x):
+
+        freqs, Pxx = welch(x-np.mean(x), window='hamming', nperseg=frames//8)
+        
+        if Pxx[1]<= 0:
+            a=0                
+        else:
+            D_PS = Pxx - Pxx[1]/ 2
+            indices = np.where(D_PS[1:] <= 0)[0]      
+            a = freqs[-1] if (indices.size==0) else freqs[indices[0]+1]
+        return a
+    
     for w in range(ancho):
-        X = tensor[:, w, :]
-        for i in range(alto):
-            x = X[i,:]
-            xm = x - np.mean(x)
-            freqs, Pxx = welch(xm, fs=2,window='hamming')
-            
-            if Pxx[1]<= 0:
-                desc_fc[w,i]=0                
-            else:
-                D_PS = Pxx - Pxx[1] / 2
-                indices = np.where(D_PS[1:] <= 0)[0]      
-                if indices.size==0:                    
-                    desc_fc[w,i]= freqs[Pxx.size-1]  
-                else:
-                    desc_fc[w,i]= freqs[indices[0]+1]
+        desc_fc[:,w] = np.apply_along_axis(frecuencia_por_columnas,-1,tensor[:,w,:])
+
     return desc_fc
+
 
 def waveletEntropy(tensor, wavelet='db2', level=5):
     import pywt
 
-    tensor = tensor[:, :, :frames].astype(np.float64)
+    tensor = tensor[:, :, :].astype(np.float64)
 
     desc_ew = np.zeros((ancho, alto))
 
     def entropia_por_columnas(x):
-        # Realiza la descomposición wavelet
+    
         coeffs = pywt.wavedec(x, wavelet, level=level)
-        
-        # Coeficiente de aproximación (low-pass) está en coeffs[0]
-        # Coeficientes de detalle (high-pass) están en coeffs[1:] para cada nivel
         Ew = np.zeros(level + 1)
         Ew[level] = np.sum(coeffs[0] ** 2)  # Coeficiente de aproximación
         
@@ -177,19 +175,19 @@ def waveletEntropy(tensor, wavelet='db2', level=5):
 
     return desc_ew
 
-def highLowRatio(tensor, fs=1.0):
+def highLowRatio(tensor):
 
-    tensor = tensor[:, :, :]
     desc_hlr = np.zeros((ancho, alto))
-
+    
     for w in range(ancho):
         X = tensor[:, w, :]
         for i in range(alto):
             x = X[i,:]
-            freqs, Pxx = welch(x, fs=fs)
-            energiabaja = np.sum(Pxx[:int(len(freqs) * 0.25)])
-            energiaalta = np.sum(Pxx[int(len(freqs) * 0.25)+1:])
+            freqs, Pxx = welch(x, window='hamming', nperseg=frames//8)
+            energiabaja = np.sum(Pxx[:int(freqs.size * 0.25)])
+            energiaalta = np.sum(Pxx[int(freqs.size * 0.25)+1:])
             desc_hlr[i,w]= (energiaalta / energiabaja) 
+
     return desc_hlr
 
     '''def hlr_per_column(x):
@@ -211,16 +209,27 @@ def energiaFiltrada(x,sos):
         return np.sum(np.abs(filtered_signal) ** 2, axis=-1) / filtered_signal.shape[-1] 
 
 def disenioFiltro(fmin,fmax,at_paso,at_rechazo):
-    wp = np.array([fmin*2, fmax*2])
-    ws = np.array([fmin*2 - 0.01, fmax*2 + 0.01])
-    nfe, fne = ellipord(wp, ws, at_paso, at_rechazo)
+    nfe, fne = ellipord(np.array([fmin*2, fmax*2]), np.array([fmin*2 - 0.01, fmax*2 + 0.01]), at_paso, at_rechazo)
     return ellip(nfe, at_paso, at_rechazo, fne, btype='band',output='sos') 
 
 def filtroBajo(tensor, fmin=0.015, fmax=0.05, at_paso=1, at_rechazo=40, fs=1.0):
-    return np.apply_along_axis(energiaFiltrada, 2, tensor,disenioFiltro(fmin,fmax,at_paso,at_rechazo))
-
+    return np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo))
+ 
 def filtroMedio(tensor, fmin=0.05, fmax=0.25, at_paso=1, at_rechazo=40, fs=1.0): 
-    return np.apply_along_axis(energiaFiltrada, 2, tensor,disenioFiltro(fmin,fmax,at_paso,at_rechazo))
+    return np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo))
 
 def filtroAlto(tensor, fmin=0.25, fmax=0.4, at_paso=1, at_rechazo=40, fs=1.0):
-    return np.apply_along_axis(energiaFiltrada, 2, tensor,disenioFiltro(fmin,fmax,at_paso,at_rechazo))
+    return np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo))
+
+def adri(tensor):
+    tensor = tensor[:, :,:].astype(np.float64)
+    m1 = (np.abs(tensor[:, :, 1]- tensor[:, :, 0])).flatten()
+    um = np.mean(m1[m1 != 0]) 
+
+    desAdri = np.zeros((alto,ancho))
+    
+    for k in range(1, frames):
+        difer = tensor[:, :, k] - tensor[:, :, k - 1]
+        desAdri += np.abs(difer) > um
+
+    return desAdri/(frames-1)
