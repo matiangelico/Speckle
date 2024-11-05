@@ -1,20 +1,29 @@
 import React from 'react';
-import UploadVideo from './subirVideos.jsx';
-import DefaultValuesManager from './DefaultValuesManager';
 import BarraSuperior from './BarraSuperior.jsx';
+import BarraLateral from './BarraLateral';
+import Flujo from './Flujo.jsx';
 import { useAuth0 } from '@auth0/auth0-react';
+import '../styles/App.css'
 
 const App = () => {
 
-    const {loginWithRedirect} = useAuth0()
+    const {loginWithRedirect, isAuthenticated} = useAuth0()
 
     return (
         <div>
-            <h1>Subir Video AVI</h1>
-            <button onClick={() => loginWithRedirect()}>Login</button>
-            <BarraSuperior/>
-            <DefaultValuesManager />
-            <UploadVideo />
+            {!isAuthenticated ? (
+                <button onClick={() => loginWithRedirect()}>Login</button>
+            ) : (
+                <>
+                    <div className="app-container">
+                        <BarraSuperior />
+                        <div className="main-content">
+                            <BarraLateral />
+                            <Flujo />
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 };

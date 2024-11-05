@@ -1,0 +1,44 @@
+.barra-lateral {
+    width: 15%; /* Ancho de la barra lateral */
+    height: 85vh; /* Altura completa de la ventana */
+    background-color: #EDF0F7; /* Fondo negro */
+    color: white; /* Color del texto */
+    padding: 20px; /* Espaciado interno */
+    display: flex;
+    flex-direction: column; /* Colocar los elementos en columna */
+    border: 2px solid #2d3648; /* Borde negro alrededor de todo el componente */
+    box-sizing: border-box;
+}
+
+.barra-busqueda {
+    padding: 10px; /* Espaciado interno del input */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    margin-bottom: 20px; /* Espacio debajo del input */
+}
+
+.historial-experiencias {
+    flex: 1; /* Permitir que este div crezca */
+    overflow-y: auto; /* Agregar scroll si es necesario */
+    color: #717D96
+}
+
+.botones {
+    margin-top: auto; /* Colocar botones al final */
+    display: flex;
+    flex-direction: column; /* Colocar botones en columna */
+}
+
+.boton {
+    margin: 5px 0; /* Espacio entre botones */
+    padding: 10px; /* Espaciado interno del botón */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    background-color: #444; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    cursor: pointer; /* Cursor pointer al pasar sobre el botón */
+}
+
+.boton:hover {
+    background-color: #555; /* Color al pasar el mouse sobre el botón */
+}
