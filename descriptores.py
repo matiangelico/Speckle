@@ -1,6 +1,5 @@
 import numpy as np
-from scipy.signal import welch
-from scipy.signal import ellip, sosfilt, ellipord
+from scipy.signal import welch, ellip, sosfilt, ellipord
 
 def setearDimensiones (tensor):
     global frames
@@ -37,9 +36,6 @@ def desviacionEstandar(tensor):
 def contrasteTemporal(tensor):
     return np.std(tensor,axis=2)/np.mean(tensor, axis=2)
 
-#def media(tensor):  #devuelve un tensor (ancho, alto, 1) por keepdims
-#    return np.mean(tensor,axis=2, keepdims=True)
-
 def autoCorrelacion(tensor):  
     desac = np.zeros((ancho, alto))
 
@@ -73,7 +69,6 @@ def frecuenciaMedia(tensor):
     f, Pxx = welch(tensor, window='hamming', nperseg= frames //8)
     return np.sum(Pxx * f, axis=2) /np.sum(Pxx, axis=2)
 
-
 def entropiaShannon(tensor):
     _,Pxx = welch(tensor.astype(np.float32), window='hamming', nperseg= frames //8)
     prob = Pxx /np.sum(Pxx,axis=-1,keepdims =True)
@@ -84,9 +79,7 @@ def frecuenciaCorte(tensor):
     desc_fc = np.zeros((ancho, alto))
 
     def frecuencia_por_columnas(x):
-
         freqs, Pxx = welch(x-np.mean(x), window='hamming', nperseg=frames//8)
-        
         if Pxx[1]<= 0:
             a=0                
         else:
