@@ -5,18 +5,12 @@ from scipy.signal import welch, ellip, sosfilt, ellipord
 def cargarTensor(PATH):
     data = sio.loadmat(PATH)
     tensor = np.array(data['video_data']).transpose(1,2,0)
-    global frames
-    global alto
-    global ancho
-    ancho = tensor.shape[0]
-    alto = tensor.shape[1]
-    frames = tensor.shape[2]
     return tensor
 
 def setearDimensiones (tensor):
     global frames
     global alto
-    global ancho
+    global ancho 
     ancho = tensor.shape[0]
     alto = tensor.shape[1]
     frames = tensor.shape[2]
@@ -25,7 +19,8 @@ def rangoDinamico(tensor):
     setearDimensiones(tensor)
     return np.max(tensor, axis=-1)-np.min(tensor,axis=-1)
 
-def diferenciasPesadas(tensor, peso=5):
+def diferenciasPesadas(tensor, peso):
+    peso = int(peso)
     setearDimensiones(tensor)
     X = tensor.astype(np.float32).transpose(1, 0, 2) 
     difPesadas = np.zeros((ancho, alto), dtype=np.float32)
@@ -39,6 +34,7 @@ def diferenciasPromediadas(tensor):
     return np.sum(np.abs(tensor[:,:,0:frames-1]-tensor[:,:,1:frames]),axis=2)/(frames-1)
 
 def fujii(tensor):
+    setearDimensiones(tensor)
     tensor = tensor[:, :, :].astype(np.float32)
     x1 =np.abs(tensor[:,:,1:frames]-tensor[:,:,0:frames-1])
     x2 =np.abs(tensor[:,:,1:frames]+tensor[:,:,0:frames-1])
@@ -51,7 +47,8 @@ def desviacionEstandar(tensor):
 def contrasteTemporal(tensor):
     return np.std(tensor,axis=2)/np.mean(tensor, axis=2)
 
-def autoCorrelacion(tensor):  
+def autoCorrelacion(tensor):
+    setearDimensiones(tensor)  
     desac = np.zeros((ancho, alto))
 
     for j in range(alto):
@@ -63,6 +60,7 @@ def autoCorrelacion(tensor):
     return desac.astype(np.float32)
 
 def fuzzy(tensor):
+    setearDimensiones(tensor)
     intervalos = np.percentile(tensor[:,:,0], [20,40,60,80],method='nearest')
 
     act = ff = np.zeros((alto,ancho,3))
@@ -81,15 +79,18 @@ def fuzzy(tensor):
     return np.sum(act, axis=-1) / frames
 
 def frecuenciaMedia(tensor):
+    setearDimensiones(tensor)
     f, Pxx = welch(tensor, window='hamming', nperseg= frames //8)
     return np.sum(Pxx * f, axis=2) /np.sum(Pxx, axis=2)
 
 def entropiaShannon(tensor):
+    setearDimensiones(tensor)
     _,Pxx = welch(tensor.astype(np.float32), window='hamming', nperseg= frames //8)
     prob = Pxx /np.sum(Pxx,axis=-1,keepdims =True)
     return (-np.sum (prob * np.log10(prob), axis=-1)).astype(np.float32)
     
 def frecuenciaCorte(tensor):
+    setearDimensiones(tensor)
     tensor = tensor.astype(np.float32)
     desc_fc = np.zeros((ancho, alto))
 
@@ -109,7 +110,9 @@ def frecuenciaCorte(tensor):
     return desc_fc.astype(np.float32)
 
 
-def waveletEntropy(tensor, wavelet='db2', level=5):
+def waveletEntropy(tensor,wavelet,level):# wavelet='db2', level=5):
+    setearDimensiones(tensor)
+    level = int(level)
     import pywt
     tensor = tensor.astype(np.float32)
     desc_ew = np.zeros((ancho, alto))
@@ -133,6 +136,7 @@ def waveletEntropy(tensor, wavelet='db2', level=5):
     return desc_ew.astype(np.float32)
 
 def highLowRatio(tensor):
+    setearDimensiones(tensor)
     desc_hlr = np.zeros((ancho, alto))
     for i in range(alto):
         freqs, Pxx = welch(tensor[:, i, :], window='hamming', nperseg=frames // 8, axis=1)
@@ -151,16 +155,29 @@ def disenioFiltro(fmin,fmax,at_paso,at_rechazo):
     nfe, fne = ellipord(np.array([fmin*2, fmax*2]), np.array([fmin*2 - 0.01, fmax*2 + 0.01]), at_paso, at_rechazo)
     return ellip(nfe, at_paso, at_rechazo, fne, btype='band',output='sos') 
 
-def filtroBajo(tensor, fmin=0.015, fmax=0.05, at_paso=1, at_rechazo=40):
+def filtroBajo(tensor,fmax,fmin,at_paso,at_rechazo): #fmin=0.015, fmax=0.05, at_paso=1, at_rechazo=40):
+    fmin = float(fmin)
+    fmax = float(fmax)
+    at_paso = int(at_paso)
+    at_rechazo = int(at_rechazo)
     return np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo))
  
-def filtroMedio(tensor, fmin=0.05, fmax=0.25, at_paso=1, at_rechazo=40): 
+def filtroMedio(tensor,fmin,fmax,at_paso,at_rechazo): #fmin=0.05, fmax=0.25, at_paso=1, at_rechazo=40):     
+    fmin = float(fmin)
+    fmax = float(fmax)
+    at_paso = int(at_paso)
+    at_rechazo = int(at_rechazo)
     return np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo))
 
-def filtroAlto(tensor, fmin=0.25, fmax=0.4, at_paso=1, at_rechazo=40):
+def filtroAlto(tensor, fmin, fmax, at_paso,at_rechazo):#fmin=0.25, fmax=0.4, at_paso=1, at_rechazo=40):
+    fmin = float(fmin)
+    fmax = float(fmax)
+    at_paso = int(at_paso)
+    at_rechazo = int(at_rechazo)
     return np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo))
 
 def adri(tensor):
+    setearDimensiones(tensor)
     tensor = tensor[:, :,:].astype(np.float16)
     m1 = (np.abs(tensor[:, :, 1]- tensor[:, :, 0])).flatten()
     um = np.mean(m1[m1 != 0]) 
