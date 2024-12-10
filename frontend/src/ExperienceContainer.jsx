@@ -2,14 +2,16 @@
 // import DefaultValuesManager from "./DefaultValuesManager";
 
 import "../styles/Experience.css";
+
 import FileDropArea from './FileDropArea';
 import SecondaryButton from './SecondaryButton';
+import PrimaryButton from './PrimaryButton';
 
 import NewExperienceIcon from './public/icon-lus-circle.svg?react';
 import ArrowRightIcon from './public/icon-arrow-right.svg?react';
-import PrimaryButton from './PrimaryButton';
 
 const ExperienceContainer = () => {
+
   return (
     <main className='experience-container'>
       <div className='experience-header'>
