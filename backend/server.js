@@ -23,7 +23,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //conexion a la base de datos
 mongoose
-  .connect("mongodb://localhost:27017/speckle")
+  .connect("mongodb+srv://ignaciosuarez:hola123@speckle.grnl5.mongodb.net/Speckle")
   .then(() => {
     console.log("Conectado a MongoDB");
   })

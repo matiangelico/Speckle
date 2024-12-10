@@ -5,7 +5,7 @@ const {
   updateDefaultValues,
 } = require("../controllers/descriptorController");
 
-// router.get("/", getAllDescriptors);
+router.get("/", getAllDescriptors);
 router.get('/descriptors', (req, res) => {
   const filePath = path.join(__dirname, '../descriptors/descriptors.json');
   fs.readFile(filePath, 'utf8', (err, data) => {

@@ -1,5 +1,5 @@
-// import UploadVideo from "./subirVideos";
-// import DefaultValuesManager from "./DefaultValuesManager";
+import UploadVideo from "./subirVideos";
+import DefaultValuesManager from "./DefaultValuesManager";
 
 import "../styles/Experience.css";
 
@@ -26,8 +26,8 @@ const ExperienceContainer = () => {
             Explora y elige los archivos que deseas cargar desde tu computadora
           </h5>
         </div>
-        {/* <DefaultValuesManager /> */}
-        {/* <UploadVideo /> */}
+        <DefaultValuesManager/>
+        <UploadVideo />
         <FileDropArea />
         <PrimaryButton SVG={ArrowRightIcon} text={"Seleccionar descriptores"} />
       </div>

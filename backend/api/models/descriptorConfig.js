@@ -17,7 +17,7 @@ const descriptorSchema = new Schema({
 const DescriptorConfig = mongoose.model(
   "DescriptorConfig",
   descriptorSchema,
-  "defaultValues"
+  "descriptors"
 );
 
 module.exports = {
