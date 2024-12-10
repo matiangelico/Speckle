@@ -1,13 +1,13 @@
 .experience-container {
   display: grid;
-  grid-template-rows: auto 0.95fr;
+  grid-template-rows: auto 1fr;
 }
 
 .experience-header {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  width: 78.25rem;
-  padding: 1rem 3rem;
+  /* width: 78.25rem; */
+  padding: 1.2rem 3rem;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
@@ -27,7 +27,6 @@
   font-feature-settings: "calt" off;
 
   /* WF Body/Body Medium */
-  font-family: Inter;
   font-size: 1rem;
   font-style: normal;
   font-weight: 400;
@@ -37,8 +36,8 @@
 
 .experience-content {
   display: flex;
-  width: 78.25rem;
-  padding: 2rem 2.5rem 2rem 5rem;
+  /* width: 78.25rem; */
+  padding: 1.2rem 3rem 1.2rem 3rem;
   flex-direction: column;
   align-items: center;
   gap: 1.875rem;
@@ -46,7 +45,7 @@
 
 .steps-container {
   display: flex;
-  padding: 0rem 1.25rem;
+  /* padding: 0rem 1.25rem; */
   flex-direction: column;
   align-items: flex-start;
   align-self: stretch;

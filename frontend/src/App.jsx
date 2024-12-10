@@ -11,7 +11,7 @@ const App = () => {
   const { loginWithRedirect, isAuthenticated } = useAuth0();
 
   return (
-    <div>
+    <>
       {!isAuthenticated ? (
         <button onClick={() => loginWithRedirect()}>Login</button>
       ) : (
@@ -24,7 +24,7 @@ const App = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

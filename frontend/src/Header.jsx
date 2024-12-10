@@ -3,8 +3,8 @@ import { styled } from "styled-components";
 
 const StyledHeader = styled.header`
   display: flex;
-  max-width: 1512px;
-  padding: 1.5rem 2.5rem;
+  //max-width: 1512px;
+  padding: 1rem 2rem;
   justify-content: space-between;
   align-items: flex-start;
   align-self: stretch;

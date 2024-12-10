@@ -34,7 +34,7 @@ const GlobalStyles = createGlobalStyle`
 
   #root {
     width: 100%;
-    max-width: 1512px;
+    //max-width: 1512px;
     max-height: 100%;
   }
 

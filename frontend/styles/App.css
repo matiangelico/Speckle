@@ -8,9 +8,9 @@
 }
 
 .main-content {
-  display: flex; /* Para colocar la barra lateral y el flujo uno al lado del otro */
-  flex: 1; /* Ocupará el espacio restante después de la barra superior */
-  overflow: hidden;
+  display: flex;
+  flex: 1;
+  /* overflow: hidden; */
 
   display: grid;
   grid-template-columns: auto 1fr;

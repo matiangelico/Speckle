@@ -1,11 +1,11 @@
 .favs-aside {
   width: 16.25rem;
-  height: 55.25rem;
+  /* height: 55.25rem; */
   flex-shrink: 0;
   background: var(--dark-100);
   border-right: 2px solid var(--dark-500);
   display: grid;
-  grid-template-rows: 0.95fr auto;
+  grid-template-rows: 1fr auto;
 }
 
 .top-container {

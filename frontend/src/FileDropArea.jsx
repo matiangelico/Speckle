@@ -3,13 +3,14 @@ import { useDropzone } from "react-dropzone";
 
 const StyledFileDropArea = styled.div`
   display: flex;
-  height: 30.625rem;
+  height: 100%;
+  width: 100%;
   padding: 1.5rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  align-self: stretch;
+  align-self: center;
 
   border-radius: 0.25rem;
   border: 1px dashed #b0b0b0;
