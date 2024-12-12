@@ -114,11 +114,25 @@ const UploadVideo = () => {
     const formData = new FormData();
     formData.append("video", video);
 
-    const descriptors = Object.keys(selectedDescriptors).filter(
+    /*const descriptors = Object.keys(selectedDescriptors).filter(
       (key) => selectedDescriptors[key]
-    );
-    formData.append("descriptors", JSON.stringify(descriptors));
-    formData.append("params", JSON.stringify(descriptorParams));
+    );*/
+    //formData.append("descriptors", JSON.stringify(descriptors));
+    //formData.append("params", JSON.stringify(descriptorParams));
+
+    const formattedDescriptors = Object.keys(selectedDescriptors)
+      .filter((descriptorName) => selectedDescriptors[descriptorName])
+      .map((descriptorName) => ({
+        name: descriptorName,
+        params: descriptorParams[descriptorName] || [],
+      }));
+    
+    
+    console.log(formattedDescriptors);
+
+    formData.append("descriptors", JSON.stringify(formattedDescriptors));
+
+    
 
     setLoading(true);
     setMessage("");
@@ -132,9 +146,14 @@ const UploadVideo = () => {
         }
       );
       setMessage(response.data.result);
+      console.log("Recibo data result:", response.data.result);
+
       setImageUrls(
         Array.isArray(response.data.images) ? response.data.images : []
       );
+
+      console.log("Envio data images:", response.data.images);
+
     } catch (error) {
       console.log(error);
       setMessage("Ha ocurrido un error.");

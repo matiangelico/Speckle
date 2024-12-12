@@ -2,10 +2,7 @@ const { DescriptorConfig } = require("../models/DescriptorConfig");
 
 const getAllDescriptors = async (req, res) => {
   try {
-    console.log('Entre a getAllDescriptores');
-    // Aquí deberías realizar una consulta que incluya todos los descriptores
     const allDescriptors = await DescriptorConfig.find(); // Asegúrate de que este modelo incluya todos los descriptores
-    console.log(allDescriptors)
     res.json(allDescriptors);
   } catch (error) {
     console.error("Error al obtener descriptores:", error);
@@ -14,7 +11,6 @@ const getAllDescriptors = async (req, res) => {
 };
 
 const updateDefaultValues = async (req, res) => {
-  console.log("Actualizando valores");
   const updatedDescriptors = req.body;
 
   try {
