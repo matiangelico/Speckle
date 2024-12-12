@@ -33,11 +33,14 @@ async def calcularDescriptores(file: UploadFile = File(...), jsonData: str = For
     print(f"Archivo recibido: {file.filename}, tamaño: {len(videoAvi)} bytes")
     tensor = np.array(aviamat.videoamat(videoAvi)).transpose(1,2,0)
     parsed_data = json.loads(jsonData)
+
     print(f"JSON recibido: {parsed_data}")
     
     respuesta = []
     for datos in  parsed_data:
+        print(f"Los datos son: {datos}")
         parametros = []
+        print(f"Nombre del descriptor: {datos['name']}")
         rutina = rutinas.get(datos['name'])
         for parametro in datos['params']:
             parametros.append(parametro['value'])    

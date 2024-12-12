@@ -146,7 +146,7 @@ const UploadVideo = () => {
         }
       );
       setMessage(response.data.result);
-      console.log("Recibo data result:", response.data.result);
+      console.log("Recibo data :", response.data);
 
       setImageUrls(
         Array.isArray(response.data.images) ? response.data.images : []

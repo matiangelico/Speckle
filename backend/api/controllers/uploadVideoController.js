@@ -11,16 +11,16 @@ exports.uploadVideo = async (req, res) => {
   const descriptors = req.body.descriptors;
 
   try {
-    // Lee el archivo de video
-    const fileStream = fs.createReadStream(filePath);
+    // Verifica que descriptors sea un string JSON válido
+    if (typeof descriptors !== "string") {
+      throw new Error("Los descriptores no están en un formato válido");
+    }
 
     // Construye los datos del formulario
     const formData = new FormData();
+    const fileStream = fs.createReadStream(filePath);
     formData.append("file", fileStream, req.file.originalname);
-
-    // `descriptors` debe ser un string JSON válido
-    const jsonData = JSON.stringify(descriptors);
-    formData.append("jsonData", jsonData);
+    formData.append("jsonData", descriptors); // Envía tal cual sin volver a serializar
 
     // Envía la solicitud al servidor de FastAPI
     const response = await axios.post("http://localhost:8000/calc", formData, {
@@ -30,7 +30,7 @@ exports.uploadVideo = async (req, res) => {
     // Devuelve la respuesta al frontend
     res.status(200).json(response.data);
   } catch (error) {
-    console.error("Error al enviar datos al servidor externo:", error);
+    console.error("Error al enviar datos al servidor externo:", error.message);
     res.status(500).json({ error: error.message });
   } finally {
     fs.unlink(filePath, (err) => {
@@ -38,6 +38,7 @@ exports.uploadVideo = async (req, res) => {
     });
   }
 };
+
 
 
 
