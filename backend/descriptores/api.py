@@ -4,10 +4,18 @@ import numpy as np
 import json
 import aviamat
 import generaImagen
+import kmeans
+import spectralClustering
 
 app = FastAPI()
 
-rutinas = {
+rutinas_ia = {
+    "K-Means" : kmeans.km,
+    "Spectral Clustering" : spectralClustering.sc,
+    "Sustractive Clustering" : 'no hace nada aun',
+}
+
+rutinas_descriptores = {
     "Rango Dinamico" : ds.rangoDinamico,
     "Diferencias Pesadas" : ds.diferenciasPesadas,
     "Diferencias Promediadas": ds.diferenciasPromediadas,
@@ -38,7 +46,7 @@ async def calcularDescriptores(file: UploadFile = File(...), jsonData: str = For
     respuesta = []
     for datos in  parsed_data:
         parametros = []
-        rutina = rutinas.get(datos['name'])
+        rutina = rutinas_descriptores.get(datos['name'])
         for parametro in datos['params']:
             parametros.append(parametro['value'])    
         matriz = rutina(tensor,*parametros).tolist()
@@ -48,4 +56,39 @@ async def calcularDescriptores(file: UploadFile = File(...), jsonData: str = For
             "imagen" : generaImagen.generate_color_map(matriz),
         }
         respuesta.append(res)
+    return respuesta
+
+@app.post("/ia")
+async def calcularDescriptores(jsonFile1: UploadFile = File(), jsonFile2: UploadFile = File()):
+
+    descriptores_json = await jsonFile1.read()
+    descriptores = json.loads(descriptores_json)
+
+    ia_json = await jsonFile2.read()
+    ia = json.loads(ia_json)
+
+    
+    desc = descriptores['descriptores']
+    total = len(desc)
+    print(f"Nro de matrices de descriptores recibidas: {total}")
+    print(f"Nro de ia a procesar: {len(ia)}")
+
+    tensor = np.zeros((len (desc[0]),len (desc[1]),total))
+
+    for t, datos in enumerate(desc):
+        tensor[:, :, t] = np.array(datos)
+    
+    respuesta = []
+    for datos in ia:
+        rutina = rutinas_ia.get(datos['name'])
+        print(rutina)
+        clusters = int(datos['Nro_clusters'])
+        matriz = rutina(tensor,clusters).tolist()
+        res = {
+            "nombre" : datos['name'],
+            "matriz" : matriz,
+            "imagen" : generaImagen.generate_color_map(matriz),
+        }
+        respuesta.append(res)
+
     return respuesta
