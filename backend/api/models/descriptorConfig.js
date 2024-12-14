@@ -1,19 +1,25 @@
-
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const paramSchema = new Schema({
+const paramSchema = new Schema(
+  {
     paramName: { type: String, required: true },
-    value: { type: String, required: true }
-}, { _id: false });
+    value: { type: String, required: true },
+  },
+  { _id: false }
+);
 
 const descriptorSchema = new Schema({
-    name: { type: String, required: true, unique: true }, 
-    params: { type: [paramSchema], default: [] } 
+  name: { type: String, required: true, unique: true },
+  params: { type: [paramSchema], default: [] },
 });
 
-const DescriptorConfig = mongoose.model('DescriptorConfig', descriptorSchema, 'defaultValues');
+const DescriptorConfig = mongoose.model(
+  "DescriptorConfig",
+  descriptorSchema,
+  "descriptors"
+);
 
 module.exports = {
-    DescriptorConfig
+  DescriptorConfig,
 };

@@ -1,6 +1,0 @@
-.flujo {
-    flex: 1; /* Ocupará el espacio restante en la dirección principal */
-    background-color: #f8f8f8; /* Color de fondo para distinguir */
-    padding: 20px; /* Espaciado interno */
-    overflow-y: auto; /* Permite desplazamiento si el contenido es demasiado largo */
-}
