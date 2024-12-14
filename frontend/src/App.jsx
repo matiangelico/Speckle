@@ -1,9 +1,9 @@
 import { useAuth0 } from "@auth0/auth0-react";
 
 import GlobalStyles from './GlobalStyles.jsx';
-import Header from "./Header.jsx";
-import Aside from "./Aside";
-import ExperienceContainer from "./ExperienceContainer.jsx";
+import Header from './components/shared/Header.jsx';
+import Aside from "./components/shared/Aside/Aside.jsx";
+import ExperienceContainer from "./components/Experience/ExperienceContainer.jsx";
 
 import "../styles/App.css";
 

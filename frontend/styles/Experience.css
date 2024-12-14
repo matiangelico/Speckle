@@ -16,7 +16,7 @@
 
 .experience-header h1 {
   color: var(--dark-800);
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-style: normal;
   font-weight: 700;
   line-height: 130%; /* 2.6rem */
@@ -55,13 +55,13 @@
   color: var(--dark-800);
 
   font-family: Inter;
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-style: normal;
   font-weight: 700;
   line-height: 130%; /* 2.6rem */
 }
 
-.steps-container h5 {
+.steps-container h3 {
   color: var(--dark-400);
 
   font-family: Inter;

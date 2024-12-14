@@ -1,14 +1,14 @@
-import UploadVideo from "./subirVideos";
-import DefaultValuesManager from "./DefaultValuesManager";
+//import UploadVideo from "./subirVideos";
+//import DefaultValuesManager from "./DefaultValuesManager";
 
-import "../styles/Experience.css";
+import "../../../styles/Experience.css";
 
 import FileDropArea from './FileDropArea';
-import SecondaryButton from './SecondaryButton';
-import PrimaryButton from './PrimaryButton';
+import SecondaryButton from '../common/SecondaryButton';
+import PrimaryButton from '../common/PrimaryButton';
 
-import NewExperienceIcon from './public/icon-lus-circle.svg?react';
-import ArrowRightIcon from './public/icon-arrow-right.svg?react';
+import NewExperienceIcon from '../../assets/svg/icon-lus-circle.svg?react';
+import ArrowRightIcon from '../../assets/svg/icon-arrow-right.svg?react';
 
 const ExperienceContainer = () => {
 
@@ -22,12 +22,12 @@ const ExperienceContainer = () => {
       <div className='experience-content'>
         <div className='steps-container'>
           <h2>1. Subir video</h2>
-          <h5>
+          <h3>
             Explora y elige los archivos que deseas cargar desde tu computadora
-          </h5>
+          </h3>
         </div>
-        <DefaultValuesManager/>
-        <UploadVideo />
+        {/* <DefaultValuesManager/> */}
+        {/* <UploadVideo /> */}
         <FileDropArea />
         <PrimaryButton SVG={ArrowRightIcon} text={"Seleccionar descriptores"} />
       </div>

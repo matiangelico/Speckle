@@ -1,6 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { styled } from "styled-components";
 
+import SpeckleLogo from "../../assets/svg/speckle-logo-40px.svg?react";
+
 const StyledHeader = styled.header`
   display: flex;
   //max-width: 1512px;
@@ -80,18 +82,7 @@ const Header = () => {
     isAuthenticated && (
       <StyledHeader>
         <LogoContainer>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            width='40'
-            height='40'
-            viewBox='0 0 40 40'
-            fill='none'
-          >
-            <path
-              d='M4.81088 11.2237L20 2.44417L35.1892 11.2237V28.7763L20 37.5558L4.81088 28.7763V11.2237ZM7.96713 13.0262V26.9738L20 33.8746L32.033 26.9738V13.0262L20 6.08375L7.96713 13.0262Z'
-              fill='#1B1C1E'
-            />
-          </svg>
+          <SpeckleLogo />
           <LogoTitle>Speckle.</LogoTitle>
         </LogoContainer>
         <UserInfo>

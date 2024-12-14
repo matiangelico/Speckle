@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { styled } from "styled-components";
 import { useDropzone } from "react-dropzone";
 
-import UploadFileIcon from "./public/icon-upload-file.svg?react";
+import UploadFileIcon from "./assets/svg/icon-upload-file.svg?react";
 
 const StyledFileDropArea = styled.div`
   display: flex;
