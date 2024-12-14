@@ -1,0 +1,10 @@
+[
+    {
+        "name" : "K-Means",
+        "Nro_clusters" :"3" 
+    },
+    {
+        "name" : "Spectral Clustering",
+        "Nro_clusters" :"3" 
+    }
+]
