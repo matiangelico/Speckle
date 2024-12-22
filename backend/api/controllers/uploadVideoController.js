@@ -1,6 +1,8 @@
 const FormData = require("form-data");
 const fs = require("fs");
 const axios = require("axios");
+const crypto = require("crypto");
+const path = require("path");
 
 exports.uploadVideo = async (req, res) => {
   if (!req.file) {
@@ -27,7 +29,27 @@ exports.uploadVideo = async (req, res) => {
       headers: formData.getHeaders(),
     });
 
-    // Devuelve la respuesta al frontend
+    const outputDir = path.join(__dirname, "output");
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir);
+    }
+
+    response.data.forEach((item) => {
+      const hash = crypto.createHash("md5").update(`${item.nombre}_${Date.now()}`).digest("hex");
+
+      const matrixFileName = `${hash}_matriz.json`;
+      const imageFileName = `${hash}_imagen.png`;
+
+      const matrixFilePath = path.join(outputDir, matrixFileName);
+      fs.writeFileSync(matrixFilePath, JSON.stringify(item.matriz, null, 2));
+
+      const imageFilePath = path.join(outputDir, imageFileName);
+      const imageBuffer = Buffer.from(item.imagen, "base64");
+      fs.writeFileSync(imageFilePath, imageBuffer);
+
+      console.log(`Archivos generados: ${matrixFilePath}, ${imageFilePath}`);
+    });
+
     res.status(200).json(response.data);
   } catch (error) {
     console.error("Error al enviar datos al servidor externo:", error.message);
