@@ -69,9 +69,10 @@ const UserEmail = styled.p`
 const ProfileImage = styled.img`
   width: 3rem;
   height: 3rem;
-  border-radius: 50%; /* Hace la imagen circular */
+  border-radius: 50%;
   border: 2px solid var(--dark-100);
-  object-fit: cover; /* Asegura que la imagen mantenga su proporción */
+  object-fit: cover;
+  object-position: center;
   cursor: pointer;
 `;
 

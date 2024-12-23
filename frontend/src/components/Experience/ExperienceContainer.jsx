@@ -1,16 +1,71 @@
 //import UploadVideo from "./subirVideos";
 //import DefaultValuesManager from "./DefaultValuesManager";
 
+import { useState } from "react";
+// import { useDispatch } from "react-redux";
+
+
+import UploadVideo from "./UploadVideoState";
+import SelectDescriptors from "./SelectDescriptorsState";
+import EditHyperparameters from "./EditHyperparametersState";
+import SelectResults from "./SelectResultsState";
+
 import "../../../styles/Experience.css";
 
-import FileDropArea from './FileDropArea';
 import SecondaryButton from '../common/SecondaryButton';
-import PrimaryButton from '../common/PrimaryButton';
 
 import NewExperienceIcon from '../../assets/svg/icon-lus-circle.svg?react';
-import ArrowRightIcon from '../../assets/svg/icon-arrow-right.svg?react';
 
 const ExperienceContainer = () => {
+  // const dispatch = useDispatch();
+
+  const [currentState, setCurrentState] = useState("UPLOAD_VIDEO");
+  const [sharedData, setSharedData] = useState({
+    video: null,
+    descriptors: [],
+    hyperparameters: {},
+  });
+
+  const renderState = () => {
+    switch (currentState) {
+      case "UPLOAD_VIDEO":
+        return (
+          <UploadVideo
+            data={sharedData}
+            setData={setSharedData}
+            onNext={() => setCurrentState("SELECT_DESCRIPTORS")}
+          />
+        );
+      case "SELECT_DESCRIPTORS":
+        return (
+          <SelectDescriptors
+            data={sharedData}
+            setData={setSharedData}
+            onNext={() => setCurrentState("EDIT_HYPERPARAMETERS")}
+            onBack={() => setCurrentState("UPLOAD_VIDEO")}
+          />
+        );
+      case "EDIT_HYPERPARAMETERS":
+        return (
+          <EditHyperparameters
+            data={sharedData}
+            setData={setSharedData}
+            onNext={() => setCurrentState("SELECT_RESULTS")}
+            onBack={() => setCurrentState("SELECT_DESCRIPTORS")}
+          />
+        );
+      case "SELECT_RESULTS":
+        return (
+          <SelectResults
+            data={sharedData}
+            setData={setSharedData}
+            onBack={() => setCurrentState("EDIT_HYPERPARAMETERS")}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <main className='experience-container'>
@@ -20,16 +75,7 @@ const ExperienceContainer = () => {
         <SecondaryButton SVG={NewExperienceIcon} text={"Nueva experiencia"}/>
       </div>
       <div className='experience-content'>
-        <div className='steps-container'>
-          <h2>1. Subir video</h2>
-          <h3>
-            Explora y elige los archivos que deseas cargar desde tu computadora
-          </h3>
-        </div>
-        {/* <DefaultValuesManager/> */}
-        {/* <UploadVideo /> */}
-        <FileDropArea />
-        <PrimaryButton SVG={ArrowRightIcon} text={"Seleccionar descriptores"} />
+        {renderState()}
       </div>
     </main>
   );

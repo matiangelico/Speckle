@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 import { styled } from "styled-components";
 import { useDropzone } from "react-dropzone";
 
-import UploadFileIcon from "./assets/svg/icon-upload-file.svg?react";
+import UploadFileIcon from "../../assets/svg/icon-upload-file.svg?react";
+// import SecondaryButton from '../common/SecondaryButton';
 
 const StyledFileDropArea = styled.div`
   display: flex;
@@ -50,8 +51,8 @@ const DropzoneContent = styled.div`
 // const StyledFileName = styled.p``
 
 const StyledFileSize = styled.p`
-  color: var(--dark-400)
-`
+  color: var(--dark-400);
+`;
 
 const FileDropArea = () => {
   const [fileName, setFileName] = useState();
@@ -66,8 +67,12 @@ const FileDropArea = () => {
     onDrop: (acceptedFiles) => {
       console.log(acceptedFiles[0]);
       
-      setFileName(acceptedFiles[0].name)
-      setFileSize(convertBitsToMB(acceptedFiles[0].size))
+      // 
+      // setData({ ...data, video: file }); // Guardar el video en el estado compartido
+      // 
+
+      setFileName(acceptedFiles[0].name);
+      setFileSize(convertBitsToMB(acceptedFiles[0].size));
     },
   });
 
@@ -76,13 +81,16 @@ const FileDropArea = () => {
       <input {...getInputProps()} />
       <DropzoneContent>
         <UploadFileIcon />
-        {fileName
-          ? <>
-              <p>{fileName}</p> <StyledFileSize>{fileSize} MB</StyledFileSize> 
-            </>
-          : <p>Explora y elige los archivos que deseas cargar desde tu computadora</p>
-        }
-        <button className='select-button'>Seleccionar archivo</button>
+        {fileName ? (
+          <>
+            <p>{fileName}</p> <StyledFileSize>{fileSize} MB</StyledFileSize>
+          </>
+        ) : (
+          <p>
+            Explora y elige los archivos que deseas cargar desde tu computadora
+          </p>
+        )}
+        {/* <SecondaryButton SVG={null} text={"Seleccionar archivo"} /> */}
       </DropzoneContent>
     </StyledFileDropArea>
   );

@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 
-const StyledfavItem = styled.button`
+const StyledAsideItem = styled.button`
   display: flex;
   width: 100%;
   padding: 0.75rem 2.5rem;
@@ -38,9 +38,9 @@ const StyledfavItem = styled.button`
   }
 `;
 
-const FavItem = ({ expTitle }) => {
+const AsideItem = ({ expTitle }) => {
   return (
-    <StyledfavItem>
+    <StyledAsideItem>
       <svg
         width='16'
         height='16'
@@ -66,7 +66,7 @@ const FavItem = ({ expTitle }) => {
         </g>
       </svg>
       <p>{expTitle}</p>
-    </StyledfavItem>
+    </StyledAsideItem>
   );
 };
-export default FavItem;
+export default AsideItem;

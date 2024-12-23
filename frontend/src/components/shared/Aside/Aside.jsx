@@ -1,12 +1,12 @@
 import "../../../../styles/SideBar.css";
-import FavItem from './FavItem';
-
+import AsideItem from './AsideItem';
 // import { styled } from "styled-components";
 
 import LogoutButton from "./LogoutButton";
 
 import SearchIcon from "../../../assets/svg/icon-search.svg?react";
 import FilterIcon from "../../../assets/svg/icon-filter.svg?react";
+
 
 // const StyledSideBar = styled.div``
 
@@ -26,16 +26,16 @@ const Aside = () => {
         <div className='time-container'>
           <strong>Hoy</strong>
         </div>
-        <FavItem expTitle={'Experiencia 1'} />
-        <FavItem expTitle={'Experiencia 2'} />
-        <FavItem expTitle={'Experiencia 3'} />
+        <AsideItem expTitle={'Experiencia 1'} />
+        <AsideItem expTitle={'Experiencia 2'} />
+        <AsideItem expTitle={'Experiencia 3'} />
         <div className='time-container'>
           <strong>Semana pasada</strong>
         </div>
-        <FavItem expTitle={'Experiencia 1'} />
+        <AsideItem expTitle={'Experiencia 1'} />
       </div>
       <div className='bottom-container'>
-        <FavItem expTitle={'Configuración'} />
+        <AsideItem expTitle={'Configuración'} />
         <LogoutButton />
       </div>
     </aside>

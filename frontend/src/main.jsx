@@ -1,8 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Auth0Provider } from "@auth0/auth0-react";
+import { Provider } from "react-redux";
 
 import App from "./App.jsx";
+import store from './reducers/store'
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const auth0ClientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
@@ -17,7 +19,9 @@ createRoot(document.getElementById("root")).render(
       clientId={auth0ClientId}
       redirectUri={window.location.origin}
     >
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </Auth0Provider>
   </StrictMode>
 );
