@@ -1,15 +1,18 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { styled } from "styled-components";
+import { useState } from "react";
 
-import SpeckleLogo from "../../assets/svg/speckle-logo-40px.svg?react";
+import NavItem from "./NavItem";
+
+import SpeckleLogo from "../../../assets/svg/speckle-logo-40px.svg?react";
+import IconDumbbel from "../../../assets/svg/icon-dumbbel.svg?react";
+import IconBrain from "../../../assets/svg/icon-brain.svg?react";
 
 const StyledHeader = styled.header`
   display: flex;
-  //max-width: 1512px;
   padding: 1rem 2rem;
   justify-content: space-between;
-  align-items: flex-start;
-  align-self: stretch;
+  align-items: center;
   border-bottom: 2px solid var(--dark-500);
 `;
 
@@ -29,10 +32,14 @@ const LogoTitle = styled.div`
   color: var(--dark-500);
   font-family: Geist;
   font-size: 1.5rem;
-  font-style: normal;
   font-weight: 500;
-  line-height: 1.25rem; /* 83.333% */
   letter-spacing: 0.125rem;
+`;
+
+const NavigationContainer = styled.nav`
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
 `;
 
 const UserInfo = styled.div`
@@ -44,7 +51,6 @@ const UserInfo = styled.div`
 const UserDetails = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: flex-end;
 `;
 
@@ -52,18 +58,14 @@ const UserName = styled.strong`
   color: var(--dark-500);
   text-align: right;
   font-size: 0.875rem;
-  font-style: normal;
   font-weight: 700;
-  line-height: 1.2rem;
 `;
 
 const UserEmail = styled.p`
   color: var(--dark-500);
   text-align: right;
   font-size: 0.875rem;
-  font-style: normal;
   font-weight: 500;
-  line-height: 1.375rem;
 `;
 
 const ProfileImage = styled.img`
@@ -72,12 +74,17 @@ const ProfileImage = styled.img`
   border-radius: 50%;
   border: 2px solid var(--dark-100);
   object-fit: cover;
-  object-position: center;
   cursor: pointer;
 `;
 
 const Header = () => {
   const { user, isAuthenticated } = useAuth0();
+  const [activeItem, setActiveItem] = useState("Consulta");
+
+  // Función para cambiar el enlace activo
+  const handleNavItemClick = (item) => {
+    setActiveItem(item);
+  };
 
   return (
     isAuthenticated && (
@@ -86,6 +93,22 @@ const Header = () => {
           <SpeckleLogo />
           <LogoTitle>Speckle.</LogoTitle>
         </LogoContainer>
+        <NavigationContainer>
+          <NavItem
+            href={"#"}
+            icon={IconDumbbel}
+            text={"Entrenamiento"}
+            isActive={activeItem === "Entrenamiento"}
+            onClick={() => handleNavItemClick("Entrenamiento")}
+          />
+          <NavItem
+            href={"#"}
+            icon={IconBrain}
+            text={"Consulta"}
+            isActive={activeItem === "Consulta"}
+            onClick={() => handleNavItemClick("Consulta")}
+          />
+        </NavigationContainer>
         <UserInfo>
           <UserDetails>
             <UserName>{user.name}</UserName>

@@ -19,33 +19,39 @@ const LoginFormContainer = styled.div`
   }
 
   a {
-  color: var(--dark-800, #080a11);
-  font-family: Inter, sans-serif;
-  font-size: 12px;
-  font-style: italic;
-  font-weight: 500;
-  line-height: 1.5;
-  text-decoration: underline;
-  text-decoration-style: solid;
-  text-decoration-skip-ink: auto; /* Ajuste automático para subrayar correctamente */
-  text-underline-offset: 2px; /* Separación del texto */
-  cursor: pointer;
-  transition: color 0.3s ease, text-decoration-color 0.3s ease;
+    color: var(--dark-800, #080a11);
+    font-family: Inter, sans-serif;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.5;
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-decoration-skip-ink: auto; /* Ajuste automático para subrayar correctamente */
+    text-underline-offset: 2px; /* Separación del texto */
+    cursor: pointer;
+    transition: color 0.3s ease, text-decoration-color 0.3s ease;
 
-  &:hover {
-    color: var(--primary, #007bff); /* Color azul en hover */
-    text-decoration-color: var(--primary, #007bff); /* Cambiar el color del subrayado */
-  }
+    &:hover {
+      color: var(--primary, #007bff); /* Color azul en hover */
+      text-decoration-color: var(
+        --primary,
+        #007bff
+      ); /* Cambiar el color del subrayado */
+    }
 
-  &:active {
-    color: var(--dark-900, #000000); /* Color más oscuro en clic */
-    text-decoration-color: var(--dark-900, #000000);
-  }
+    &:active {
+      color: var(--dark-900, #000000); /* Color más oscuro en clic */
+      text-decoration-color: var(--dark-900, #000000);
+    }
 
-  &:visited {
-    color: var(--dark-600, #555555); /* Color diferente para enlaces visitados */
+    &:visited {
+      color: var(
+        --dark-600,
+        #555555
+      ); /* Color diferente para enlaces visitados */
+    }
   }
-}
 `;
 
 const TitleContainer = styled.div`
