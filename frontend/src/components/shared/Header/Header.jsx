@@ -20,7 +20,8 @@ const LogoContainer = styled.div`
   display: flex;
   height: 3rem;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.25rem;
+  pointer-events: none;
 
   svg {
     width: 2.5rem;

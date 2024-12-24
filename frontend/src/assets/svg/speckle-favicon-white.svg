@@ -1,3 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#ffffff">
-  <path d="M272-120 64-480l208-360h416l208 360-208 360H272Zm38-66.67h340L818.33-480 650-773.33H310L140.67-480 310-186.67ZM480-480Z" transform="rotate(90 480 -480)"/>
+<svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px"
+  fill="currentColor">
+  <path
+    d="M272-120 64-480l208-360h416l208 360-208 360H272Zm38-66.67h340L818.33-480 650-773.33H310L140.67-480 310-186.67ZM480-480Z"
+    transform="rotate(90 480 -480)" />
 </svg>
