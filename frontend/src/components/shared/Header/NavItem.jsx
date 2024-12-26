@@ -8,11 +8,11 @@ const StyledNavItem = styled.a`
   font-family: Inter, sans-serif;
   font-size: 1rem;
   font-weight: 500;
-  color: ${({ isActive }) =>
-    isActive ? "var(--dark-800)" : "var(--dark-400)"};
+  color: ${(props) =>
+    props["data-is-active"] ? "var(--dark-800)" : "var(--dark-400)"};
   text-decoration: none;
-  border-bottom: ${({ isActive }) =>
-    isActive ? "2px solid var(--dark-800)" : "2px solid transparent"};
+  border-bottom: ${(props) =>
+    props["data-is-active"] ? "2px solid var(--dark-800)" : "2px solid transparent"};
   cursor: pointer;
   transition: color 0.3s ease, border-color 0.1s linear;
 
@@ -23,7 +23,7 @@ const StyledNavItem = styled.a`
 
 const NavItem = ({ href, icon: Icon, text, isActive, onClick }) => {
   return (
-    <StyledNavItem href={href} isActive={isActive} onClick={onClick}>
+    <StyledNavItem href={href} data-is-active={isActive}  onClick={onClick}>
       {Icon && <Icon />}
       {text}
     </StyledNavItem>

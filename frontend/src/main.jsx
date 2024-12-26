@@ -17,7 +17,7 @@ createRoot(document.getElementById("root")).render(
     <Auth0Provider
       domain={auth0Domain}
       clientId={auth0ClientId}
-      redirectUri={window.location.origin}
+      authorizationParams={{ redirect_uri: window.location.origin }}
     >
       <Provider store={store}>
         <App />

@@ -8,8 +8,8 @@ const StyledAsideItem = styled.button`
   padding: 0.75rem 2.5rem;
   border: none;
   background: transparent;
-  color: ${({ isActive }) =>
-    isActive ? "var(--dark-800)" : "var(--dark-300)"};
+  color: ${(props) =>
+    props["data-is-active"] ? "var(--dark-800)" : "var(--dark-300)"};
   cursor: pointer;
   transition: background-color 0.1s linear, color 0.1s linear;
 
@@ -48,7 +48,7 @@ const StyledAsideItem = styled.button`
 
 const AsideItem = ({ icon: Icon, title, isActive, handleClick }) => {
   return (
-    <StyledAsideItem isActive={isActive} onClick={handleClick}>
+    <StyledAsideItem data-is-active={isActive} onClick={handleClick}>
       {Icon && <Icon />} {/* Renderiza el ícono si está definido */}
       <p>{title}</p>
     </StyledAsideItem>

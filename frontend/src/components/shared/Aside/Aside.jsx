@@ -1,4 +1,3 @@
-import "../../../../styles/SideBar.css";
 import { styled } from "styled-components";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useState } from "react";

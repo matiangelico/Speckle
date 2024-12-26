@@ -22,8 +22,10 @@ const StyledInput = styled.input`
   padding: 0 1rem; /* Añadir padding interno para texto */
   border-radius: 12px;
   border: 2px solid
-    ${({ isInvalid }) =>
-      isInvalid ? "var(--red-error, #e63946)" : "var(--dark-800)"};
+    ${(props) =>
+      props["data-is-invalid"]
+        ? "var(--red-error, #e63946)"
+        : "var(--dark-800)"};
   background: #ffffff;
   transition: border-color 0.3s ease, background-color 0.3s ease;
 
@@ -32,8 +34,10 @@ const StyledInput = styled.input`
   }
 
   &:focus {
-    border-color: ${({ isInvalid }) =>
-      isInvalid ? "var(--red-error, #e63946)" : "var(--primary)"};
+    border-color: ${(props) =>
+      props["data-is-invalid"]
+        ? "var(--red-error, #e63946)"
+        : "var(--primary)"};
     background: #ffffff;
     outline: none; /* Elimina el borde azul predeterminado */
   }
@@ -70,7 +74,7 @@ const Input = ({
         placeholder={placeholder}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        isInvalid={error}
+        data-is-invalid={error}
       />
       {error && <ErrorText>{error}</ErrorText>}
     </InputContainer>

@@ -1,10 +1,7 @@
-import { useState } from "react";
-
 import { styled } from "styled-components";
 import { useDropzone } from "react-dropzone";
 
 import UploadFileIcon from "../../assets/svg/icon-upload-file.svg?react";
-// import SecondaryButton from '../common/SecondaryButton';
 
 const StyledFileDropArea = styled.div`
   display: flex;
@@ -48,32 +45,22 @@ const DropzoneContent = styled.div`
   }
 `;
 
-// const StyledFileName = styled.p``
-
 const StyledFileSize = styled.p`
   color: var(--dark-400);
 `;
 
-const FileDropArea = () => {
-  const [fileName, setFileName] = useState();
-  const [fileSize, setFileSize] = useState();
-
-  const convertBitsToMB = (bitsValue) => {
-    const mbValue = bitsValue / (1024 * 1024); // bytes -> MB
-    return mbValue.toFixed(2);
-  };
-
+const FileDropArea = ({ onFileDrop, fileName, fileSize }) => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
-      console.log(acceptedFiles[0]);
-      
-      // 
-      // setData({ ...data, video: file }); // Guardar el video en el estado compartido
-      // 
-
-      setFileName(acceptedFiles[0].name);
-      setFileSize(convertBitsToMB(acceptedFiles[0].size));
+      if (acceptedFiles.length > 0) {
+        const file = acceptedFiles[0];
+        onFileDrop(file);
+      } else {
+        alert("No se seleccionó ningún archivo.");
+      }
     },
+    multiple: false, // Solo permite un archivo
+    accept: { "video/avi": [".avi"] }, // Restringe a archivos .avi
   });
 
   return (
@@ -83,14 +70,12 @@ const FileDropArea = () => {
         <UploadFileIcon />
         {fileName ? (
           <>
-            <p>{fileName}</p> <StyledFileSize>{fileSize} MB</StyledFileSize>
+            <p>{fileName}</p>
+            <StyledFileSize>{fileSize} MB</StyledFileSize>
           </>
         ) : (
-          <p>
-            Explora y elige los archivos que deseas cargar desde tu computadora
-          </p>
+          <p>Explora y elige los archivos que deseas cargar desde tu computadora</p>
         )}
-        {/* <SecondaryButton SVG={null} text={"Seleccionar archivo"} /> */}
       </DropzoneContent>
     </StyledFileDropArea>
   );

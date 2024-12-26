@@ -12,6 +12,7 @@
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
     "@reduxjs/toolkit": "^2.5.0",
+    "@xstate/react": "^5.0.1",
     "axios": "^1.7.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -20,7 +21,8 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.28.0",
     "redux": "^5.0.1",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "xstate": "^5.19.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
