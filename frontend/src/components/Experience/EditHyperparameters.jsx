@@ -3,21 +3,8 @@ import SecondaryButton from "../common/SecondaryButton";
 
 import ArrowRightIcon from "../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../assets/svg/icon-arrow-left.svg?react";
-import TaskCheckbox from "../common/CheckBox";
-import styled from "styled-components";
 
-const StyledDescriptorsContainer = styled.div`
-  display: flex;
-  align-items: center;
-  align-content: flex-start;
-  gap: 10px 10px;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-
-  span {}
-`;
-
-const SelectDescriptorsState = ({ context, send }) => {
+const SelectResultsState = ({ context, send }) => {
   const handleBack = () => {
     if (context.descriptors) {
       send({ type: "BACK" }); // Avanzar al siguiente estado si hay un video
@@ -45,14 +32,7 @@ const SelectDescriptorsState = ({ context, send }) => {
         </h3>
       </div>
 
-      <StyledDescriptorsContainer>
-        <TaskCheckbox text={"Diferencias pesadas"} />
-        <TaskCheckbox text={"Diferencias promediadas"} />
-        <TaskCheckbox text={"Fujii"} />
-        <TaskCheckbox text={"Entropia de Shannon"} />
-        <TaskCheckbox text={"Diferencias pesadas"} />
-        <TaskCheckbox text={"Diferencias pesadas"} />
-      </StyledDescriptorsContainer>
+      <div></div>
 
       <div className='two-buttons-container'>
         <SecondaryButton
@@ -71,4 +51,4 @@ const SelectDescriptorsState = ({ context, send }) => {
   );
 };
 
-export default SelectDescriptorsState;
+export default SelectResultsState;

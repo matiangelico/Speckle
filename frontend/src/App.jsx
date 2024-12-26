@@ -5,7 +5,6 @@ import Header from "./components/shared/Header/Header.jsx";
 import Aside from "./components/shared/Aside/Aside.jsx";
 import ExperienceContainer from "./components/Experience/ExperienceContainer.jsx";
 import Login from "./components/Login/Login.jsx";
-import SubirVideos from "./subirVideos.jsx"
 
 import "../styles/App.css";
 
@@ -23,7 +22,6 @@ const App = () => {
           <div className='main-content'>
             <Aside />
             <ExperienceContainer />
-            <SubirVideos />
           </div>
         </div>
       )}

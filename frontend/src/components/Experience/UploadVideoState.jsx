@@ -6,7 +6,7 @@ import ArrowRightIcon from "../../assets/svg/icon-arrow-right.svg?react";
 const UploadVideo = ({ context, send }) => {
   // Manejar el clic del botón "Siguiente"
   const handleNext = () => {
-    if (context.video) {
+    if (context.hyperparameters) {
       send({ type: "NEXT" }); // Avanzar al siguiente estado si hay un video
     } else {
       alert("Por favor, sube un video antes de continuar."); // Validación
