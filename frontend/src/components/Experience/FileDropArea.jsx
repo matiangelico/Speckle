@@ -4,7 +4,6 @@ import { styled } from "styled-components";
 import { useDropzone } from "react-dropzone";
 
 import UploadFileIcon from "../../assets/svg/icon-upload-file.svg?react";
-// import SecondaryButton from '../common/SecondaryButton';
 
 const StyledFileDropArea = styled.div`
   display: flex;

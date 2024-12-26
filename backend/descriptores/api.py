@@ -56,7 +56,6 @@ async def calcularDescriptores(file: UploadFile = File(...), jsonData: str = For
         res = {
             "nombre" : datos['name'],
             "matriz" : matriz,
-            "imagen" : generaImagen.generate_color_map(matriz),
         }
         respuesta.append(res)
     return respuesta
@@ -90,7 +89,6 @@ async def calcularDescriptores(jsonFile1: UploadFile = File(), jsonFile2: Upload
         res = {
             "nombre" : datos['name'],
             "matriz" : matriz,
-            "imagen" : generaImagen.generate_color_map(matriz),
         }
         respuesta.append(res)
 
