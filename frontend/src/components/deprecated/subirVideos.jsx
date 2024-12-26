@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import { fetchDescriptors, uploadVideoWithDescriptors } from "./services/apiService";
 import DescriptorSelection from "./DescriptorSelection";
 import ImageDisplay from "./ImageDisplay";
 
@@ -14,15 +14,12 @@ const UploadVideo = () => {
   const [descriptorsVisible, setDescriptorsVisible] = useState(false);
   const [descriptorParams, setDescriptorParams] = useState({});
 
-  // Manejadores de eventos y funciones auxiliares
   const handleFileChange = async (event) => {
     const selectedVideo = event.target.files[0];
     setVideo(selectedVideo);
 
     try {
-      const response = await fetch("http://localhost:5000/descriptor");
-      if (!response.ok) throw new Error("Error en la red");
-      const data = await response.json();
+      const data = await fetchDescriptors();
       const transformedData = transformResponse(data);
       setDefaultValues(transformedData.defaultValues);
       setDescriptorList(transformedData.descriptorList);
@@ -88,9 +85,6 @@ const UploadVideo = () => {
     } else {
       setDescriptorParams((prev) => {
         const { [name]: _, ...rest } = prev;
-
-        console.log(_);
-
         return rest;
       });
     }
@@ -114,46 +108,22 @@ const UploadVideo = () => {
     const formData = new FormData();
     formData.append("video", video);
 
-    /*const descriptors = Object.keys(selectedDescriptors).filter(
-      (key) => selectedDescriptors[key]
-    );*/
-    //formData.append("descriptors", JSON.stringify(descriptors));
-    //formData.append("params", JSON.stringify(descriptorParams));
-
     const formattedDescriptors = Object.keys(selectedDescriptors)
       .filter((descriptorName) => selectedDescriptors[descriptorName])
       .map((descriptorName) => ({
         name: descriptorName,
         params: descriptorParams[descriptorName] || [],
       }));
-    
-    
-    console.log(formattedDescriptors);
 
     formData.append("descriptors", JSON.stringify(formattedDescriptors));
-
-    
 
     setLoading(true);
     setMessage("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/uploadVideo",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      setMessage(response.data.result);
-      console.log("Recibo data :", response.data);
-
-      setImageUrls(
-        Array.isArray(response.data.images) ? response.data.images : []
-      );
-
-      console.log("Envio data images:", response.data.images);
-
+      const data = await uploadVideoWithDescriptors(formData);
+      console.log("Recibo data :", data);
+      // Procesar la respuesta del backend aquí
     } catch (error) {
       console.log(error);
       setMessage("Ha ocurrido un error.");
@@ -166,12 +136,9 @@ const UploadVideo = () => {
     (checked) => checked
   );
 
-  //BORRAR/////////////////////////
-  console.log(defaultValues);
-  ////////////////////////////////
   return (
     <div>
-      <input type='file' accept='video/avi' onChange={handleFileChange} />
+      <input type="file" accept="video/avi" onChange={handleFileChange} />
       {descriptorsVisible && (
         <DescriptorSelection
           descriptorList={descriptorList}
@@ -188,7 +155,7 @@ const UploadVideo = () => {
         {loading ? "Cargando..." : "Enviar Descriptores"}
       </button>
       {message && <p>{message}</p>}
-      <ImageDisplay imageUrls={imageUrls} /> {/* Usa el nuevo componente */}
+      <ImageDisplay imageUrls={imageUrls} />
     </div>
   );
 };

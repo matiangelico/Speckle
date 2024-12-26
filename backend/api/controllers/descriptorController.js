@@ -2,7 +2,7 @@ const { DescriptorConfig } = require("../models/DescriptorConfig");
 
 const getAllDescriptors = async (req, res) => {
   try {
-    const allDescriptors = await DescriptorConfig.find(); // Asegúrate de que este modelo incluya todos los descriptores
+    const allDescriptors = await DescriptorConfig.find();
     res.json(allDescriptors);
   } catch (error) {
     console.error("Error al obtener descriptores:", error);
@@ -14,11 +14,9 @@ const updateDefaultValues = async (req, res) => {
   const updatedDescriptors = req.body;
 
   try {
-    // Iterar sobre cada descriptor y actualizar los parámetros
     for (const descriptor of updatedDescriptors) {
       const { id, params } = descriptor;
 
-      // Buscar el descriptor por ID
       const descriptorToUpdate = await DescriptorConfig.findById(id);
       if (!descriptorToUpdate) {
         return res
@@ -26,17 +24,15 @@ const updateDefaultValues = async (req, res) => {
           .json({ message: `Descriptor con ID ${id} no encontrado` });
       }
 
-      // Actualizar los parámetros en el descriptor
       for (const param of params) {
         const paramIndex = descriptorToUpdate.params.findIndex(
           (p) => p.paramName === param.paramName
         );
         if (paramIndex !== -1) {
-          descriptorToUpdate.params[paramIndex].value = param.value; // Actualizar el valor
+          descriptorToUpdate.params[paramIndex].value = param.value;
         }
       }
 
-      // Guardar los cambios en la base de datos
       await descriptorToUpdate.save();
     }
 
