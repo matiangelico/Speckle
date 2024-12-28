@@ -9,11 +9,11 @@ const StyledTimeItem = styled.div`
   pointer-events: none;
 
   strong {
-    color: var(--dark-600);
+    color: var(--dark-400);
     font-family: Inter;
     font-size: 0.6875rem;
     font-style: normal;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 140%; /* 0.9625rem */
     letter-spacing: 0.06875rem;
   }

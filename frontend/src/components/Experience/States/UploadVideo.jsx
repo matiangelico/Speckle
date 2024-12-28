@@ -1,23 +1,18 @@
-import PrimaryButton from "../common/PrimaryButton";
-import FileDropArea from "./FileDropArea";
+import PrimaryButton from "../../common/PrimaryButton";
+import FileDropArea from "../Utils/FileDropArea";
 
-import ArrowRightIcon from "../../assets/svg/icon-arrow-right.svg?react";
+import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 
 const UploadVideo = ({ context, send }) => {
-  // Manejar el clic del botón "Siguiente"
   const handleNext = () => {
-    if (context.hyperparameters) {
-      send({ type: "NEXT" }); // Avanzar al siguiente estado si hay un video
+    if (context.video) {
+      send({ type: "NEXT" });
     } else {
-      alert("Por favor, sube un video antes de continuar."); // Validación
+      alert("Por favor, sube un video antes de continuar.");
     }
   };
 
   const handleFileDrop = (file) => {
-    console.log("Archivo recibido:", file);
-    console.log("Tipo MIME:", file.type);
-
-    // Envía el archivo a la máquina de estados
     send({ type: "UPDATE_CONTEXT", data: { video: file } });
   };
 

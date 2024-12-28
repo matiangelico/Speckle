@@ -1,10 +1,10 @@
-import PrimaryButton from "../common/PrimaryButton";
-import SecondaryButton from "../common/SecondaryButton";
+import PrimaryButton from "../../common/PrimaryButton";
+import SecondaryButton from "../../common/SecondaryButton";
 
-import ArrowRightIcon from "../../assets/svg/icon-arrow-right.svg?react";
-import ArrowLeftIcon from "../../assets/svg/icon-arrow-left.svg?react";
+import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
+import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
 
-const SelectResultsState = ({ context, send }) => {
+const SelectClusteringResults = ({ context, send }) => {
   const handleBack = () => {
     if (context.descriptors) {
       send({ type: "BACK" }); // Avanzar al siguiente estado si hay un video
@@ -26,7 +26,7 @@ const SelectResultsState = ({ context, send }) => {
   return (
     <>
       <div className='steps-container'>
-        <h2>2. Seleccionar descriptores</h2>
+        <h2>6. Seleccionar resultados de clustering</h2>
         <h3>
           Explora y elige los archivos que deseas cargar desde tu computadora
         </h3>
@@ -38,17 +38,17 @@ const SelectResultsState = ({ context, send }) => {
         <SecondaryButton
           handleClick={handleBack}
           SVG={ArrowLeftIcon}
-          text={"Nueva experiencia"}
+          text={"Editar parametros de clustering"}
         />
 
         <PrimaryButton
           handleClick={handleNext}
           SVG={ArrowRightIcon}
-          text={"Seleccionar descriptores"}
+          text={"Generar resultados de clustering"}
         />
       </div>
     </>
   );
 };
 
-export default SelectResultsState;
+export default SelectClusteringResults;

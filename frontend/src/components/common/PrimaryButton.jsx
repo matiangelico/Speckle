@@ -9,15 +9,15 @@ const StyledPrimaryButton = styled.button`
   gap: 8px;
 
   border-radius: 8px;
-  background: var(--dark-800, #318aac); /* Fondo inicial */
+  background: var(--dark-800);
   color: var(--white, #fff);
   font-family: Inter, sans-serif;
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.5;
-  border: 2px solid var(--dark-800, #318aac);
+  border: 2px solid var(--dark-800);
   cursor: pointer;
-  overflow: hidden; /* Oculta el efecto fuera de los bordes del botón */
+  overflow: hidden;
   transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
 
   &:hover {
@@ -70,7 +70,7 @@ const StyledPrimaryButton = styled.button`
 
 const StyledText = styled.span`
   color: inherit; /* Asegura que use el color del botón */
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: -0.18px;
   text-transform: none;

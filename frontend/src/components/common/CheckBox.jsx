@@ -15,6 +15,8 @@ const StyledCheckbox = styled.label`
     background-color: var(--dark-100);
   }
 
+  
+
   input {
     appearance: none;
     width: 20px;
@@ -49,7 +51,11 @@ const StyledCheckbox = styled.label`
   }
 
   input:checked + svg {
-    color: var(--white); /* Cambio de color del ícono cuando está marcado */
+    color: var(--white);
+  }
+
+  input:checked + & {
+    background-color: var(--dark-600);
   }
 
   span {
@@ -66,18 +72,18 @@ const Checkbox = ({ label, checked, onChange }) => {
   return (
     <StyledCheckbox>
       <input type="checkbox" checked={checked} onChange={onChange} />
-      <CheckIcon />
+      <CheckIcon /> {/* El icono ahora está posicionado encima */}
       <span>{label}</span>
     </StyledCheckbox>
   );
 };
 
-// Uso del componente de checkbox con estado en el componente padre
-const TaskCheckbox = ({ text }) => {
+const TaskCheckbox = ({ text, onChange }) => {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
+    onChange(text, !isChecked);
   };
 
   return (

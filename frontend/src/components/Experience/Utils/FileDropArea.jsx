@@ -1,29 +1,37 @@
 import { styled } from "styled-components";
 import { useDropzone } from "react-dropzone";
 
-import UploadFileIcon from "../../assets/svg/icon-upload-file.svg?react";
+import UploadFileIcon from "../../../assets/svg/icon-upload-file.svg?react";
 
 const StyledFileDropArea = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
-  padding: 1.5rem;
+  padding: 4rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
+  text-align: center;
+  gap: 1rem;
   align-self: center;
-
-  border-radius: 0.25rem;
-  border: 1px dashed #b0b0b0;
+  border-radius: 8px;
+  border: 2px dashed var(--dark-400);
   background: var(--white, #fff);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: var(--dark-100);
+    border-color: var(--dark-600);
   }
 
   &:active {
-    background-color: #e0e0e0;
+    background-color: var(--dark-200);
+    border-color: var(--dark-800);
+  }
+
+  &:focus {
+    outline: 3px solid var(--dark-200);
   }
 `;
 
@@ -34,19 +42,25 @@ const DropzoneContent = styled.div`
   gap: 4px;
 
   .select-button {
-    margin-top: 10px;
-    padding: 8px 16px;
+    margin-top: 15px;
+    padding: 10px 20px;
     font-size: 14px;
-    color: #333;
-    border: 1px solid #333;
-    border-radius: 4px;
-    background-color: white;
+    color: var(--dark-800);
+    border: 2px solid var(--dark-500);
+    border-radius: 8px;
+    background-color: var(--white);
     cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: var(--dark-100);
+    }
   }
 `;
 
 const StyledFileSize = styled.p`
   color: var(--dark-400);
+  font-size: 14px;
 `;
 
 const FileDropArea = ({ onFileDrop, fileName, fileSize }) => {
@@ -59,13 +73,13 @@ const FileDropArea = ({ onFileDrop, fileName, fileSize }) => {
         alert("No se seleccionó ningún archivo.");
       }
     },
-    multiple: false, // Solo permite un archivo
-    accept: { "video/avi": [".avi"] }, // Restringe a archivos .avi
+    multiple: false,
+    accept: { "video/avi": [".avi"] },
   });
 
   return (
     <StyledFileDropArea {...getRootProps()}>
-      <input {...getInputProps()} />
+      <input {...getInputProps()} aria-label='Cargar video' />
       <DropzoneContent>
         <UploadFileIcon />
         {fileName ? (
@@ -74,7 +88,10 @@ const FileDropArea = ({ onFileDrop, fileName, fileSize }) => {
             <StyledFileSize>{fileSize} MB</StyledFileSize>
           </>
         ) : (
-          <p>Explora y elige los archivos que deseas cargar desde tu computadora</p>
+          <p>
+            Arrastra y suelta un archivo de video (.avi) o haz clic para
+            seleccionar uno desde tu computadora.
+          </p>
         )}
       </DropzoneContent>
     </StyledFileDropArea>

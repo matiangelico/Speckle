@@ -37,7 +37,7 @@ const StyledInput = styled.input`
     border-color: ${(props) =>
       props["data-is-invalid"]
         ? "var(--red-error, #e63946)"
-        : "var(--primary)"};
+        : "var(--dark-800)"};
     background: #ffffff;
     outline: none; /* Elimina el borde azul predeterminado */
   }

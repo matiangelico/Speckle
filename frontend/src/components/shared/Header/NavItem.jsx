@@ -14,6 +14,7 @@ const StyledNavItem = styled.a`
   border-bottom: ${(props) =>
     props["data-is-active"] ? "2px solid var(--dark-800)" : "2px solid transparent"};
   cursor: pointer;
+  user-select: none;
   transition: color 0.3s ease, border-color 0.1s linear;
 
   &:hover {

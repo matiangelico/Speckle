@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 
 import SearchIcon from "../../../assets/svg/icon-search.svg?react";
-import FilterIcon from "../../../assets/svg/icon-filter.svg?react";
+// import FilterIcon from "../../../assets/svg/icon-filter.svg?react";
 
 const StyledToolsContainer = styled.div`
   display: flex;
@@ -34,7 +34,7 @@ const ToolsContainer = () => {
     <StyledToolsContainer>
       <SearchIcon />
       <input type='text' placeholder='Buscar...' className='search-bar' />
-      <FilterIcon />
+      {/* <FilterIcon /> */}
     </StyledToolsContainer>
   );
 };

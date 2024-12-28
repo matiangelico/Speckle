@@ -5,7 +5,7 @@ const StyledAsideItem = styled.button`
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 0.75rem 2.5rem;
+  padding: 0.75rem 1.5rem;
   border: none;
   background: transparent;
   color: ${(props) =>

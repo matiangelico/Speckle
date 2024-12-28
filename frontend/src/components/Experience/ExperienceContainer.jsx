@@ -6,9 +6,14 @@ import TrainingMachine from "../../machines/trainingMachine";
 import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
 
 // Componentes de estado
-import UploadVideo from "./UploadVideoState";
-import SelectDescriptors from "./SelectDescriptorsState";
-import SelectResults from "./SelectResultsState";
+import UploadVideo from "./States/UploadVideo";
+import SelectDescriptors from "./States/SelectDescriptors";
+import EditHyperparameters from './States/EditHyperparameters';
+import SelectDescriptorsResults from "./States/SelectDescriptorsResults";
+import EditClusteringParams from './States/EditClusteringParams';
+import SelectClusteringResults from './States/SelectClusteringResults';
+import EditNeuralNetworkParams from './States/EditNeuralNetworkParams';
+import NeuralNetworkResult from './States/NeuralNetworkResult';
 
 // Commons
 import SecondaryButton from "../common/SecondaryButton";
@@ -106,12 +111,22 @@ const ExperienceContainer = () => {
   // Renderiza el estado actual basado en `state.value`
   const renderState = () => {
     switch (state.value) {
-      case "UPLOAD_VIDEO":
+      case "UPLOAD_VIDEO": //1
         return <UploadVideo context={state.context} send={send} />;
-      case "SELECT_DESCRIPTORS":
+      case "SELECT_DESCRIPTORS": //2
         return <SelectDescriptors context={state.context} send={send} />;
-      case "SELECT_RESULTS":
-        return <SelectResults context={state.context} send={send} />;
+      case "EDIT_HYPERPARAMETERS": //3
+        return <EditHyperparameters context={state.context} send={send} />;
+      case "SELECT_DESCRIPTOR_RESULTS": //4
+        return <SelectDescriptorsResults context={state.context} send={send} />;
+      case "EDIT_CLUSTER_PARAMS": //5
+        return <EditClusteringParams context={state.context} send={send} />;
+      case "SELECT_CLUSTERING_RESULTS": //6
+        return <SelectClusteringResults context={state.context} send={send} />;
+      case "EDIT_NEURAL_NETWORK_PARAMS": //7
+        return <EditNeuralNetworkParams context={state.context} send={send} />;
+      case "NEURAL_NETWORK_RESULTS": //8
+        return <NeuralNetworkResult context={state.context} send={send} />;
       default:
         return null;
     }

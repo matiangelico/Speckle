@@ -22,6 +22,7 @@ const LogoContainer = styled.div`
   align-items: center;
   gap: 0.25rem;
   pointer-events: none;
+  user-select: none;
 
   svg {
     width: 2.5rem;
