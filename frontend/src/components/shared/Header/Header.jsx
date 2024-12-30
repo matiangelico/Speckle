@@ -1,4 +1,3 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { styled } from "styled-components";
 import { useState } from "react";
 
@@ -79,8 +78,7 @@ const ProfileImage = styled.img`
   cursor: pointer;
 `;
 
-const Header = () => {
-  const { user, isAuthenticated } = useAuth0();
+const Header = ({ userName, userEmail, pictureURL }) => {
   const [activeItem, setActiveItem] = useState("Consulta");
 
   // Función para cambiar el enlace activo
@@ -89,8 +87,7 @@ const Header = () => {
   };
 
   return (
-    isAuthenticated && (
-      <StyledHeader>
+    <StyledHeader>
         <LogoContainer>
           <SpeckleLogo />
           <LogoTitle>Speckle.</LogoTitle>
@@ -113,13 +110,12 @@ const Header = () => {
         </NavigationContainer>
         <UserInfo>
           <UserDetails>
-            <UserName>{user.name}</UserName>
-            <UserEmail>{user.email}</UserEmail>
+            <UserName>{userName}</UserName>
+            <UserEmail>{userEmail}</UserEmail>
           </UserDetails>
-          <ProfileImage src={user.picture} alt={user.name} />
+          <ProfileImage src={pictureURL} alt={userName} />
         </UserInfo>
       </StyledHeader>
-    )
   );
 };
 

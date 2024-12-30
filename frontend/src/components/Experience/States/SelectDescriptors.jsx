@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+
+import defaultValuesServices from "../../../services/defaultValues";
 
 import styled from "styled-components";
 
@@ -26,10 +27,17 @@ const SelectDescriptors = ({ context, send }) => {
   const [descriptors, setDescriptors] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/descriptors")
+    defaultValuesServices
+      .getAll()
       .then((response) => {
-        setDescriptors(response.data);
+        const rawDescriptors = response.data;
+
+        const initDescriptors = rawDescriptors.map((descriptor) => ({
+          name: descriptor.name,
+          checked: false,
+        }));
+
+        setDescriptors(initDescriptors);
       })
       .catch((error) =>
         console.error("Error al cargar los descriptores:", error)
@@ -52,7 +60,7 @@ const SelectDescriptors = ({ context, send }) => {
     const newDescriptors = context.descriptors.includes(descriptorName)
       ? context.descriptors.filter((d) => d !== descriptorName) // Eliminar si ya está seleccionado
       : [...context.descriptors, descriptorName]; // Añadir si no está seleccionado
-      
+
     send({
       type: "UPDATE_CONTEXT",
       data: { descriptors: newDescriptors },

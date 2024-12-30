@@ -1,6 +1,10 @@
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useAuth0 } from "@auth0/auth0-react";
+
 import styled from "styled-components";
 
-import { useAuth0 } from "@auth0/auth0-react";
+import { initializeDefaultValues } from "./reducers/defaultValuesReducer.jsx";
 
 import GlobalStyles from "./GlobalStyles.jsx";
 import Login from "./components/Login/Login.jsx";
@@ -27,7 +31,12 @@ const MainContent = styled.div`
 `;
 
 const App = () => {
-  const { isAuthenticated } = useAuth0();
+  const { user, isAuthenticated } = useAuth0();
+  const dispatch = useDispatch();
+  
+  useEffect(() => {
+    dispatch(initializeDefaultValues());
+  }, [dispatch]);
 
   return (
     <>
@@ -36,7 +45,11 @@ const App = () => {
         <Login />
       ) : (
         <AppContainer>
-          <Header />
+          <Header
+            userName={user.name}
+            userEmail={user.email}
+            pictureURL={user.picture}
+          />
           <MainContent>
             <Aside />
             <ExperienceContainer />
