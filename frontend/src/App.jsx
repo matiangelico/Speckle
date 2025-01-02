@@ -13,7 +13,7 @@ import Aside from "./components/shared/Aside/Aside.jsx";
 import ExperienceContainer from "./components/Experience/ExperienceContainer.jsx";
 
 const AppContainer = styled.div`
-  height: 100vh; /* Ocupará el 100% de la altura de la ventana */
+  height: 100vh;
   border-radius: 0.5rem;
   border: 4px solid var(--dark-500);
 
@@ -24,7 +24,7 @@ const AppContainer = styled.div`
 const MainContent = styled.div`
   display: flex;
   flex: 1;
-  /* overflow: hidden; */
+  //overflow: hidden;
 
   display: grid;
   grid-template-columns: auto 1fr;

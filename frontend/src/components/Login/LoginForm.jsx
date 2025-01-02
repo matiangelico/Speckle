@@ -16,6 +16,10 @@ const LoginFormContainer = styled.div`
 
   form {
     width: 75%;
+
+    input {
+      margin-bottom: 1rem;
+    }
   }
 
   a {
@@ -159,7 +163,7 @@ const LoginForm = () => {
       </TitleContainer>
       <form onSubmit={handleSubmit}>
         <Input
-          textLabel={"Correo electrónico"}
+          primaryLabel={"Correo electrónico"}
           type={"email"}
           id={"email"}
           name={"email"}
@@ -169,7 +173,7 @@ const LoginForm = () => {
         />
 
         <Input
-          textLabel={"Contraseña"}
+          primaryLabel={"Contraseña"}
           type={"password"}
           id={"password"}
           name={"password"}

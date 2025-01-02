@@ -1,26 +1,33 @@
 import { styled } from "styled-components";
 
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+
+// Maquina de estados
 import { useMachine } from "@xstate/react";
 import TrainingMachine from "../../machines/trainingMachine";
-
-import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
 
 // Componentes de estado
 import UploadVideo from "./States/UploadVideo";
 import SelectDescriptors from "./States/SelectDescriptors";
-import EditHyperparameters from './States/EditHyperparameters';
+import EditHyperparameters from "./States/EditHyperparameters";
 import SelectDescriptorsResults from "./States/SelectDescriptorsResults";
-import EditClusteringParams from './States/EditClusteringParams';
-import SelectClusteringResults from './States/SelectClusteringResults';
-import EditNeuralNetworkParams from './States/EditNeuralNetworkParams';
-import NeuralNetworkResult from './States/NeuralNetworkResult';
+import EditClusteringParams from "./States/EditClusteringParams";
+import SelectClusteringResults from "./States/SelectClusteringResults";
+import EditNeuralNetworkParams from "./States/EditNeuralNetworkParams";
+import NeuralNetworkResult from "./States/NeuralNetworkResult";
 
 // Commons
 import SecondaryButton from "../common/SecondaryButton";
 
+// Icons
+import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
+import { initializeDescriptors } from '../../reducers/trainingReducer';
+
+
 const StyledExperienceContainer = styled.main`
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 0.95fr;
 `;
 
 const ExperienceHeader = styled.div`
@@ -56,9 +63,9 @@ const ExperienceHeader = styled.div`
 
 const ExperienceContent = styled.div`
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 0.95fr auto;
   padding: 1.2rem 3rem 1.2rem 3rem;
-  gap: 1.875rem;
+  gap: 1rem;
 
   .steps-container {
     display: flex;
@@ -106,7 +113,12 @@ const ExperienceContent = styled.div`
 `;
 
 const ExperienceContainer = () => {
+  const dispatch = useDispatch();
   const [state, send] = useMachine(TrainingMachine);
+
+  useEffect(() => {
+    dispatch(initializeDescriptors());
+  }, [dispatch]);
 
   // Renderiza el estado actual basado en `state.value`
   const renderState = () => {

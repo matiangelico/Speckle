@@ -7,7 +7,6 @@ const defaultValuesSlice = createSlice({
   initialState: null,
   reducers: {
     setDefaultValues(state, action) {
-      console.log(action.payload);
       return action.payload;
     },
     updateDefaultValue(state, action) {
@@ -21,6 +20,8 @@ const defaultValuesSlice = createSlice({
 
 export const { setDefaultValues, updateDefaultValue } =
   defaultValuesSlice.actions;
+
+export const selectDefaultValues = (state) => state.defaultValues || [];
 
 export const initializeDefaultValues = () => {
   return async (dispatch) => {
