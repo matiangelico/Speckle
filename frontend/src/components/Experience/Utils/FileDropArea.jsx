@@ -39,6 +39,7 @@ const DropzoneContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-size: 16px;
   gap: 4px;
 
   .select-button {

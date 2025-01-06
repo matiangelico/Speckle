@@ -18,10 +18,9 @@ const traininingSlice = createSlice({
         descriptors,
       };
     },
-    updateDescriptors(state, action) {
+    selectDescriptor(state, action) {
       const name = action.payload;
-      console.log(name);
-      
+
       const changedDescriptors = state.descriptors.map(
         (descriptor) =>
           descriptor.name === name
@@ -31,28 +30,71 @@ const traininingSlice = createSlice({
 
       return {
         ...state,
-        descriptors: changedDescriptors, // Aquí estamos devolviendo "descriptors" actualizado
+        descriptors: changedDescriptors,
       };
     },
     setHyperparameters(state, action) {
-      return { ...state, hyperparameters: action.payload };
+      const defaultValues = action.payload;
+      
+      console.log("defaultValues", defaultValues);
+
+      const updatedDescriptors = state.descriptors.map((descriptor) => {
+        const defaultDescriptor = defaultValues.find(
+          (defaultDesc) => defaultDesc.name === descriptor.name
+        );
+        
+        if (!defaultDescriptor) return descriptor;
+
+        console.log("pasooo 1");
+
+        const updatedHyperparameters = descriptor.hyperparameters.map(
+          (param) => {
+            const defaultParam = defaultDescriptor.params.find(
+              (defaultParam) => defaultParam.paramName === param.paramName
+            );
+
+            if (defaultParam && param.value !== defaultParam.value) {
+              return { ...param, value: defaultParam.value };
+            }
+            return param;
+          }
+        );
+
+        return { ...descriptor, hyperparameters: updatedHyperparameters };
+      });
+
+      return { ...state, descriptors: updatedDescriptors };
     },
-    updateHyperparameters(state, action) {
-      const hyperparameters = action.payload;
-      return {
-        ...state,
-        hyperparameters,
-      };
+    updateHyperparameter(state, action) {
+      const { descriptorName, hyperparameterName, newValue } = action.payload;
+
+      const updatedDescriptors = state.descriptors.map((descriptor) => {
+        if (descriptor.name === descriptorName) {
+          const updatedHyperparameters = descriptor.hyperparameters?.map(
+            (param) => {
+              if (param.paramName === hyperparameterName) {
+                return { ...param, value: newValue };
+              }
+              return param;
+            }
+          );
+
+          return { ...descriptor, hyperparameters: updatedHyperparameters };
+        }
+        return descriptor;
+      });
+
+      return { ...state, descriptors: updatedDescriptors };
     },
   },
 });
 
 export const {
-  setDescriptors,
   setVideo,
-  updateDescriptors,
+  setDescriptors,
+  selectDescriptor,
   setHyperparameters,
-  updateHyperparameters,
+  updateHyperparameter,
 } = traininingSlice.actions;
 
 export const initializeVideo = (file) => {
@@ -70,7 +112,7 @@ export const initializeVideo = (file) => {
 export const initializeDescriptors = () => {
   return (dispatch, getState) => {
     const defaultValues = getState().defaultValues;
-    
+
     const descriptors = defaultValues.map((descriptor) => ({
       name: descriptor.name,
       checked: false,
@@ -81,9 +123,11 @@ export const initializeDescriptors = () => {
   };
 };
 
-export const selectDescriptor = (descriptorChanged) => {
-  return (dispatch) => {
-    dispatch(updateDescriptors(descriptorChanged));
+export const resetHyperparameters = () => {
+  return (dispatch, getState) => {
+    const defaultValues = getState().defaultValues;
+
+    dispatch(setHyperparameters(defaultValues));
   };
 };
 

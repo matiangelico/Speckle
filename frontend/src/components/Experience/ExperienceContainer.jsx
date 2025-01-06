@@ -7,6 +7,9 @@ import { useDispatch } from 'react-redux';
 import { useMachine } from "@xstate/react";
 import TrainingMachine from "../../machines/trainingMachine";
 
+//Redux
+import { initializeDescriptors } from '../../reducers/trainingReducer';
+
 // Componentes de estado
 import UploadVideo from "./States/UploadVideo";
 import SelectDescriptors from "./States/SelectDescriptors";
@@ -22,8 +25,6 @@ import SecondaryButton from "../common/SecondaryButton";
 
 // Icons
 import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
-import { initializeDescriptors } from '../../reducers/trainingReducer';
-
 
 const StyledExperienceContainer = styled.main`
   display: grid;

@@ -83,7 +83,8 @@
       "params": [
         {
           "paramName": "wavelet",
-          "value": "db2"
+          "value": "db2",
+          "unit": "tipo"
         },
         {
           "paramName": "level",
@@ -111,19 +112,23 @@
       "params": [
         {
           "paramName": "fmin",
-          "value": "0.015"
+          "value": "0.015",
+          "unit": "Hz"
         },
         {
           "paramName": "fmax",
-          "value": "0.05"
+          "value": "0.05",
+          "unit": "Hz"
         },
         {
           "paramName": "at_paso",
-          "value": "1"
+          "value": "1",
+          "unit": "dB"
         },
         {
           "paramName": "at_rechazo",
-          "value": "40"
+          "value": "40",
+          "unit": "dB"
         },
         {
           "paramName": "fs",
@@ -139,19 +144,23 @@
       "params": [
         {
           "paramName": "fmin",
-          "value": "0.05"
+          "value": "0.05",
+          "unit": "Hz"
         },
         {
           "paramName": "fmax",
-          "value": "0.25"
+          "value": "0.25",
+          "unit": "Hz"
         },
         {
           "paramName": "at_paso",
-          "value": "1"
+          "value": "1",
+          "unit": "dB"
         },
         {
           "paramName": "at_rechazo",
-          "value": "40"
+          "value": "40",
+          "unit": "dB"
         },
         {
           "paramName": "fs",
@@ -167,19 +176,23 @@
       "params": [
         {
           "paramName": "fmin",
-          "value": "0.025"
+          "value": "0.025",
+          "unit": "Hz"
         },
         {
           "paramName": "fmax",
-          "value": "0.4"
+          "value": "0.4",
+          "unit": "Hz"
         },
         {
           "paramName": "at_paso",
-          "value": "1"
+          "value": "1",
+          "unit": "dB"
         },
         {
           "paramName": "at_rechazo",
-          "value": "40"
+          "value": "40",
+          "unit": "dB"
         },
         {
           "paramName": "fs",

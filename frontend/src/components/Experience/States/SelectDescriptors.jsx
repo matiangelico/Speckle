@@ -44,8 +44,8 @@ const SelectDescriptors = ({ send }) => {
     }
   };
 
-  const handleDescriptorChange = (descriptorName) => {
-    dispatch(selectDescriptor(descriptorName));
+  const handleDescriptorChange = (descriptorChanged) => {
+    dispatch(selectDescriptor(descriptorChanged));
   };
 
   return (

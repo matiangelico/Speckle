@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const StyledPrimaryButton = styled.button`
-  position: relative; /* Necesario para el efecto de animación */
+  position: relative;
   display: flex;
   padding: 12px 20px;
   justify-content: center;
@@ -12,9 +12,8 @@ const StyledPrimaryButton = styled.button`
   background: var(--dark-800);
   color: var(--white, #fff);
   font-family: Inter, sans-serif;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  line-height: 1.5;
   border: 2px solid var(--dark-800);
   cursor: pointer;
   overflow: hidden;
