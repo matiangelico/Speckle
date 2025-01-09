@@ -2,11 +2,6 @@ import numpy as np
 import scipy.io as sio
 from scipy.signal import welch, ellip, sosfilt, ellipord
 
-def cargarTensor(PATH):
-    data = sio.loadmat(PATH)
-    tensor = np.array(data['video_data']).transpose(1,2,0)
-    return tensor
-
 def setearDimensiones (tensor):
     global frames
     global alto
