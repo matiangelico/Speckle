@@ -20,6 +20,6 @@ def sc (tensor, nro_clusters):
     )
     labels = spectral.fit_predict(features)
 
-    labels_reducidos = labels.reshape(a//2,b//2)
+    labels_reducidos = int(labels.reshape(a//2,b//2))
 
     return resize(labels_reducidos, (a,b), order=0, preserve_range=True).astype(int)

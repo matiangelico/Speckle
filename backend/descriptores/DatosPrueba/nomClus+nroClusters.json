@@ -1,0 +1,22 @@
+[
+    {
+        "name" : "Kmeans",
+        "nro_clusters" :"3" 
+    },
+    {
+        "name" : "MiniBatch Kmeans",
+        "nro_clusters" :"3" 
+    },
+    {
+        "name" : "GMM",
+        "nro_clusters" :"3" 
+    },
+    {
+        "name" : "Hdbscan",
+        "nro_clusters" :"3" 
+    },
+    {
+        "name" : "Sustractive Clustering",
+        "radius" :"5" 
+    }
+]

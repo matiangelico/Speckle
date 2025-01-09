@@ -10,7 +10,7 @@ import gmm
 import hdb
 import sustractivo
 
-data = sio.loadmat('matrizMoneda10.mat')
+data = sio.loadmat('../matrizyvideo/matrizMoneda10.mat')
 m = np.array(data['video_data']).transpose(1,2,0)
 
 m1 = entropiaShannon(m)
@@ -46,7 +46,7 @@ modulos_ia = {
     "GMM" : gmm.gmm,
     "Spectral Clustering" : spectralClustering.sc,
     "Agglometarive Clustering" : agglomerative.agglo,
-    "Hdbscan" : hdb.hello,
+    "Hdbscan" : hdb.h,
     "Sustractive Clustering": sustractivo.sus,
 }
 

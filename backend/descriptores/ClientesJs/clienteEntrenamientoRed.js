@@ -2,8 +2,8 @@ const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
 
-const jsonData = require('../matyres.json');
-const jsonData2 = require('../parametros.json');
+const jsonData = require('../DatosPrueba/desc+clust.json');
+const jsonData2 = require('../DatosPrueba/parametrosEntrenamiento.json');
 
 fs.writeFileSync('pruebaTemp.json', JSON.stringify(jsonData));
 fs.writeFileSync('pruebaTemp2.json', JSON.stringify(jsonData2));
@@ -19,7 +19,7 @@ axios.post('http://127.0.0.1:8000/entrenamientoRed', form, {
     responseType: "arraybuffer",
 })
     .then(response => {
-        fs.writeFileSync("modelo_recibido1234.h5", response.data);
+        fs.writeFileSync("../output/modelo_recibido1234.h5", response.data);
         console.log("Modelo recibido y guardado como modelo_recibido1234.h5");
 
         fs.unlinkSync("pruebaTemp.json");

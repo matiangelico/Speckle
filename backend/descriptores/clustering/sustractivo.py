@@ -1,6 +1,6 @@
 import numpy as np
 
-def sus (tensor, radius = 5):
+def sus (tensor, radius):
     height, width, _ = tensor.shape
     
     # Promedio de las imágenes para obtener una representación inicial
@@ -20,6 +20,6 @@ def sus (tensor, radius = 5):
     max_density = np.max(density)
     for x in range(height):
         for y in range(width):
-            output_image[x, y] = combined_image[x, y] * (density[x, y] / max_density)
+            output_image[x, y] = int(combined_image[x, y] * (density[x, y] / max_density))
     
     return output_image

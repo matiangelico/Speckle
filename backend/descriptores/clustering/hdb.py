@@ -1,7 +1,7 @@
 import hdbscan
 from sklearn.preprocessing import StandardScaler
 
-def hello(tensor, nro_clusters):
+def h(tensor, nro_clusters):
 
     a,b,_ = tensor.shape
 

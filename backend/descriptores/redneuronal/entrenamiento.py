@@ -4,10 +4,12 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from tensorflow import keras
 from keras.layers import BatchNormalization, Dropout, Dense
-
+from keras.callbacks import EarlyStopping
 
 def entrenamientoRed (X_train, Y_train, params):
-    
+
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
     model = keras.Sequential([
         keras.layers.Input(shape=(X_train.shape[1],)), 
         keras.layers.Flatten(),  
@@ -27,7 +29,7 @@ def entrenamientoRed (X_train, Y_train, params):
     model.summary()
 
     # Entrenar el modelo
-    #model.fit(X_train, Y_train, epochs=1, batch_size=1, verbose=1)
+    model.fit(X_train, Y_train, epochs=1, batch_size=1, verbose=1, callbacks=[early_stopping])
 
     # Guardar el modelo entrenado
     #model.save("modelo_entrenado.h5")

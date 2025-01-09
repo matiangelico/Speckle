@@ -19,13 +19,11 @@ from tensorflow import metrics
 
 app = FastAPI()
 
-rutinas_ia = {
+rutinas_clustering = {
     "Kmeans" : kmeans.km,
     "MiniBatch Kmeans" : mkm.mbkm,
     "GMM" : gmm.gmm,
-    "Spectral Clustering" : spec.sc,
-    "Agglometarive Clustering" : agglo.agglo,
-    "Hdbscan" : hdb.hello,
+    "Hdbscan" : hdb.h,
     "Sustractive Clustering": sustractivo.sus,
 }
 
@@ -68,8 +66,8 @@ async def calcularDescriptores(file: UploadFile = File(...), jsonData: str = For
             parametros.append(parametro['value'])    
         matriz = rutina(tensor,*parametros).tolist()
         res = {
-            "nombre" : datos['name'],
-            "matriz" : matriz,
+            "nombre_descriptor" : datos['name'],
+            "matriz_descriptor" : matriz,
         }
         respuesta.append(res)
     return respuesta
@@ -96,13 +94,17 @@ async def calcularClustering(jsonFile1: UploadFile = File(), jsonFile2: UploadFi
     
     respuesta = []
     for datos in clus:
-        rutina = rutinas_ia.get(datos['name'])
-        print(rutina)
-        clusters = int(datos['Nro_clusters'])
-        matriz = rutina(tensor,clusters).tolist()
+        rutina = rutinas_clustering.get(datos['name'])
+        print(f"Nombre del Clustering: {datos['name']}")
+        if (datos['name']=="Sustractive Clustering"):
+            param = int(datos['radius'])
+        else:
+            param = int(datos['nro_clusters'])
+        print (param)
+        matriz = rutina(tensor,param).tolist()
         res = {
-            "nombre" : datos['name'],
-            "matriz" : matriz,
+            "nombre_clustering" : datos['name'],
+            "matriz_clustering" : matriz,
         }
         respuesta.append(res)
 
@@ -111,32 +113,28 @@ async def calcularClustering(jsonFile1: UploadFile = File(), jsonFile2: UploadFi
 @app.post("/entrenamientoRed")
 async def neuronal(background_tasks: BackgroundTasks,jsonFile1: UploadFile = File(), jsonFile2: UploadFile = File()):
     
-    descriptores_json = await jsonFile1.read()
-    descriptores = json.loads(descriptores_json)
+    matrices_json = await jsonFile1.read()
+    matrices = json.loads(matrices_json)
 
     params_json = await jsonFile2.read()
     params = json.loads(params_json)
 
     
-    desc = descriptores['descriptores']
-    total = len(desc)-1
+    desc = matrices['descriptores']
+    resultados = np.array(matrices['clustering']).reshape(-1)
+    total = len(desc)
     print(f"Nro de matrices de descriptores recibidas: {total}")
     print(f"Nro de capas: {len(params)}")
 
     tensor = np.zeros((len (desc[0]),len (desc[1]),total))
 
 
-    for t, datos in enumerate(desc[:-1]):
+    for t, datos in enumerate(desc):
         tensor[:, :, t] = np.array(datos)
     
     entrada = tensor.reshape(-1,total)
 
     print (entrada.shape)
-    
-    resultados = np.array(desc[-1])
-
-    resultados = resultados.reshape(-1)
-
     print (resultados.shape)
 
     parametros_entrenamiento = np.zeros((3,len(params)))
@@ -165,7 +163,7 @@ def eliminar_archivo(model_path: str):
 
 
 @app.post("/prediccionRed")
-async def calcularDescriptores(file: UploadFile = File(...), jsonFile: UploadFile = File()):
+async def prediccion(file: UploadFile = File(...), jsonFile: UploadFile = File()):
     model_path = "modelo_temporal.h5"
     with open(model_path, "wb") as f:
         f.write(await file.read())
@@ -177,6 +175,7 @@ async def calcularDescriptores(file: UploadFile = File(...), jsonFile: UploadFil
     modelo = keras.models.load_model(modelo, custom_objects={'mse': metrics.MeanSquaredError()})
     
     print(f"Modelo cargado desde {file.filename}")
+  
   
     descriptores_json = await jsonFile.read()
     descriptores = json.loads(descriptores_json)
