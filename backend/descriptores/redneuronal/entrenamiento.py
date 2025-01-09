@@ -29,7 +29,7 @@ def entrenamientoRed (X_train, Y_train, params):
     model.summary()
 
     # Entrenar el modelo
-    model.fit(X_train, Y_train, epochs=1, batch_size=1, verbose=1, callbacks=[early_stopping])
+    model.fit(X_train, Y_train, epochs=1, batch_size=64, verbose=1, callbacks=[early_stopping])
 
     # Guardar el modelo entrenado
     #model.save("modelo_entrenado.h5")

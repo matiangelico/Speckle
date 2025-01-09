@@ -16,6 +16,7 @@ import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from tensorflow import keras
 from tensorflow import metrics
+import normalizar
 
 app = FastAPI()
 
@@ -163,19 +164,18 @@ def eliminar_archivo(model_path: str):
 
 
 @app.post("/prediccionRed")
-async def prediccion(file: UploadFile = File(...), jsonFile: UploadFile = File()):
+async def prediccion(background_tasks: BackgroundTasks,file: UploadFile = File(...), jsonFile: UploadFile = File()):
+    
     model_path = "modelo_temporal.h5"
     with open(model_path, "wb") as f:
         f.write(await file.read())
 
-    modelo = await file.read()
-    print(f"Archivo recibido: {file.filename}, tamaño: {len(modelo)} bytes")
+    #modelo = await file.read()
+    #print(f"Archivo recibido: {file.filename}, tamaño: {len(modelo)} bytes")
     
     
-    modelo = keras.models.load_model(modelo, custom_objects={'mse': metrics.MeanSquaredError()})
+    modelo = keras.models.load_model(model_path, custom_objects={'mse': metrics.MeanSquaredError()})
     
-    print(f"Modelo cargado desde {file.filename}")
-  
   
     descriptores_json = await jsonFile.read()
     descriptores = json.loads(descriptores_json)
@@ -196,10 +196,12 @@ async def prediccion(file: UploadFile = File(...), jsonFile: UploadFile = File()
    
     resultado = modelo.predict(entrada)
 
-    #background_tasks.add_task(eliminar_archivo, file.filename)
+    resultado = normalizar.n(resultado.reshape(300,300))
+
+    background_tasks.add_task(eliminar_archivo, model_path)
     
     respuesta = {
         "prediccion": resultado.tolist(),
     }
-    
+
     return respuesta

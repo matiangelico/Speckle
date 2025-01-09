@@ -2,7 +2,7 @@ const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
 
-const jsonData = require('../DatosPrueba/matricesDescriptores.json');
+const jsonData = require('../DatosPrueba/descPrediccion.json');
 
 fs.writeFileSync('pruebaTemp.json', JSON.stringify(jsonData));
 
@@ -17,9 +17,8 @@ axios.post('http://127.0.0.1:8000/prediccionRed', form, {
 })
     .then(response => {
         const respuesta = response.data
-        console.log(respuesta.prediccion)
-        //fs.writeFileSync('./matriz1234.json', JSON.stringify(respuesta))
-        //console.log('Matriz guardada como matriz1234.json')
+        fs.writeFileSync('../output/matriz_final.json', JSON.stringify(respuesta))
+        console.log('Matriz guardada como ../output/matriz_final.json')
     })
     .catch(error => {
       console.error('Error:', error);
