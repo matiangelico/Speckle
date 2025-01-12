@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 
-def generate_color_map(tensor): 
+def colorMap(tensor): 
     
     imagen = plt.imshow(tensor, cmap='jet')
     plt.colorbar(imagen) 

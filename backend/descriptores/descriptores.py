@@ -150,21 +150,7 @@ def disenioFiltro(fmin,fmax,at_paso,at_rechazo):
     nfe, fne = ellipord(np.array([fmin*2, fmax*2]), np.array([fmin*2 - 0.01, fmax*2 + 0.01]), at_paso, at_rechazo)
     return ellip(nfe, at_paso, at_rechazo, fne, btype='band',output='sos') 
 
-def filtroBajo(tensor,fmax,fmin,at_paso,at_rechazo): #fmin=0.015, fmax=0.05, at_paso=1, at_rechazo=40):
-    fmin = float(fmin)
-    fmax = float(fmax)
-    at_paso = int(at_paso)
-    at_rechazo = int(at_rechazo)
-    return np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo))
- 
-def filtroMedio(tensor,fmin,fmax,at_paso,at_rechazo): #fmin=0.05, fmax=0.25, at_paso=1, at_rechazo=40):     
-    fmin = float(fmin)
-    fmax = float(fmax)
-    at_paso = int(at_paso)
-    at_rechazo = int(at_rechazo)
-    return np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo))
-
-def filtroAlto(tensor, fmin, fmax, at_paso,at_rechazo):#fmin=0.25, fmax=0.4, at_paso=1, at_rechazo=40):
+def filtro(tensor, fmin, fmax, at_paso,at_rechazo):
     fmin = float(fmin)
     fmax = float(fmax)
     at_paso = int(at_paso)

@@ -5,7 +5,7 @@
     },
     "name": "Entropia Shannon",
     "params": []
-  },
+  },  
   {
     "_id": {
       "$oid": "671fa3de0cdae93206840dbd"
@@ -46,6 +46,30 @@
       {
         "paramName": "peso",
         "value": "5"
+      }
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840dbb"
+    },
+    "name": "Filtro Bajo",
+    "params": [
+      {
+        "paramName": "fmin",
+        "value": "0.015"
+      },
+      {
+        "paramName": "fmax",
+        "value": "0.05"
+      },
+      {
+        "paramName": "at_paso",
+        "value": "1"
+      },
+      {
+        "paramName": "at_rechazo",
+        "value": "40"
       }
     ]
   }
