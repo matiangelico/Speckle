@@ -1,11 +1,20 @@
+//Commons
 import PrimaryButton from "../../common/PrimaryButton";
 import FileDropArea from "../Utils/FileDropArea";
 
+//Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 
-const UploadVideo = ({ context, send }) => {
+//Redux
+import { initializeVideo } from "../../../reducers/trainingReducer";
+import { useDispatch, useSelector } from 'react-redux';
+
+const UploadVideo = ({ send }) => {
+  const dispatch = useDispatch();
+  const video = useSelector((state) => state.training.video);
+
   const handleNext = () => {
-    if (context.video) {
+    if (video) {
       send({ type: "NEXT" });
     } else {
       alert("Por favor, sube un video antes de continuar.");
@@ -13,9 +22,9 @@ const UploadVideo = ({ context, send }) => {
   };
 
   const handleFileDrop = (file) => {
-    send({ type: "UPDATE_CONTEXT", data: { video: file } });
+    dispatch(initializeVideo(file));
   };
-
+  
   return (
     <>
       <div className='steps-container'>
@@ -27,9 +36,9 @@ const UploadVideo = ({ context, send }) => {
 
       <FileDropArea
         onFileDrop={handleFileDrop}
-        fileName={context.video?.name || ""}
+        fileName={video?.name || ""}
         fileSize={
-          context.video ? (context.video.size / (1024 * 1024)).toFixed(2) : ""
+          video ? (video.size / (1024 * 1024)).toFixed(2) : ""
         }
       />
 

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { styled } from "styled-components";
 
 import CheckIcon from "../../assets/svg/icon-check.svg?react";
@@ -78,18 +77,15 @@ const Checkbox = ({ label, checked, onChange }) => {
   );
 };
 
-const TaskCheckbox = ({ text, onChange }) => {
-  const [isChecked, setIsChecked] = useState(false);
-
+const TaskCheckbox = ({ label, checked, onChange }) => {
   const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
-    onChange(text, !isChecked);
+    onChange(label, !checked);
   };
 
   return (
     <Checkbox
-      label={text}
-      checked={isChecked}
+      label={label}
+      checked={checked}
       onChange={handleCheckboxChange}
     />
   );

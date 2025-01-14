@@ -1,14 +1,19 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-
 import styled from "styled-components";
 
+//Redux
+import { useDispatch, useSelector } from "react-redux";
+import { selectDescriptor } from '../../../reducers/trainingReducer';
+
+//Commons
 import TaskCheckbox from "../../common/CheckBox";
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
 
+//Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
+
+
 
 const StyledDescriptorsContainer = styled.div`
   display: flex;
@@ -17,46 +22,30 @@ const StyledDescriptorsContainer = styled.div`
   gap: 10px 10px;
   flex-shrink: 0;
   flex-wrap: wrap;
-
-  span {
-  }
 `;
 
-const SelectDescriptors = ({ context, send }) => {
-  const [descriptors, setDescriptors] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:3001/descriptors")
-      .then((response) => {
-        setDescriptors(response.data);
-      })
-      .catch((error) =>
-        console.error("Error al cargar los descriptores:", error)
-      );
-  }, []);
+const SelectDescriptors = ({ send }) => {
+  const dispatch = useDispatch();
+  const descriptors = useSelector((state) => state.training.descriptors);
 
   const handleBack = () => {
     send({ type: "BACK" });
   };
 
   const handleNext = () => {
-    if (context.descriptors.length > 0) {
+    const isAnyDescriptorChecked = descriptors.some(
+      (descriptor) => descriptor.checked
+    );
+
+    if (isAnyDescriptorChecked) {
       send({ type: "NEXT" });
     } else {
-      alert("Por favor, selecciona al menos un descriptor para continuar."); // Validación
+      alert("Por favor, selecciona al menos un descriptor para continuar.");
     }
   };
 
-  const handleDescriptorChange = (descriptorName) => {
-    const newDescriptors = context.descriptors.includes(descriptorName)
-      ? context.descriptors.filter((d) => d !== descriptorName) // Eliminar si ya está seleccionado
-      : [...context.descriptors, descriptorName]; // Añadir si no está seleccionado
-      
-    send({
-      type: "UPDATE_CONTEXT",
-      data: { descriptors: newDescriptors },
-    });
+  const handleDescriptorChange = (descriptorChanged) => {
+    dispatch(selectDescriptor(descriptorChanged));
   };
 
   return (
@@ -68,15 +57,18 @@ const SelectDescriptors = ({ context, send }) => {
         </h3>
       </div>
 
-      <StyledDescriptorsContainer>
-        {descriptors.map((descriptor, index) => (
-          <TaskCheckbox
-            key={index}
-            text={descriptor.name}
-            onChange={() => handleDescriptorChange(descriptor.name)}
-          />
-        ))}
-      </StyledDescriptorsContainer>
+      {descriptors && (
+        <StyledDescriptorsContainer>
+          {descriptors.map((descriptor, index) => (
+            <TaskCheckbox
+              key={index}
+              label={descriptor.name}
+              checked={descriptor.checked}
+              onChange={handleDescriptorChange} // Actualiza el estado de "checked"
+            />
+          ))}
+        </StyledDescriptorsContainer>
+      )}
 
       <div className='two-buttons-container'>
         <SecondaryButton

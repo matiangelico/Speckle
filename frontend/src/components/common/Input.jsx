@@ -3,17 +3,38 @@ import { styled } from "styled-components";
 const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%; /* Responsivo */
-  max-width: 426px; /* Ancho máximo */
+  // width: 100%;
+  min-width: 200px; 
+  max-width: 426px;
   text-align: left;
-  margin-bottom: 1rem; /* Espaciado entre inputs */
+`;
+
+const LabelContainer = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+  align-self: stretch;
+  margin-bottom: 0.5rem;
+  padding: 0 0.1rem;
 
   label {
-    color: var(--dark-800);
     font-family: Inter, sans-serif;
     font-size: 14px;
+    font-feature-settings: "calt" off;
+    line-height: 115%;
+    letter-spacing: -0.14px;
+  }
+
+  label:nth-child(1) {
+    color: var(--dark-800);
     font-weight: 500;
-    margin-bottom: 0.5rem; /* Espacio entre label y input */
+  }
+
+  label:nth-child(2) {
+    color: var(--dark-400);
+    font-weight: 400;
+    letter-spacing: -0.14px;
   }
 `;
 
@@ -55,7 +76,8 @@ const ErrorText = styled.span`
 `;
 
 const Input = ({
-  textLabel,
+  primaryLabel,
+  secondaryLabel,
   type,
   id,
   name,
@@ -66,7 +88,11 @@ const Input = ({
 }) => {
   return (
     <InputContainer>
-      <label htmlFor={id}>{textLabel}</label>
+      <LabelContainer>
+        <label htmlFor={id}>{primaryLabel}</label>
+        {secondaryLabel && <label htmlFor={id}>{secondaryLabel}</label>}
+      </LabelContainer>
+
       <StyledInput
         type={type}
         id={id}
@@ -76,6 +102,7 @@ const Input = ({
         onChange={(e) => setValue(e.target.value)}
         data-is-invalid={error}
       />
+
       {error && <ErrorText>{error}</ErrorText>}
     </InputContainer>
   );
