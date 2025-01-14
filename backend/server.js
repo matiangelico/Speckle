@@ -2,6 +2,7 @@ const cors = require("cors");
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const { auth } = require("express-openid-connect");
 
 const descriptorRoutes = require("./api/routes/descriptorRoutes");
 const uploadVideoRoutes = require("./api/routes/uploadVideoRoutes");
@@ -14,7 +15,6 @@ app.use((req, res, next) => {
   console.log(`Método: ${req.method}, Ruta: ${req.originalUrl}`);
   next();
 });
-
 
 mongoose
   .connect("mongodb+srv://ignaciosuarez:hola123@speckle.grnl5.mongodb.net/Speckle")
