@@ -8,7 +8,6 @@ import generaImagen as gi
 import clustering.kmeans as kmeans
 import clustering.minibatchKmeans as mkm
 import clustering.gmm as gmm
-import clustering.agglomerative as agglo
 import clustering.spectralClustering as spec
 import clustering.sustractivo as sustractivo
 import clustering.hdb as hdb
@@ -17,8 +16,7 @@ import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from tensorflow import keras
 from tensorflow import metrics
-import normalizar
-import io
+import normalizar 
 
 app = FastAPI()
 
@@ -26,7 +24,7 @@ rutinas_clustering = {
     "Kmeans" : kmeans.km,
     "MiniBatch Kmeans" : mkm.mbkm,
     "GMM" : gmm.gmm,
-    "Hdbscan" : hdb.h,
+    "Spectral Clustering" : spec.sc,
     "Sustractive Clustering": sustractivo.sus,
 }
 
@@ -50,136 +48,67 @@ rutinas_descriptores = {
     "Adri": ds.adri,
 }
 
-@app.post("/calculoTensor")
-async def calcularDescriptores(file: UploadFile = File(...)):
+@app.post("/descriptores")
+async def descriptores(file: UploadFile = File(...), jsonData: str = Form(...)):
     videoAvi = await file.read()
     print(f"Archivo recibido: {file.filename}, tamaño: {len(videoAvi)} bytes")
     tensor = np.array(aviamat.videoamat(videoAvi)).transpose(1,2,0).astype(np.uint8)
-    buffer = io.BytesIO()
-    np.savez_compressed(buffer, tensor=tensor)
-    buffer.seek(0)
+    desc_params = json.loads(jsonData)
 
-    return StreamingResponse(buffer, media_type="application/octet-stream", headers={
-        "Content-Disposition": "attachment; filename=tensor_comprimido.npz"
-    })
-
-
-@app.post("/imagenesDescriptores")
-async def calcularDescriptores(file: UploadFile = File(...), jsonData: str = Form(...)):
-    archivo = await file.read()
-    buffer = io.BytesIO(archivo)
-    tensor = np.load(buffer)["tensor"]
-    print(f"Archivo recibido: {file.filename}, tamaño: {len(tensor)} bytes")
-    parsed_data = json.loads(jsonData)
-
-    print(f"JSON recibido: {parsed_data}")
+    print(f"JSON recibido: {desc_params}")
     
-    respuesta = []
-    for datos in  parsed_data:
-        #print(f"Los datos son: {datos}")
+    respuesta_imagenes = []
+    respuesta_matrices =[]
+    for datos in  desc_params:
         parametros = []
         rutina = rutinas_descriptores.get(datos['name'])
         print(f"Nombre del descriptor: {datos['name']}")
         for parametro in datos['params']:
             parametros.append(parametro['value'])    
+
         matriz = rutina(tensor,*parametros).tolist()
-        res = {
-            "nombre_descriptor" : datos['name'],
-            "imagen_descriptor" : gi.colorMap(matriz),
-        }
-        respuesta.append(res)
-    return respuesta
+        imagenes = {"nombre_descriptor" : datos['name'],"imagen_descriptor" : gi.colorMap(matriz)}
+        matrices = {"nombre_descriptor" : datos['name'],"matriz_descriptor" : matriz}
+        respuesta_imagenes.append(imagenes)
+        respuesta_matrices.append(matrices)
+    return {"matrices_descriptores":respuesta_matrices,"imagenes_descriptores":respuesta_imagenes}
 
-@app.post("/matrizDescriptor")
-async def calcularDescriptores(file: UploadFile = File(...), jsonData: str = Form(...)):
-    tensor_json = await file.read()
-    print(f"Archivo recibido: {file.filename}, tamaño: {len(tensor_json)} bytes")
-    tensor = np.array(tensor_json)
-    descriptor = json.loads(jsonData)
 
-    print(f"Descriptor recibido: {descriptor}")
+@app.post("/clustering")
+async def clustering(jsonFile: UploadFile = File(), jsonData: str = Form(...)):
+
+    desc_json = await jsonFile.read()
+    matrices_desc = json.loads(desc_json)
+
+    clust_params = json.loads(jsonData)
+
+    total = len(matrices_desc)
     
-    parametros = []
-    rutina = rutinas_descriptores.get(descriptor['name'])
-    for parametro in descriptor['params']:
-        parametros.append(parametro['value'])    
-    matriz = rutina(tensor,*parametros).tolist()
-    res = {
-        "nombre_descriptor" : descriptor['name'],
-        "imagen_descriptor" : matriz,
-    }
-    
-    return res
-
-
-@app.post("/imagenesClustering")
-async def calcularClustering(jsonFile1: UploadFile = File(), jsonFile2: UploadFile = File()):
-
-    descriptores_json = await jsonFile1.read()
-    descriptores = json.loads(descriptores_json)
-
-    clustering_json = await jsonFile2.read()
-    clus = json.loads(clustering_json)
-
-    
-    desc = descriptores['descriptores']
-    total = len(desc)
     print(f"Nro de matrices de descriptores recibidas: {total}")
-    print(f"Nro de clustering a procesar: {len(clus)}")
+    print(f"Cantidad de clustering a procesar: {len(clust_params)}")
 
-    tensor = np.zeros((len (desc[0]),len (desc[1]),total))
+    tensor = np.zeros((len(matrices_desc[0]['matriz_descriptor'][0]),len(matrices_desc[0]['matriz_descriptor'][1]),total))
 
-    for t, datos in enumerate(desc):
-        tensor[:, :, t] = np.array(datos)
+    print(tensor.shape)
     
-    respuesta = []
-    for datos in clus:
+    for t, datos in enumerate(matrices_desc):
+        tensor[:, :, t] = np.array(datos['matriz_descriptor'])
+
+    respuesta_imagenes = []
+    respuesta_matrices =[]
+
+    for datos in clust_params:
         rutina = rutinas_clustering.get(datos['name'])
-        print(f"Nombre del Clustering: {datos['name']}")
-        if (datos['name']=="Sustractive Clustering"):
-            param = int(datos['radius'])
-        else:
-            param = int(datos['nro_clusters'])
-        print (param)
+        param = int(datos['radius']) if (datos['name']=="Sustractive Clustering")else int(datos['nro_clusters'])
+        print(f"Nombre del Clustering: {datos['name']}. Parametro {param}")
         matriz = rutina(tensor,param).tolist()
-        res = {
-            "nombre_clustering" : datos['name'],
-            "matriz_clustering" : gi.colorMap(matriz),
-        }
-        respuesta.append(res)
+        imagenes = {"nombre_clustering" : datos['name'],"imagen_clustering" : gi.colorMap(matriz)}
+        matrices = {"nombre_clustering" : datos['name'],"matriz_clustering" : matriz}
+        respuesta_imagenes.append(imagenes)
+        respuesta_matrices.append(matrices)
 
-    return respuesta
+    return {"matrices_clustering":respuesta_matrices,"imagenes_clustering":respuesta_imagenes}
 
-@app.post("/matrizClustering")
-async def calcularClustering(jsonFile1: UploadFile = File(), jsonFile2: UploadFile = File()):
-
-    descriptores_json = await jsonFile1.read()
-    descriptores = json.loads(descriptores_json)
-
-    clustering_json = await jsonFile2.read()
-    clus = json.loads(clustering_json)
-
-    
-    desc = descriptores['descriptores']
-    total = len(desc)
-    print(f"Nro de matrices de descriptores recibidas: {total}")
-    print(f"Nro de clustering a procesar: {len(clus)}")
-
-    tensor = np.zeros((len (desc[0]),len (desc[1]),total))
-
-    for t, datos in enumerate(desc):
-        tensor[:, :, t] = np.array(datos)
-    
-    rutina = rutinas_clustering.get(datos['name'])
-    print(f"Nombre del Clustering: {datos['name']}")
-    param = int(datos['radius']) if(datos['name']=="Sustractive Clustering") else int(datos['nro_clusters'])
-    print (param)
-    matriz = rutina(tensor,param).tolist()
-    res = {
-        "nombre_clustering" : datos['name'],
-        "matriz_clustering" : matriz,
-    }
-    return res
 
 @app.post("/entrenamientoRed")
 async def neuronal(background_tasks: BackgroundTasks,jsonFile1: UploadFile = File(), jsonFile2: UploadFile = File()):

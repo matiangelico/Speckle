@@ -16,10 +16,9 @@ def sc (tensor, nro_clusters):
         affinity='nearest_neighbors',
         n_neighbors=10,
         assign_labels='kmeans',
-        random_state=42
     )
     labels = spectral.fit_predict(features)
 
-    labels_reducidos = int(labels.reshape(a//2,b//2))
+    labels_reducidos = labels.reshape(a//2,b//2)
 
     return resize(labels_reducidos, (a,b), order=0, preserve_range=True).astype(int)

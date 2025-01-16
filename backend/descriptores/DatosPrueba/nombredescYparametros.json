@@ -8,69 +8,37 @@
   },  
   {
     "_id": {
-      "$oid": "671fa3de0cdae93206840dbd"
+      "$oid": "671fa3de0cdae93206840dbe"
     },
-    "name": "Filtro Alto",
-    "params": [
-      {
-        "paramName": "fmin",
-        "value": "0.025"
-      },
-      {
-        "paramName": "fmax",
-        "value": "0.4"
-      },
-      {
-        "paramName": "at_paso",
-        "value": "1"
-      },
-      {
-        "paramName": "at_rechazo",
-        "value": "40"
-      }
-    ]
-  },
-  {
-    "_id": {
-      "$oid": "671fa3de0cdae93206840db0"
-    },
-    "name": "Diferencias Promediadas",
+    "name": "Fuzzy",
     "params": []
   },
   {
     "_id": {
-      "$oid": "671fa3de0cdae93206840daf"
+      "$oid": "671fa3de0cdae93206840db1"
     },
-    "name": "Diferencias Pesadas",
-    "params": [
-      {
-        "paramName": "peso",
-        "value": "5"
-      }
-    ]
+    "name": "Fujii",
+    "params": []
   },
   {
     "_id": {
-      "$oid": "671fa3de0cdae93206840dbb"
+      "$oid": "671fa3de0cdae93206840db4"
     },
-    "name": "Filtro Bajo",
-    "params": [
-      {
-        "paramName": "fmin",
-        "value": "0.015"
-      },
-      {
-        "paramName": "fmax",
-        "value": "0.05"
-      },
-      {
-        "paramName": "at_paso",
-        "value": "1"
-      },
-      {
-        "paramName": "at_rechazo",
-        "value": "40"
-      }
-    ]
+    "name": "Adri",
+    "params": []
+  },
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840db6"
+    },
+    "name": "Frecuencia Media",
+    "params": []
+  },
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840dba"
+    },
+    "name": "High Low Ratio",
+    "params": []
   }
 ]
