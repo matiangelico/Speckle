@@ -2,7 +2,11 @@ import styled from "styled-components";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { resetHyperparameters, updateHyperparameter } from "../../../reducers/trainingReducer";
+import {
+  initializeDescriptorsResult,
+  resetHyperparameters,
+  updateHyperparameter,
+} from "../../../reducers/trainingReducer";
 
 //Commons
 import Input from "../../common/Input";
@@ -18,10 +22,15 @@ const HyperparametersContainer = styled.div`
   display: grid;
   gap: 10px 10px;
   width: 100%;
-  padding-bottom: 10px;
+  // padding-bottom: 10px;
   height: min-content;
-  max-height: 45vh;
+  // max-height: 45vh;
   overflow-y: auto;
+
+  @media (min-height: 900px) {
+    // max-height: 60vh;
+    gap: 20px;
+  }
 `;
 
 const StyledRow = styled.div`
@@ -73,6 +82,8 @@ const EditHyperparameters = ({ send }) => {
   };
 
   const handleNext = () => {
+    dispatch(initializeDescriptorsResult())
+
     if (chekedDescriptors.length === 0) {
       send({ type: "NEXT" });
     } else {
@@ -92,7 +103,7 @@ const EditHyperparameters = ({ send }) => {
   };
 
   const handleSetDefaultValues = () => {
-    dispatch(resetHyperparameters())
+    dispatch(resetHyperparameters());
   };
 
   return (

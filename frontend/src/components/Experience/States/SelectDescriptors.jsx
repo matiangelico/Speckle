@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { selectDescriptor } from '../../../reducers/trainingReducer';
+import { selectDescriptor } from "../../../reducers/trainingReducer";
 
 //Commons
 import TaskCheckbox from "../../common/CheckBox";
@@ -12,8 +12,6 @@ import SecondaryButton from "../../common/SecondaryButton";
 //Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
-
-
 
 const StyledDescriptorsContainer = styled.div`
   display: flex;
@@ -44,7 +42,7 @@ const SelectDescriptors = ({ send }) => {
     }
   };
 
-  const handleDescriptorChange = (descriptorChanged) => {
+  const handleDescriptorSelected = (descriptorChanged) => {
     dispatch(selectDescriptor(descriptorChanged));
   };
 
@@ -64,7 +62,7 @@ const SelectDescriptors = ({ send }) => {
               key={index}
               label={descriptor.name}
               checked={descriptor.checked}
-              onChange={handleDescriptorChange} // Actualiza el estado de "checked"
+              onChange={handleDescriptorSelected} // Actualiza el estado de "checked"
             />
           ))}
         </StyledDescriptorsContainer>

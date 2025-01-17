@@ -4,24 +4,14 @@ import SecondaryButton from "../../common/SecondaryButton";
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
 
-const EditClusteringParams = ({ context, send }) => {
+const EditClusteringParams = ({ send }) => {
   const handleBack = () => {
-    if (context.descriptors) {
-      send({ type: "BACK" }); // Avanzar al siguiente estado si hay un video
-    } else {
-      alert("Por favor, selecciona al menos un descriptor para continuar."); // Validación
-    }
+    send({ type: "BACK" }); // Avanzar al siguiente estado si hay un video
   };
 
   const handleNext = () => {
-    if (context.descriptors) {
-      send({ type: "NEXT" }); // Avanzar al siguiente estado si hay un video
-    } else {
-      alert("Por favor, sube un video antes de continuar."); // Validación
-    }
+    send({ type: "NEXT" }); // Avanzar al siguiente estado si hay un video}
   };
-
-  console.log(context);
 
   return (
     <>

@@ -11,11 +11,14 @@ import SettingIcon from "../../../assets/svg/icon-settings.svg?react";
 import LogOutIcon from "../../../assets/svg/icon-log-out.svg?react";
 
 const AsideContainer = styled.aside`
+  position: sticky;
+  top: 0;
+  height: 100%;
   width: 16.25rem;
-  /* height: 55.25rem; */
   flex-shrink: 0;
   background: var(--dark-100);
   border-right: 2px solid var(--dark-500);
+  border-bottom: 1px solid var(--dark-500);
   display: grid;
   grid-template-rows: 1fr auto;
 `;

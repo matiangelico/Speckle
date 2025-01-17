@@ -1,14 +1,14 @@
 import { styled } from "styled-components";
 
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 // Maquina de estados
 import { useMachine } from "@xstate/react";
 import TrainingMachine from "../../machines/trainingMachine";
 
 //Redux
-import { initializeDescriptors } from '../../reducers/trainingReducer';
+import { initializeDescriptors } from "../../reducers/trainingReducer";
 
 // Componentes de estado
 import UploadVideo from "./States/UploadVideo";
@@ -27,15 +27,16 @@ import SecondaryButton from "../common/SecondaryButton";
 import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
 
 const StyledExperienceContainer = styled.main`
+  height: 87vh;
   display: grid;
-  grid-template-rows: auto 0.95fr;
+  grid-template-rows: auto 1fr;
 `;
 
 const ExperienceHeader = styled.div`
+  height: 10vh;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  /* width: 78.25rem; */
-  padding: 1.2rem 3rem;
+  padding: 0.25rem 2rem;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
@@ -60,20 +61,30 @@ const ExperienceHeader = styled.div`
     line-height: 150%; /* 1.5rem */
     letter-spacing: -0.01rem;
   }
+
+  @media (min-height: 900px) {
+    height: 8vh;
+  }
 `;
 
 const ExperienceContent = styled.div`
+  max-height: 100vh;
   display: grid;
-  grid-template-rows: auto 0.95fr auto;
-  padding: 1.2rem 3rem 1.2rem 3rem;
+  grid-template-rows: auto 1fr auto;
+  padding: 0rem 2rem 1rem 2rem;
   gap: 1rem;
+  overflow-y: auto;
 
   .steps-container {
+    position: sticky;
+    top: 0px;
+    background: var(--white);
     display: flex;
-    /* padding: 0rem 1.25rem; */
+    padding: 1rem 0 0.5rem 0;
     flex-direction: column;
     align-items: flex-start;
     align-self: stretch;
+    box-shadow: 0px 10px 10px rgb(255 255 255 / 100%);
   }
 
   .steps-container h2 {

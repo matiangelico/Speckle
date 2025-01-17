@@ -8,6 +8,7 @@ import IconDumbbel from "../../../assets/svg/icon-dumbbel.svg?react";
 import IconBrain from "../../../assets/svg/icon-brain.svg?react";
 
 const StyledHeader = styled.header`
+  height: 12vh;
   display: flex;
   padding: 1rem 2rem;
   justify-content: space-between;
@@ -88,34 +89,34 @@ const Header = ({ userName, userEmail, pictureURL }) => {
 
   return (
     <StyledHeader>
-        <LogoContainer>
-          <SpeckleLogo />
-          <LogoTitle>Speckle.</LogoTitle>
-        </LogoContainer>
-        <NavigationContainer>
-          <NavItem
-            href={"#"}
-            icon={IconDumbbel}
-            text={"Entrenamiento"}
-            isActive={activeItem === "Entrenamiento"}
-            onClick={() => handleNavItemClick("Entrenamiento")}
-          />
-          <NavItem
-            href={"#"}
-            icon={IconBrain}
-            text={"Consulta"}
-            isActive={activeItem === "Consulta"}
-            onClick={() => handleNavItemClick("Consulta")}
-          />
-        </NavigationContainer>
-        <UserInfo>
-          <UserDetails>
-            <UserName>{userName}</UserName>
-            <UserEmail>{userEmail}</UserEmail>
-          </UserDetails>
-          <ProfileImage src={pictureURL} alt={userName} />
-        </UserInfo>
-      </StyledHeader>
+      <LogoContainer>
+        <SpeckleLogo />
+        <LogoTitle>Speckle.</LogoTitle>
+      </LogoContainer>
+      <NavigationContainer>
+        <NavItem
+          href={"#"}
+          icon={IconDumbbel}
+          text={"Entrenamiento"}
+          isActive={activeItem === "Entrenamiento"}
+          onClick={() => handleNavItemClick("Entrenamiento")}
+        />
+        <NavItem
+          href={"#"}
+          icon={IconBrain}
+          text={"Consulta"}
+          isActive={activeItem === "Consulta"}
+          onClick={() => handleNavItemClick("Consulta")}
+        />
+      </NavigationContainer>
+      <UserInfo>
+        <UserDetails>
+          <UserName>{userName}</UserName>
+          <UserEmail>{userEmail}</UserEmail>
+        </UserDetails>
+        <ProfileImage src={pictureURL} alt={userName} />
+      </UserInfo>
+    </StyledHeader>
   );
 };
 

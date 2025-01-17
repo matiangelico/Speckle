@@ -1,11 +1,14 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { useAuth0 } from "@auth0/auth0-react";
-
 import styled from "styled-components";
 
+import { useEffect } from "react";
+
+import { useAuth0 } from "@auth0/auth0-react";
+
+// Redux
+import { useDispatch } from "react-redux";
 import { initializeDefaultValues } from "./reducers/defaultValuesReducer.jsx";
 
+// Components
 import GlobalStyles from "./GlobalStyles.jsx";
 import Login from "./components/Login/Login.jsx";
 import Header from "./components/shared/Header/Header.jsx";
@@ -14,7 +17,7 @@ import ExperienceContainer from "./components/Experience/ExperienceContainer.jsx
 
 const AppContainer = styled.div`
   height: 100vh;
-  border-radius: 0.5rem;
+  // border-radius: 0.5rem;
   border: 4px solid var(--dark-500);
 
   display: grid;
@@ -22,21 +25,29 @@ const AppContainer = styled.div`
 `;
 
 const MainContent = styled.div`
-  display: flex;
-  flex: 1;
-  //overflow: hidden;
-
   display: grid;
   grid-template-columns: auto 1fr;
 `;
 
 const App = () => {
   const { user, isAuthenticated } = useAuth0();
+  // const { user, isAuthenticated, getAccessTokenSilently  } = useAuth0();
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     dispatch(initializeDefaultValues());
   }, [dispatch]);
+
+  // const getToken = async () => {
+  //   try {
+  //     const token = await getAccessTokenSilently();
+  //     console.log(token);  // Aquí tendrás el JWT
+  //   } catch (error) {
+  //     console.error("Error obteniendo el token", error);
+  //   }
+  // };
+
+  // getToken()
 
   return (
     <>
