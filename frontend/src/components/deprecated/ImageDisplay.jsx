@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ImageModal from "./ImageModal"; // Asegúrate de tener este componente separado
-import "../styles/ImageDisplay.css"; // Importa el archivo CSS
+//import "../styles/ImageDisplay.css"; // Importa el archivo CSS
 
 const ImageDisplay = ({ imageUrls, onApplyAI }) => {
   const [selectedImages, setSelectedImages] = useState({});

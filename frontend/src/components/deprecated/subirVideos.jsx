@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fetchDescriptors, uploadVideoWithDescriptors } from "./services/apiService";
+import { fetchDescriptors, uploadVideoWithDescriptors } from "../../services/apiService";
 import DescriptorSelection from "./DescriptorSelection";
 import ImageDisplay from "./ImageDisplay";
 

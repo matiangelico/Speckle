@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.io as sio
 from scipy.signal import welch, ellip, sosfilt, ellipord
+from normalizar import normalizar
 
 def setearDimensiones (tensor):
     global frames
@@ -12,7 +13,7 @@ def setearDimensiones (tensor):
 
 def rangoDinamico(tensor):
     setearDimensiones(tensor)
-    return np.max(tensor, axis=-1)-np.min(tensor,axis=-1)
+    return normalizar(np.max(tensor, axis=-1)-np.min(tensor,axis=-1))
 
 def diferenciasPesadas(tensor, peso):
     peso = int(peso)
@@ -21,12 +22,12 @@ def diferenciasPesadas(tensor, peso):
     difPesadas = np.zeros((ancho, alto), dtype=np.float32)
     for f in range(frames - peso):
         difPesadas += np.abs(X[:, :, f] * (peso - 1) - np.sum(X[:, :, f + 1: f + peso + 1], axis=2))    
-    return (difPesadas.T).astype(np.float32)
+    return normalizar(difPesadas.T)
 
 def diferenciasPromediadas(tensor):
     setearDimensiones(tensor)
     tensor = tensor[:, :, :].astype(np.float32)
-    return np.sum(np.abs(tensor[:,:,0:frames-1]-tensor[:,:,1:frames]),axis=2)/(frames-1)
+    return normalizar(np.sum(np.abs(tensor[:,:,0:frames-1]-tensor[:,:,1:frames]),axis=2)/(frames-1))
 
 def fujii(tensor):
     setearDimensiones(tensor)
@@ -34,13 +35,13 @@ def fujii(tensor):
     x1 =np.abs(tensor[:,:,1:frames]-tensor[:,:,0:frames-1])
     x2 =np.abs(tensor[:,:,1:frames]+tensor[:,:,0:frames-1])
     x2[x2 == 0] = 1
-    return np.sum(x1/x2,axis=2)
+    return normalizar(np.sum(x1/x2,axis=2))
 
 def desviacionEstandar(tensor):
-    return np.std(tensor[:,:,:],axis=2).astype(np.float32)
+    return normalizar(np.std(tensor[:,:,:],axis=2))
 
 def contrasteTemporal(tensor):
-    return np.std(tensor,axis=2)/np.mean(tensor, axis=2)
+    return normalizar(np.std(tensor,axis=2)/np.mean(tensor, axis=2))
 
 def autoCorrelacion(tensor):
     setearDimensiones(tensor)  
@@ -52,7 +53,7 @@ def autoCorrelacion(tensor):
         ac_aux = np.argmax(ac[:, frames-1:2*frames-2] <= (ac[:, frames-1] / 2)[:, None], axis=1)
         desac[:, j] = np.where(ac_aux == 0, 0, ac_aux + 1)
 
-    return desac.astype(np.float32)
+    return normalizar(desac)
 
 def fuzzy(tensor):
     setearDimensiones(tensor)
@@ -71,18 +72,18 @@ def fuzzy(tensor):
         act[iac] += 1
         ff = fn
 
-    return np.sum(act, axis=-1) / frames
+    return normalizar(np.sum(act, axis=-1) / frames)
 
 def frecuenciaMedia(tensor):
     setearDimensiones(tensor)
     f, Pxx = welch(tensor, window='hamming', nperseg= frames //8)
-    return np.sum(Pxx * f, axis=2) /np.sum(Pxx, axis=2)
+    return normalizar(np.sum(Pxx * f, axis=2) /np.sum(Pxx, axis=2))
 
 def entropiaShannon(tensor):
     setearDimensiones(tensor)
     _,Pxx = welch(tensor.astype(np.float32), window='hamming', nperseg= frames //8)
     prob = Pxx /np.sum(Pxx,axis=-1,keepdims =True)
-    return (-np.sum (prob * np.log10(prob), axis=-1)).astype(np.float32)
+    return normalizar((-np.sum (prob * np.log10(prob), axis=-1)))
     
 def frecuenciaCorte(tensor):
     setearDimensiones(tensor)
@@ -102,7 +103,7 @@ def frecuenciaCorte(tensor):
     for w in range(ancho):
         desc_fc[:,w] = np.apply_along_axis(frecuencia_por_columnas,-1,tensor[:,w,:])
 
-    return desc_fc.astype(np.float32)
+    return normalizar(desc_fc)
 
 
 def waveletEntropy(tensor,wavelet,level):# wavelet='db2', level=5):
@@ -128,7 +129,7 @@ def waveletEntropy(tensor,wavelet,level):# wavelet='db2', level=5):
     for w in range(ancho):
         desc_ew[:,w] = np.apply_along_axis(entropia_por_columnas, 1, tensor[:, w, :])
 
-    return desc_ew.astype(np.float32)
+    return normalizar(desc_ew)
 
 def highLowRatio(tensor):
     setearDimensiones(tensor)
@@ -139,7 +140,7 @@ def highLowRatio(tensor):
         energiaalta = np.sum(Pxx[:, int(freqs.size * 0.25)+1:], axis=1)
         desc_hlr[:, i] = energiaalta / energiabaja
 
-    return desc_hlr.astype(np.float32)
+    return normalizar(desc_hlr)
 
 
 def energiaFiltrada(x,sos):
@@ -150,26 +151,12 @@ def disenioFiltro(fmin,fmax,at_paso,at_rechazo):
     nfe, fne = ellipord(np.array([fmin*2, fmax*2]), np.array([fmin*2 - 0.01, fmax*2 + 0.01]), at_paso, at_rechazo)
     return ellip(nfe, at_paso, at_rechazo, fne, btype='band',output='sos') 
 
-def filtroBajo(tensor,fmax,fmin,at_paso,at_rechazo): #fmin=0.015, fmax=0.05, at_paso=1, at_rechazo=40):
+def filtro(tensor, fmin, fmax, at_paso,at_rechazo):
     fmin = float(fmin)
     fmax = float(fmax)
     at_paso = int(at_paso)
     at_rechazo = int(at_rechazo)
-    return np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo))
- 
-def filtroMedio(tensor,fmin,fmax,at_paso,at_rechazo): #fmin=0.05, fmax=0.25, at_paso=1, at_rechazo=40):     
-    fmin = float(fmin)
-    fmax = float(fmax)
-    at_paso = int(at_paso)
-    at_rechazo = int(at_rechazo)
-    return np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo))
-
-def filtroAlto(tensor, fmin, fmax, at_paso,at_rechazo):#fmin=0.25, fmax=0.4, at_paso=1, at_rechazo=40):
-    fmin = float(fmin)
-    fmax = float(fmax)
-    at_paso = int(at_paso)
-    at_rechazo = int(at_rechazo)
-    return np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo))
+    return normalizar(np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo)))
 
 def adri(tensor):
     setearDimensiones(tensor)
@@ -183,4 +170,4 @@ def adri(tensor):
         difer = tensor[:, :, k] - tensor[:, :, k - 1]
         desAdri += np.abs(difer) > um
 
-    return (desAdri/(frames-1)).astype(np.float32)
+    return normalizar((desAdri/(frames-1)))

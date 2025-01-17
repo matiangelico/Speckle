@@ -1,9 +1,49 @@
-const { DescriptorConfig } = require("../models/DescriptorConfig");
+const { DescriptorConfig } = require("../models/descriptorConfig");
+const defaultDescriptors = require("../../data/defaultDescriptors.json");
+
+
+//registrar valores predeterminados
+const registerDefaultDescriptors = async (userId) => {
+  try {
+    const existingConfig = await DescriptorConfig.findOne({ userId });
+    if (existingConfig) {
+      return { message: "User already has default descriptors." };
+    }
+
+    const newConfig = new DescriptorConfig({
+      userId,
+      descriptors: defaultDescriptors.descriptors,
+    });
+
+    await newConfig.save();
+
+    return { message: "Default descriptors added successfully." };
+  } catch (error) {
+    console.error("Error adding default descriptors:", error);
+    throw new Error("Failed to add default descriptors.");
+  }
+};
 
 const getAllDescriptors = async (req, res) => {
+
+  console.log('req.auth:', req.auth);
+  console.log('req.user:', req.user); 
+
+  if (!req.user || !req.user.sub) {
+    return res.status(401).json({ message: 'Usuario no autenticado.' });
+  }
+  const userId = req.user.sub;
+
   try {
-    const allDescriptors = await DescriptorConfig.find();
-    res.json(allDescriptors);
+    const config = await DescriptorConfig.findOne({ userId });
+
+
+    if (!config) {
+      const registrationResponse = await registerDefaultDescriptors(userId);
+      return res.status(201).json({ message: registrationResponse.message });
+    }
+
+    res.json(config.descriptors);
   } catch (error) {
     console.error("Error al obtener descriptores:", error);
     res.status(500).json({ message: "Error en el servidor" });
@@ -48,4 +88,4 @@ const updateDefaultValues = async (req, res) => {
   }
 };
 
-module.exports = { getAllDescriptors, updateDefaultValues };
+module.exports = { registerDefaultDescriptors, getAllDescriptors, updateDefaultValues };

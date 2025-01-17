@@ -9,14 +9,22 @@ const paramSchema = new Schema(
   { _id: false }
 );
 
-const descriptorSchema = new Schema({
+const descriptorSchema = new Schema(
+  {
   name: { type: String, required: true, unique: true },
   params: { type: [paramSchema], default: [] },
+  },
+  { _id: false }
+);
+
+const userDescriptorSchema = new Schema({
+  userId: { type: String, required: true, unique: true },
+  descriptors: { type: [descriptorSchema], default: [] },
 });
 
 const DescriptorConfig = mongoose.model(
   "DescriptorConfig",
-  descriptorSchema,
+  userDescriptorSchema,
   "descriptors"
 );
 

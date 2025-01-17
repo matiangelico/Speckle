@@ -1,4 +1,4 @@
-import "../styles/ImageModal.css"; // Importa el archivo CSS para el modal
+//import "../styles/ImageModal.css"; // Importa el archivo CSS para el modal
 
 const ImageModal = ({ image, onClose }) => {
   if (!image) return null; // No renderiza nada si no hay imagen

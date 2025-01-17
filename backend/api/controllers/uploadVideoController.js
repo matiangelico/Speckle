@@ -10,6 +10,8 @@ exports.uploadVideo = async (req, res) => {
   const filePath = req.file.path;
   const descriptors = req.body.descriptors;
 
+  console.log("El file path es ",filePath," y el descriptors: ",descriptors);
+
   try {
     if (typeof descriptors !== "string") {
       throw new Error("Los descriptores no están en un formato válido");
@@ -23,6 +25,8 @@ exports.uploadVideo = async (req, res) => {
     const response = await axios.post("http://localhost:8000/calc", formData, {
       headers: formData.getHeaders(),
     });
+
+    console.log("Response data es: ",response.data);
 
     res.status(200).json(response.data);
   } catch (error) {
