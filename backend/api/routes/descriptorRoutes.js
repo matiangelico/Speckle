@@ -2,14 +2,15 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const router = express.Router();
-const { authMiddleware } = require('../middlewares/jwt');
+//const { authMiddleware } = require('../middlewares/jwt');
 const {
   getAllDescriptors,
   updateDefaultValues,
   registerDefaultDescriptors,
 } = require("../controllers/descriptorController");
 
-router.get("/", authMiddleware, getAllDescriptors);
+//router.get("/", authMiddleware, getAllDescriptors);
+router.get("/", getAllDescriptors);
 
 router.get('/descriptors', (req, res) => {
   const filePath = path.join(__dirname, '../descriptors/descriptors.json');

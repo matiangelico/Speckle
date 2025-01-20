@@ -10,7 +10,6 @@ import clustering.minibatchKmeans as mkm
 import clustering.gmm as gmm
 import clustering.spectralClustering as spec
 import clustering.sustractivo as sustractivo
-import clustering.hdb as hdb
 import redneuronal.entrenamiento as train
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
