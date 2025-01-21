@@ -5,7 +5,7 @@ const path = require("path");
 
 exports.uploadVideo = async (req, res) => {
 
-  const TEMP_DIR = path.join(__dirname, "../../temporal");
+  const TEMP_DIR = path.join(__dirname, "../../uploads");
 
   if (!fs.existsSync(TEMP_DIR)) {
     fs.mkdirSync(TEMP_DIR, { recursive: true });
