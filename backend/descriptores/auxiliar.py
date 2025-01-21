@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
 from PIL import Image
-
+'''
 # Decodificar base64 y convertir a imagen
 def decode_base64_image(base64_string):
     image_data = base64.b64decode(base64_string)
@@ -16,7 +16,7 @@ with open('./output/imagenes_clustering.json', 'r') as f:
     imagenes_json = json.load(f)
 
 # Crear un solo plot para todas las imágenes
-fig, axes = plt.subplots(2, 2, figsize=(15, 12))  # Ajusta 4x5 para 17 imágenes
+fig, axes = plt.subplots(2, 4, figsize=(15, 12))  # Ajusta 4x5 para 17 imágenes
 
 # Aplanar los ejes para acceder fácilmente
 axes = axes.ravel()
@@ -36,4 +36,32 @@ for i, imagen in enumerate(imagenes_json):
 
 # Ajustar y mostrar el gráfico
 plt.tight_layout()
+plt.show()
+
+'''
+
+import json
+import base64
+from PIL import Image
+from io import BytesIO
+
+# Leer el archivo JSON
+with open('./output/imagen_prediccion.json', 'r') as f:
+    data = json.load(f)
+
+# Extraer la cadena base64 de la clave 'prediccion'
+imagen_base64 = data['prediccion']
+
+# Decodificar la cadena base64
+imagen_bytes = base64.b64decode(imagen_base64)
+
+# Convertir los bytes en una imagen
+imagen = Image.open(BytesIO(imagen_bytes))
+
+# Convertir la imagen a un arreglo de numpy
+imagen_array = np.array(imagen)
+
+# Mostrar la imagen usando matplotlib
+plt.imshow(imagen_array)
+plt.axis('off')  # Opcional: quitar los ejes
 plt.show()

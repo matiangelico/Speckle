@@ -2,11 +2,11 @@ const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
 
-const jsonData = require('../DatosPrueba/nombredescYparametros.json');
+const datos_descriptores = require('../DatosPrueba/todosDescyParams.json');
 
 const form = new FormData();
-form.append('file', fs.createReadStream('../matrizyvideo/moneda10.avi',));
-form.append('jsonData', JSON.stringify(jsonData))
+form.append('video_experiencia', fs.createReadStream('../matrizyvideo/moneda10.avi',));
+form.append('datos_descriptores', JSON.stringify(datos_descriptores))
 
 const jsonFormat = (key, value) => {
   // Si el valor es un array y tiene más de un número, convertirlo a una sola línea
