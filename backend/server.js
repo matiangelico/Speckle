@@ -2,7 +2,7 @@ const cors = require("cors");
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const { auth } = require("express-openid-connect");
+//const { auth } = require("express-openid-connect");
 
 const descriptorRoutes = require("./api/routes/descriptorRoutes");
 const uploadVideoRoutes = require("./api/routes/uploadVideoRoutes");

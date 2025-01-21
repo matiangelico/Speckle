@@ -1,11 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+//Utils
+import { convertToReadableDate } from '../utils/dateUtils';
+
+//Services
+import trainingService from '../services/trainingExperience'
+
+
 const traininingSlice = createSlice({
   name: "training",
   initialState: {
-    createdAt: Date.now(),
+    createdAt: convertToReadableDate(Date.now()),
     video: null,
     descriptors: [],
+    descriptorsResults: [],
   },
   reducers: {
     setVideo(state, action) {
@@ -86,6 +94,24 @@ const traininingSlice = createSlice({
 
       return { ...state, descriptors: updatedDescriptors };
     },
+    setDescriptorsResults(state, action) {
+      return { ...state, descriptorsResults: action.payload };
+    },
+    selectResultDescriptor(state, action) {
+      const name = action.payload;
+
+      const changedResults = state.descriptorsResults.map(
+        (result) =>
+          result.name === name
+            ? { ...result, checked: !result.checked } // Cambia el valor de "checked"
+            : result // Si no coincide, no hace cambios
+      );
+
+      return {
+        ...state,
+        descriptorsResults: changedResults,
+      };
+    },
   },
 });
 
@@ -95,6 +121,9 @@ export const {
   selectDescriptor,
   setHyperparameters,
   updateHyperparameter,
+  setDescriptorsResults,
+  selectResultDescriptor,
+
 } = traininingSlice.actions;
 
 export const initializeVideo = (file) => {
@@ -130,5 +159,21 @@ export const resetHyperparameters = () => {
     dispatch(setHyperparameters(defaultValues));
   };
 };
+
+// deprecated en el futuro
+export const initializeDescriptorsResult = () => {
+  return async dispatch => {
+      const results = await trainingService.getResults()
+
+      const descriptorResults = results.map((result) => ({
+        name: result.name,
+        image: result.resultImage,
+        checked: false,
+      }));
+
+      dispatch(setDescriptorsResults(descriptorResults))
+  }
+}
+// 
 
 export default traininingSlice.reducer;

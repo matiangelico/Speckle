@@ -1,27 +1,51 @@
+import styled from "styled-components";
+
+import { useDispatch, useSelector } from "react-redux";
+
+//Commons
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
+import ResultContainer from "../../common/resultContainer";
 
+//Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
+import { selectResultDescriptor } from '../../../reducers/trainingReducer';
 
-const SelectDescriptorsResults = ({ context, send }) => {
+const DescriptorResultsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Crea columnas que se ajustan al tamaño */
+  gap: 10px;
+  width: 100%;
+  height: min-content;
+  overflow-y: auto;
+
+  @media (min-height: 900px) {
+    gap: 20px;
+  }
+`;
+
+const SelectDescriptorsResults = ({ send }) => {
+  const dispatch = useDispatch();
+  const descriptorsResults = useSelector(
+    (state) => state.training.descriptorsResults
+  );
+
+  console.log("descriptorsResults", descriptorsResults);
+
   const handleBack = () => {
-    if (context.descriptors) {
-      send({ type: "BACK" }); // Avanzar al siguiente estado si hay un video
-    } else {
-      alert("Por favor, selecciona al menos un descriptor para continuar."); // Validación
-    }
+    send({ type: "BACK" });
   };
 
   const handleNext = () => {
-    if (context.descriptors) {
-      send({ type: "NEXT" }); // Avanzar al siguiente estado si hay un video
-    } else {
-      alert("Por favor, sube un video antes de continuar."); // Validación
-    }
+    send({ type: "NEXT" });
   };
 
-  console.log(context);
+  const expandImageInfo = () => {};
+
+  const handleResultSelected = (resultSelected) => {
+      dispatch(selectResultDescriptor(resultSelected));
+    };
 
   return (
     <>
@@ -32,7 +56,18 @@ const SelectDescriptorsResults = ({ context, send }) => {
         </h3>
       </div>
 
-      <div></div>
+      <DescriptorResultsContainer>
+        {descriptorsResults.map((result, index) => (
+          <ResultContainer
+            key={index}
+            title={result.name}
+            checked={result.checked}
+            base64Image={result.image}
+            handleSelect={handleResultSelected}
+            handleClickInfo={expandImageInfo}
+          />
+        ))}
+      </DescriptorResultsContainer>
 
       <div className='two-buttons-container'>
         <SecondaryButton

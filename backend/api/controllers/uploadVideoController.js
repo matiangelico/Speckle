@@ -3,38 +3,38 @@ const fs = require("fs");
 const axios = require("axios");
 
 exports.uploadVideo = async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No se recibió ningún archivo" });
+  if (!req.files || !req.files.video || !req.files.descriptors) {
+    return res.status(400).json({ error: "Faltan archivos: video o descriptors" });
   }
 
-  const filePath = req.file.path;
-  const descriptors = req.body.descriptors;
+  const videoPath = req.files.video[0].path;  
+  const descriptorsPath = req.files.descriptors[0].path;  
 
-  console.log("El file path es ",filePath," y el descriptors: ",descriptors);
+  const descriptors = JSON.parse(fs.readFileSync(descriptorsPath, 'utf8'));
+
+  console.log("El video path es ", videoPath, " y los descriptores son: ", descriptors);
 
   try {
-    if (typeof descriptors !== "string") {
-      throw new Error("Los descriptores no están en un formato válido");
-    }
-
     const formData = new FormData();
-    const fileStream = fs.createReadStream(filePath);
-    formData.append("file", fileStream, req.file.originalname);
-    formData.append("jsonData", descriptors); 
+    const fileStream = fs.createReadStream(videoPath);
 
-    const response = await axios.post("http://localhost:8000/calc", formData, {
+    formData.append("file", fileStream, req.files.video[0].originalname);  
+    formData.append("jsonData", JSON.stringify(descriptors)); 
+
+    const response = await axios.post("http://localhost:8000/descriptores", formData, {
       headers: formData.getHeaders(),
     });
 
-    console.log("Response data es: ",response.data);
+    const imagenes_descriptores = response.data.imagenes_descriptores;
 
-    res.status(200).json(response.data);
+    console.log("Le voy a mandar al front: ", imagenes_descriptores);
+
+    res.status(200).json({imagenes_descriptores});
   } catch (error) {
-    console.error("Error al enviar datos al servidor externo:", error.message);
+    console.error("Error al procesar la solicitud:", error.message);
     res.status(500).json({ error: error.message });
   }
 };
-
 
 
 

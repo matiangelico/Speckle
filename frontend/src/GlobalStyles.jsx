@@ -25,19 +25,18 @@ const GlobalStyles = createGlobalStyle`
   html {
     font-family: 'Inter', sans-serif;
     min-width: 375px;
+    overflow: hidden;
   }
 
   body {
     display: grid;
     place-items: center;
-    //width: 94.5rem;
     min-height: 100vh;
     margin: 0;
   }
 
   #root {
     width: 100%;
-    //max-width: 1512px;
     max-height: 100%;
   }
 
