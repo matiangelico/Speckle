@@ -1,40 +1,50 @@
 const FormData = require("form-data");
 const fs = require("fs");
 const axios = require("axios");
+const path = require("path");
 
 exports.uploadVideo = async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No se recibió ningún archivo" });
+
+  const TEMP_DIR = path.join(__dirname, "../../uploads");
+
+  if (!fs.existsSync(TEMP_DIR)) {
+    fs.mkdirSync(TEMP_DIR, { recursive: true });
+    console.log(`Carpeta temporal creada en: ${TEMP_DIR}`);
+  } 
+
+  if (!req.files || !req.files.video || !req.files.descriptors) {
+    return res.status(400).json({ error: "Faltan archivos: video o descriptors" });
   }
 
-  const filePath = req.file.path;
-  const descriptors = req.body.descriptors;
+  const videoPath = req.files.video[0].path;  
+  const descriptorsPath = req.files.descriptors[0].path;  
 
-  console.log("El file path es ",filePath," y el descriptors: ",descriptors);
+  const descriptors = JSON.parse(fs.readFileSync(descriptorsPath, 'utf8'));
 
   try {
-    if (typeof descriptors !== "string") {
-      throw new Error("Los descriptores no están en un formato válido");
-    }
-
     const formData = new FormData();
-    const fileStream = fs.createReadStream(filePath);
-    formData.append("file", fileStream, req.file.originalname);
-    formData.append("jsonData", descriptors); 
+    const videoStream = fs.createReadStream(videoPath);
 
-    const response = await axios.post("http://localhost:8000/calc", formData, {
+    formData.append("video_experiencia", videoStream, req.files.video[0].originalname);  
+    formData.append("datos_descriptores", JSON.stringify(descriptors)); 
+
+    const response = await axios.post("http://localhost:8000/descriptores", formData, {
       headers: formData.getHeaders(),
     });
 
-    console.log("Response data es: ",response.data);
+    const imagenes_descriptores = response.data.imagenes_descriptores;
+    const matrices_descriptores = response.data.matrices_descriptores;
 
-    res.status(200).json(response.data);
+    const matricesFilePath = path.join(TEMP_DIR, "matrices_descriptores.json");
+    fs.writeFileSync(matricesFilePath, JSON.stringify(matrices_descriptores, null, 2));
+    console.log(`Archivo JSON creado en: ${matricesFilePath}`);
+
+    res.status(200).json({imagenes_descriptores});
   } catch (error) {
-    console.error("Error al enviar datos al servidor externo:", error.message);
+    console.error("Error al procesar la solicitud:", error.message);
     res.status(500).json({ error: error.message });
   }
 };
-
 
 
 

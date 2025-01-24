@@ -7,23 +7,22 @@ import aviamat
 import generaImagen as gi
 import clustering.kmeans as kmeans
 import clustering.minibatchKmeans as mkm
-import clustering.gmm as gmm
+import clustering.gauss as gauss
 import clustering.spectralClustering as spec
 import clustering.sustractivo as sustractivo
-import clustering.hdb as hdb
 import redneuronal.entrenamiento as train
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from tensorflow import keras
 from tensorflow import metrics
-import normalizar 
+from normalizar import normalizar
 
-app = FastAPI()
+app = FastAPI() 
 
 rutinas_clustering = {
     "Kmeans" : kmeans.km,
     "MiniBatch Kmeans" : mkm.mbkm,
-    "GMM" : gmm.gmm,
+    "Promedio Gaussiano" : gauss.bc,
     "Spectral Clustering" : spec.sc,
     "Sustractive Clustering": sustractivo.sus,
 }
@@ -49,11 +48,11 @@ rutinas_descriptores = {
 }
 
 @app.post("/descriptores")
-async def descriptores(file: UploadFile = File(...), jsonData: str = Form(...)):
-    videoAvi = await file.read()
-    print(f"Archivo recibido: {file.filename}, tamaño: {len(videoAvi)} bytes")
+async def descriptores(video_experiencia: UploadFile = File(...), datos_descriptores: str = Form(...)):
+    videoAvi = await video_experiencia.read()
+    print(f"Archivo recibido: {video_experiencia.filename}, tamaño: {len(videoAvi)} bytes")
     tensor = np.array(aviamat.videoamat(videoAvi)).transpose(1,2,0).astype(np.uint8)
-    desc_params = json.loads(jsonData)
+    desc_params = json.loads(datos_descriptores)
 
     print(f"JSON recibido: {desc_params}")
     
@@ -75,12 +74,12 @@ async def descriptores(file: UploadFile = File(...), jsonData: str = Form(...)):
 
 
 @app.post("/clustering")
-async def clustering(jsonFile: UploadFile = File(), jsonData: str = Form(...)):
+async def clustering(matrices_descriptores: UploadFile = File(), datos_clustering: str = Form(...)):
 
-    desc_json = await jsonFile.read()
+    desc_json = await matrices_descriptores.read()
     matrices_desc = json.loads(desc_json)
 
-    clust_params = json.loads(jsonData)
+    clust_params = json.loads(datos_clustering)
 
     total = len(matrices_desc)
     
@@ -99,7 +98,7 @@ async def clustering(jsonFile: UploadFile = File(), jsonData: str = Form(...)):
 
     for datos in clust_params:
         rutina = rutinas_clustering.get(datos['name'])
-        param = int(datos['radius']) if (datos['name']=="Sustractive Clustering")else int(datos['nro_clusters'])
+        param = int(datos['radius']) if (datos['name']=="Sustractive Clustering"or datos['name']=="Promedio Gaussiano")else int(datos['nro_clusters'])
         print(f"Nombre del Clustering: {datos['name']}. Parametro {param}")
         matriz = rutina(tensor,param).tolist()
         imagenes = {"nombre_clustering" : datos['name'],"imagen_clustering" : gi.colorMap(matriz)}
@@ -111,35 +110,35 @@ async def clustering(jsonFile: UploadFile = File(), jsonData: str = Form(...)):
 
 
 @app.post("/entrenamientoRed")
-async def neuronal(background_tasks: BackgroundTasks,jsonFile1: UploadFile = File(), jsonFile2: UploadFile = File()):
+async def neuronal(background_tasks: BackgroundTasks,matrices_descriptores: UploadFile = File(),matriz_clustering: UploadFile = File(), parametros_entrenamiento: str = Form(...)):
     
-    matrices_json = await jsonFile1.read()
-    matrices = json.loads(matrices_json)
+    desc_json = await matrices_descriptores.read()
+    matrices_desc = json.loads(desc_json)
 
-    params_json = await jsonFile2.read()
-    params = json.loads(params_json)
+    clus_json = await matriz_clustering.read()
+    matriz_clus = json.loads(clus_json)
 
-    
-    desc = matrices['descriptores']
-    resultados = np.array(matrices['clustering']).reshape(-1)
-    total = len(desc)
+    train_params = json.loads(parametros_entrenamiento)
+
+    total = len(matrices_desc)
+
     print(f"Nro de matrices de descriptores recibidas: {total}")
-    print(f"Nro de capas: {len(params)}")
+    print(f"Clustering seleccionado: {matriz_clus['nombre_clustering']}")
 
-    tensor = np.zeros((len (desc[0]),len (desc[1]),total))
-
-
-    for t, datos in enumerate(desc):
-        tensor[:, :, t] = np.array(datos)
+    tensor = np.zeros((len(matrices_desc[0]['matriz_descriptor'][0]),len(matrices_desc[0]['matriz_descriptor'][1]),total))
+    
+    for t, datos in enumerate(matrices_desc):
+        tensor[:, :, t] = np.array(datos['matriz_descriptor'])
     
     entrada = tensor.reshape(-1,total)
+    resultados = np.array(matriz_clus['matriz_clustering']).reshape(-1)
 
     print (entrada.shape)
     print (resultados.shape)
 
-    parametros_entrenamiento = np.zeros((3,len(params)))
+    parametros_entrenamiento = np.zeros((3,len(train_params)))
 
-    for t,datos in enumerate(params):      
+    for t,datos in enumerate(train_params):      
         parametros_entrenamiento[t,0]=float(datos['Neuronas'])
         parametros_entrenamiento[t,1]=int(datos['BatchNormalization'])
         parametros_entrenamiento[t,2]=float(datos['Dropout'])
@@ -148,10 +147,10 @@ async def neuronal(background_tasks: BackgroundTasks,jsonFile1: UploadFile = Fil
     
     model = train.entrenamientoRed(entrada,resultados,parametros_entrenamiento)
 
-    model_path = "modelo_entrenado.h5"
+    model_path = "modelo_entrenado.keras"
     model.save(model_path)
 
-    respuesta = FileResponse(model_path, filename="modelo_entrenado.h5", media_type='application/octet-stream')
+    respuesta = FileResponse(model_path, filename="modelo_entrenado.keras", media_type='application/octet-stream')
 
     background_tasks.add_task(eliminar_archivo, model_path)
     
@@ -161,33 +160,28 @@ async def neuronal(background_tasks: BackgroundTasks,jsonFile1: UploadFile = Fil
 def eliminar_archivo(model_path: str):
     os.remove(model_path)
 
-
 @app.post("/prediccionRed")
-async def prediccion(background_tasks: BackgroundTasks,file: UploadFile = File(...), jsonFile: UploadFile = File()):
+async def prediccion(background_tasks: BackgroundTasks,modelo_entrenado: UploadFile = File(...), matrices_descriptores: UploadFile = File()):
     
-    model_path = "modelo_temporal.h5"
+    model_path = "modelo_temporal.keras"
     with open(model_path, "wb") as f:
-        f.write(await file.read())
-
-    #modelo = await file.read()
-    #print(f"Archivo recibido: {file.filename}, tamaño: {len(modelo)} bytes")
-    
+        f.write(await modelo_entrenado.read())
     
     modelo = keras.models.load_model(model_path, custom_objects={'mse': metrics.MeanSquaredError()})
     
-  
-    descriptores_json = await jsonFile.read()
-    descriptores = json.loads(descriptores_json)
-    
-    desc = descriptores['descriptores']
-    total = len(desc)
+    desc_json = await matrices_descriptores.read()
+    matrices_desc = json.loads(desc_json)
+
+    total = len(matrices_desc)
     print(f"Nro de matrices de descriptores recibidas: {total}")
+    
+    alto = len(matrices_desc[0]['matriz_descriptor'][0])
+    ancho = len(matrices_desc[0]['matriz_descriptor'][1])
 
-    tensor = np.zeros((len (desc[0]),len (desc[1]),total))
-
-
-    for t, datos in enumerate(desc):
-        tensor[:, :, t] = np.array(datos)
+    tensor = np.zeros((alto,ancho,total))
+    
+    for t, datos in enumerate(matrices_desc):
+        tensor[:, :, t] = np.array(datos['matriz_descriptor'])
     
     entrada = tensor.reshape(-1,total)
 
@@ -195,12 +189,11 @@ async def prediccion(background_tasks: BackgroundTasks,file: UploadFile = File(.
    
     resultado = modelo.predict(entrada)
 
-    resultado = normalizar.n(resultado.reshape(300,300))
+    resultado = normalizar(resultado.reshape(alto,ancho))
 
     background_tasks.add_task(eliminar_archivo, model_path)
     
-    respuesta = {
-        "prediccion": resultado.tolist(),
-    }
+    respuesta_matriz = {"prediccion": resultado.tolist()}
+    respuesta_imagen = {"prediccion": gi.colorMap(resultado.tolist())}
 
-    return respuesta
+    return {"matriz_prediccion":respuesta_matriz,"imagen_prediccion":respuesta_imagen}

@@ -2,14 +2,14 @@ const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
 
-const jsonData = require('../output/matrices_descriptores.json');
-const jsonData2 = require('../DatosPrueba/nomClus+nroClusters.json');
+const matrices_descriptores = require('../output/matrices_descriptores.json');
+const datos_clustering = require('../DatosPrueba/nomClus+nroClusters.json');
 
-fs.writeFileSync('descriptores_temp.json', JSON.stringify(jsonData));
+fs.writeFileSync('descriptores_temp.json', JSON.stringify(matrices_descriptores));
 
 const form = new FormData();
-form.append('jsonFile', fs.createReadStream('descriptores_temp.json'));
-form.append('jsonData', JSON.stringify(jsonData2))
+form.append('matrices_descriptores', fs.createReadStream('descriptores_temp.json'));
+form.append('datos_clustering', JSON.stringify(datos_clustering))
 
 
 const jsonFormat = (key, value) => {
@@ -37,6 +37,7 @@ axios.post('http://127.0.0.1:8000/clustering', form, {
               console.log(clustering.nombre_clustering); 
           });
         }
+         fs.unlinkSync("descriptores_temp.json");
   })
     .catch(error => {
       console.error('Error:', error);
