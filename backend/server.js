@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const descriptorRoutes = require("./api/routes/descriptorRoutes");
 const uploadVideoRoutes = require("./api/routes/uploadVideoRoutes");
 const clusteringRoutes = require("./api/routes/clusteringRoutes");
+const trainingRoutes = require("./api/routes/trainingRoutes");
 
 app.use(cors());
 app.use(express.json()); 
@@ -28,6 +29,7 @@ mongoose
 app.use("/descriptor", descriptorRoutes);
 app.use("/uploadVideo", uploadVideoRoutes);
 app.use("/clustering", clusteringRoutes);
+app.use("/training", trainingRoutes);
 
 
 const PORT = 5000;

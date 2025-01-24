@@ -27,16 +27,20 @@ exports.calculateClustering = async (req, res) => {
     }
 
     const filteredMatricesPath = path.join(__dirname, "../../uploads/filteredMatrices.json");
-    const filteredMatricesJson = JSON.stringify(filteredMatrices, null, 2);
-
-    fs.writeFileSync(filteredMatricesPath, filteredMatricesJson);
+    fs.writeFileSync(filteredMatricesPath, JSON.stringify(filteredMatrices, null, 2));
     console.log(`Guardado filteredMatrices.json en ${filteredMatricesPath}`);
 
-    const clusteringJson = JSON.stringify(clustering);
-
     const formData = new FormData();
-    formData.append("matrices_descriptores", Buffer.from(filteredMatricesJson), "matrices.json");
-    formData.append("datos_clustering", clusteringJson);
+    const fileStream = fs.createReadStream(filteredMatricesPath);
+
+    formData.append("matrices_descriptores", fileStream, {
+      filename: "matrices.json",
+      contentType: "application/json",
+    });
+
+    formData.append("datos_clustering", JSON.stringify(clustering), {
+      contentType: "application/json",
+    });
 
     const response = await axios.post("http://localhost:8000/clustering", formData, {
       headers: formData.getHeaders(),
@@ -44,18 +48,18 @@ exports.calculateClustering = async (req, res) => {
 
     console.log("Respuesta de la API Python:", response.data);
 
-    const { imagenesClustering, matricesClustering } = response.data;
+    const { imagenes_clustering, matrices_clustering } = response.data;
 
-    if (!imagenesClustering || !matricesClustering) {
+    if (!imagenes_clustering || !matrices_clustering) {
       return res.status(500).json({ error: "Faltan datos en la respuesta de la API Python" });
     }
 
-    const matricesClusteringPath = path.join(__dirname, "../uploads/matricesClustering.json");
-    fs.writeFileSync(matricesClusteringPath, JSON.stringify(matricesClustering, null, 2));
+    const matricesClusteringPath = path.join(__dirname, "../../uploads/matricesClustering.json");
+    fs.writeFileSync(matricesClusteringPath, JSON.stringify(matrices_clustering, null, 2));
 
     console.log(`Guardado matricesClustering.json en ${matricesClusteringPath}`);
 
-    res.status(200).json({ imagenesClustering });
+    res.status(200).json({ imagenes_clustering });
   } catch (error) {
     console.error("Error al procesar la solicitud:", error.message);
     res.status(500).json({ error: error.message });
