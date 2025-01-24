@@ -75,15 +75,16 @@ const StyledText = styled.span`
   text-transform: none;
 `;
 
-const PrimaryButton = ({ handleClick, SVG, text, disabled, ariaLabel }) => {
+const PrimaryButton = ({ handleClick, LeftSVG = null, RightSVG = null, text, disabled, ariaLabel }) => {
   return (
     <StyledPrimaryButton
       onClick={handleClick}
       disabled={disabled}
       aria-label={ariaLabel || text}
-    >
+      >
+      {LeftSVG && <LeftSVG />}
       <StyledText>{text}</StyledText>
-      {SVG && <SVG />}
+      {RightSVG && <RightSVG />}
     </StyledPrimaryButton>
   );
 };

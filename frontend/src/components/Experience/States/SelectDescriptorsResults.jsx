@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 //Commons
@@ -10,11 +11,15 @@ import ResultContainer from "../../common/resultContainer";
 //Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
-import { selectResultDescriptor } from '../../../reducers/trainingReducer';
+import { selectResultDescriptor } from "../../../reducers/trainingReducer";
+import ResultModal from "../Utils/ResultModal";
 
 const DescriptorResultsContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Crea columnas que se ajustan al tamaño */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(250px, 1fr)
+  ); /* Crea columnas que se ajustan al tamaño */
   gap: 10px;
   width: 100%;
   height: min-content;
@@ -30,6 +35,7 @@ const SelectDescriptorsResults = ({ send }) => {
   const descriptorsResults = useSelector(
     (state) => state.training.descriptorsResults
   );
+  const [modalInfo, setModalInfo] = useState(null);
 
   console.log("descriptorsResults", descriptorsResults);
 
@@ -41,11 +47,17 @@ const SelectDescriptorsResults = ({ send }) => {
     send({ type: "NEXT" });
   };
 
-  const expandImageInfo = () => {};
+  const openModal = (image, title) => {
+    setModalInfo({ image, title });
+  };
+
+  const closeModal = () => {
+    setModalInfo(null);
+  };
 
   const handleResultSelected = (resultSelected) => {
-      dispatch(selectResultDescriptor(resultSelected));
-    };
+    dispatch(selectResultDescriptor(resultSelected));
+  };
 
   return (
     <>
@@ -64,7 +76,7 @@ const SelectDescriptorsResults = ({ send }) => {
             checked={result.checked}
             base64Image={result.image}
             handleSelect={handleResultSelected}
-            handleClickInfo={expandImageInfo}
+            handleClickInfo={() => openModal(result.image, result.name)}
           />
         ))}
       </DescriptorResultsContainer>
@@ -82,6 +94,13 @@ const SelectDescriptorsResults = ({ send }) => {
           text={"Editar parametros de clustering"}
         />
       </div>
+
+      <ResultModal
+        image={modalInfo?.image}
+        title={modalInfo?.title}
+        isOpen={!!modalInfo}
+        onClose={closeModal}
+      />
     </>
   );
 };
