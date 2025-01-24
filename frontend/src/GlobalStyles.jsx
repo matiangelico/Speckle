@@ -43,6 +43,38 @@ const GlobalStyles = createGlobalStyle`
   input:focus {
     outline: none;
   }
+
+  /* MODAL */
+  .Modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--white);
+    
+    max-width: 530px;
+    max-height: 90vh;
+    z-index: 101;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    border-radius: 16px;
+    border: 2.5px solid var(--dark-800);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  /* OVERLAY */
+  .Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 100;
+  }
 `;
 
 export default GlobalStyles;

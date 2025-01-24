@@ -16,9 +16,9 @@ const StyledButton = styled.button`
     color: var(--dark-400);
   }
 
-  &:focus {
-    outline: 3px solid #0056b3;
-  }
+  // &:focus {
+  //   outline: 3px solid #0056b3;
+  // }
 
   &:active {
     color: var(--dark-800);
@@ -31,8 +31,8 @@ const StyledButton = styled.button`
 
 const SvgButton = ({ SvgIcon, onClick, ariaLabel }) => {
   const handleClick = (event) => {
-    event.stopPropagation(); // Detener la propagación del evento al contenedor padre
-    onClick(); // Llamamos a la función pasada en props (puede ser la lógica adicional que necesites)
+    event.stopPropagation();
+    onClick(); // Llama a la función pasada en props
   };
 
   return (
