@@ -16,7 +16,7 @@ const StyledSecondaryButton = styled.button`
   font-weight: 700;
   cursor: pointer;
   overflow: hidden; /* Para ocultar la animación que exceda los bordes */
-  z-index: 1; /* Asegura que el texto esté por encima */
+  z-index: 1;
   transition: color 0.3s ease;
 
   svg {

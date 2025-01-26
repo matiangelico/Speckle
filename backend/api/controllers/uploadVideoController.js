@@ -1,8 +1,17 @@
 const FormData = require("form-data");
 const fs = require("fs");
 const axios = require("axios");
+const path = require("path");
 
 exports.uploadVideo = async (req, res) => {
+
+  const TEMP_DIR = path.join(__dirname, "../../uploads");
+
+  if (!fs.existsSync(TEMP_DIR)) {
+    fs.mkdirSync(TEMP_DIR, { recursive: true });
+    console.log(`Carpeta temporal creada en: ${TEMP_DIR}`);
+  } 
+
   if (!req.files || !req.files.video || !req.files.descriptors) {
     return res.status(400).json({ error: "Faltan archivos: video o descriptors" });
   }
@@ -12,22 +21,23 @@ exports.uploadVideo = async (req, res) => {
 
   const descriptors = JSON.parse(fs.readFileSync(descriptorsPath, 'utf8'));
 
-  console.log("El video path es ", videoPath, " y los descriptores son: ", descriptors);
-
   try {
     const formData = new FormData();
-    const fileStream = fs.createReadStream(videoPath);
+    const videoStream = fs.createReadStream(videoPath);
 
-    formData.append("file", fileStream, req.files.video[0].originalname);  
-    formData.append("jsonData", JSON.stringify(descriptors)); 
+    formData.append("video_experiencia", videoStream, req.files.video[0].originalname);  
+    formData.append("datos_descriptores", JSON.stringify(descriptors)); 
 
     const response = await axios.post("http://localhost:8000/descriptores", formData, {
       headers: formData.getHeaders(),
     });
 
     const imagenes_descriptores = response.data.imagenes_descriptores;
+    const matrices_descriptores = response.data.matrices_descriptores;
 
-    console.log("Le voy a mandar al front: ", imagenes_descriptores);
+    const matricesFilePath = path.join(TEMP_DIR, "matrices_descriptores.json");
+    fs.writeFileSync(matricesFilePath, JSON.stringify(matrices_descriptores, null, 2));
+    console.log(`Archivo JSON creado en: ${matricesFilePath}`);
 
     res.status(200).json({imagenes_descriptores});
   } catch (error) {

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useEffect } from "react";
 
 import { useAuth0 } from "@auth0/auth0-react";
+import ReactModal from 'react-modal';
 
 // Redux
 import { useDispatch } from "react-redux";
@@ -48,6 +49,9 @@ const App = () => {
   // };
 
   // getToken()
+
+  ReactModal.setAppElement("#root");
+
 
   return (
     <>

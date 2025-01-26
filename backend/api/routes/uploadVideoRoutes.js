@@ -10,4 +10,6 @@ router.post("/", upload.fields([
     { name: "descriptors", maxCount: 1 }  
   ]), uploadController.uploadVideo);
 
+
+
 module.exports = router;
