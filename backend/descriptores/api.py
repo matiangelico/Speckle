@@ -1,29 +1,30 @@
-from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks, Header, HTTPException
+from fastapi.responses import FileResponse
 import descriptores as ds
 import numpy as np
 import json
 import aviamat
 import generaImagen as gi
-import clustering.kmeans as kmeans
-import clustering.minibatchKmeans as mkm
-import clustering.gauss as gauss
-import clustering.spectralClustering as spec
-import clustering.sustractivo as sustractivo
+from clustering import kmeans,minibatchKmeans,gauss,spectralClustering,sustractivo
 import redneuronal.entrenamiento as train
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from tensorflow import keras
 from tensorflow import metrics
 from normalizar import normalizar
+from dotenv import load_dotenv
+import uvicorn
 
 app = FastAPI() 
 
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
+
 rutinas_clustering = {
     "Kmeans" : kmeans.km,
-    "MiniBatch Kmeans" : mkm.mbkm,
+    "MiniBatch Kmeans" : minibatchKmeans.mbkm,
     "Promedio Gaussiano" : gauss.bc,
-    "Spectral Clustering" : spec.sc,
+    "Spectral Clustering" : spectralClustering.sc,
     "Sustractive Clustering": sustractivo.sus,
 }
 
@@ -47,8 +48,14 @@ rutinas_descriptores = {
     "Adri": ds.adri,
 }
 
+async def validaApiKey(x_api_key):
+    if (x_api_key != API_KEY):
+        raise HTTPException(status_code=403, detail="Invalid API Key")
+
 @app.post("/descriptores")
-async def descriptores(video_experiencia: UploadFile = File(...), datos_descriptores: str = Form(...)):
+async def descriptores(x_api_key: str = Header(None),video_experiencia: UploadFile = File(...), datos_descriptores: str = Form(...)):
+    
+    await validaApiKey(x_api_key)
     videoAvi = await video_experiencia.read()
     print(f"Archivo recibido: {video_experiencia.filename}, tamaño: {len(videoAvi)} bytes")
     tensor = np.array(aviamat.videoamat(videoAvi)).transpose(1,2,0).astype(np.uint8)
@@ -74,8 +81,8 @@ async def descriptores(video_experiencia: UploadFile = File(...), datos_descript
 
 
 @app.post("/clustering")
-async def clustering(matrices_descriptores: UploadFile = File(), datos_clustering: str = Form(...)):
-
+async def clustering(x_api_key: str = Header(None),matrices_descriptores: UploadFile = File(), datos_clustering: str = Form(...)):
+    await validaApiKey(x_api_key)
     desc_json = await matrices_descriptores.read()
     matrices_desc = json.loads(desc_json)
 
@@ -110,8 +117,8 @@ async def clustering(matrices_descriptores: UploadFile = File(), datos_clusterin
 
 
 @app.post("/entrenamientoRed")
-async def neuronal(background_tasks: BackgroundTasks,matrices_descriptores: UploadFile = File(),matriz_clustering: UploadFile = File(), parametros_entrenamiento: str = Form(...)):
-    
+async def neuronal(background_tasks: BackgroundTasks,x_api_key: str = Header(None),matrices_descriptores: UploadFile = File(),matriz_clustering: UploadFile = File(), parametros_entrenamiento: str = Form(...)):
+    await validaApiKey(x_api_key)
     desc_json = await matrices_descriptores.read()
     matrices_desc = json.loads(desc_json)
 
@@ -152,7 +159,7 @@ async def neuronal(background_tasks: BackgroundTasks,matrices_descriptores: Uplo
 
     respuesta = FileResponse(model_path, filename="modelo_entrenado.keras", media_type='application/octet-stream')
 
-    background_tasks.add_task(eliminar_archivo, model_path)
+    background_tasks.add_task(eliminar_archivo, model_path) 
     
     return respuesta
 
@@ -161,39 +168,49 @@ def eliminar_archivo(model_path: str):
     os.remove(model_path)
 
 @app.post("/prediccionRed")
-async def prediccion(background_tasks: BackgroundTasks,modelo_entrenado: UploadFile = File(...), matrices_descriptores: UploadFile = File()):
+async def prediccion(background_tasks: BackgroundTasks,x_api_key: str = Header(None),modelo_entrenado: UploadFile = File(...), matrices_descriptores: UploadFile = File()):
     
+    await validaApiKey(x_api_key)
     model_path = "modelo_temporal.keras"
     with open(model_path, "wb") as f:
         f.write(await modelo_entrenado.read())
-    
+
     modelo = keras.models.load_model(model_path, custom_objects={'mse': metrics.MeanSquaredError()})
-    
+
     desc_json = await matrices_descriptores.read()
     matrices_desc = json.loads(desc_json)
 
     total = len(matrices_desc)
     print(f"Nro de matrices de descriptores recibidas: {total}")
-    
+
     alto = len(matrices_desc[0]['matriz_descriptor'][0])
     ancho = len(matrices_desc[0]['matriz_descriptor'][1])
 
     tensor = np.zeros((alto,ancho,total))
-    
+
     for t, datos in enumerate(matrices_desc):
         tensor[:, :, t] = np.array(datos['matriz_descriptor'])
-    
+
     entrada = tensor.reshape(-1,total)
 
     print (entrada.shape)
-   
+
     resultado = modelo.predict(entrada)
 
     resultado = normalizar(resultado.reshape(alto,ancho))
 
     background_tasks.add_task(eliminar_archivo, model_path)
-    
+
     respuesta_matriz = {"prediccion": resultado.tolist()}
     respuesta_imagen = {"prediccion": gi.colorMap(resultado.tolist())}
 
     return {"matriz_prediccion":respuesta_matriz,"imagen_prediccion":respuesta_imagen}
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "api:app", 
+        host=os.getenv("host"),
+        port=os.getenv("port"), 
+        ssl_keyfile=os.getenv("ssl_keyfile"), 
+        ssl_certfile=os.getenv("ssl_certfile"),
+    )

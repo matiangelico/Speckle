@@ -1,4 +1,3 @@
-import numpy as np
 from sklearn.cluster import KMeans
 from joblib import parallel_backend
 import os

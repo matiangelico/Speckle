@@ -1,6 +1,12 @@
 const axios = require('axios');
+const https = require('https');
 const fs = require('fs');
 const FormData = require('form-data');
+require('dotenv').config({path:'../.env'});
+
+const agent = new https.Agent({ rejectUnauthorized: false });
+
+const API_KEY = process.env.API_KEY
 
 const matrices_descriptores = require('../output/matrices_descriptores.json');
 const datos_clustering = require('../DatosPrueba/nomClus+nroClusters.json');
@@ -12,18 +18,12 @@ form.append('matrices_descriptores', fs.createReadStream('descriptores_temp.json
 form.append('datos_clustering', JSON.stringify(datos_clustering))
 
 
-const jsonFormat = (key, value) => {
-  // Si el valor es un array y tiene más de un número, convertirlo a una sola línea
-  if (Array.isArray(value) && value.length > 10) {
-      return JSON.stringify(value); // Lo deja en una sola línea
-  }
-  return value; // Devuelve normalmente los otros valores
-};
-
-axios.post('http://127.0.0.1:8000/clustering', form, {
-    headers: {
-        ...form.getHeaders()
-    }
+axios.post('https://127.0.0.1:8000/clustering', form, {
+      headers: {
+      'x-api-key': API_KEY,
+      ...form.getHeaders()
+    },
+    httpsAgent: agent
 })
     .then(response => {
         const respuesta = response.data
@@ -40,5 +40,9 @@ axios.post('http://127.0.0.1:8000/clustering', form, {
          fs.unlinkSync("descriptores_temp.json");
   })
     .catch(error => {
-      console.error('Error:', error);
+      if (error.response){
+        console.error('Error:');
+        console.log('API Key cargada:', process.env.API_KEY);
+      }
+
     });

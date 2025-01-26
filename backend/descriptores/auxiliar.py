@@ -38,8 +38,8 @@ for i, imagen in enumerate(imagenes_json):
 plt.tight_layout()
 plt.show()
 
-'''
 
+'''
 import json
 import base64
 from PIL import Image

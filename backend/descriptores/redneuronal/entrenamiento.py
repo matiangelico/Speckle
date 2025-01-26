@@ -8,7 +8,7 @@ from keras.callbacks import EarlyStopping
 
 def entrenamientoRed (X_train, Y_train, params):
 
-    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+    early_stopping = EarlyStopping(monitor='loss', patience=3, restore_best_weights=True)
 
     model = keras.Sequential([
         keras.layers.Input(shape=(X_train.shape[1],)), 
@@ -29,7 +29,7 @@ def entrenamientoRed (X_train, Y_train, params):
     model.summary()
 
     # Entrenar el modelo
-    model.fit(X_train, Y_train, epochs=10, batch_size=64, verbose=1, callbacks=[early_stopping])
+    model.fit(X_train, Y_train, epochs=40, batch_size=64, verbose=1, callbacks=[early_stopping])
 
     # Guardar el modelo entrenado
     #model.save("modelo_entrenado.h5")
