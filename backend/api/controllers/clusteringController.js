@@ -10,8 +10,17 @@ exports.calculateClustering = async (req, res) => {
     return res.status(400).json({ error: "Se requieren descriptores y métodos de clustering" });
   }
 
+  if (!req.auth || !req.auth.payload || !req.auth.payload.sub) {
+    return res.status(401).json({ error: "Usuario no autenticado" });
+  }
+
+  const userId = req.auth.payload.sub;
+  const sanitizedUserId = userId.replace(/[|:<>"?*]/g, "_");
+  const userTempDir = path.join(__dirname, "../../uploads/temp", sanitizedUserId);
+
   try {
-    const matricesPath = path.join(__dirname, "../../uploads/matrices_descriptores.json");
+
+    const matricesPath = path.join(userTempDir, "matrices_descriptores.json");
 
     if (!fs.existsSync(matricesPath)) {
       return res.status(404).json({ error: "El archivo matrices_descriptores.json no existe" });
@@ -26,7 +35,7 @@ exports.calculateClustering = async (req, res) => {
       return res.status(404).json({ error: "No se encontraron matrices para los descriptores enviados" });
     }
 
-    const filteredMatricesPath = path.join(__dirname, "../../uploads/filteredMatrices.json");
+    const filteredMatricesPath = path.join(userTempDir, "filteredMatrices.json");
     fs.writeFileSync(filteredMatricesPath, JSON.stringify(filteredMatrices, null, 2));
     console.log(`Guardado filteredMatrices.json en ${filteredMatricesPath}`);
 
@@ -54,7 +63,7 @@ exports.calculateClustering = async (req, res) => {
       return res.status(500).json({ error: "Faltan datos en la respuesta de la API Python" });
     }
 
-    const matricesClusteringPath = path.join(__dirname, "../../uploads/matricesClustering.json");
+    const matricesClusteringPath = path.join(userTempDir, "matricesClustering.json");
     fs.writeFileSync(matricesClusteringPath, JSON.stringify(matrices_clustering, null, 2));
 
     console.log(`Guardado matricesClustering.json en ${matricesClusteringPath}`);

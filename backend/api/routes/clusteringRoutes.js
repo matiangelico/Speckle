@@ -1,10 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
 const clusteringController = require("../controllers/clusteringController");
+const authMiddleware = require("../middlewares/auth");
 
-const upload = multer({ dest: "uploads/" });
-
-router.post("/", clusteringController.calculateClustering);
+router.post("/",authMiddleware, clusteringController.calculateClustering);
 
 module.exports = router;

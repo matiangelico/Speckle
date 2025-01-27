@@ -1,0 +1,44 @@
+[
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840db7"
+    },
+    "name": "Entropia Shannon",
+    "params": []
+  },  
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840dbe"
+    },
+    "name": "Fuzzy",
+    "params": []
+  },
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840db1"
+    },
+    "name": "Fujii",
+    "params": []
+  },
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840db4"
+    },
+    "name": "Adri",
+    "params": []
+  },
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840db6"
+    },
+    "name": "Frecuencia Media",
+    "params": []
+  },
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840dba"
+    },
+    "name": "High Low Ratio",
+    "params": []
+  }
+]

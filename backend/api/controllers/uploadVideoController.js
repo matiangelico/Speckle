@@ -4,12 +4,17 @@ const axios = require("axios");
 const path = require("path");
 
 exports.uploadVideo = async (req, res) => {
+  console.log("Auth payload:", req.auth?.payload); 
+  console.log("Cuerpo de la solicitud (body):", req.body);
+  console.log("Archivos recibidos:", req.files); 
 
-  const TEMP_DIR = path.join(__dirname, "../../uploads");
+  const userId = req.auth.payload.sub; 
+  const sanitizedUserId = userId.replace(/[|:<>"?*]/g, "_");
+  const userTempDir = path.join(__dirname, "../../uploads/temp", sanitizedUserId);
 
-  if (!fs.existsSync(TEMP_DIR)) {
-    fs.mkdirSync(TEMP_DIR, { recursive: true });
-    console.log(`Carpeta temporal creada en: ${TEMP_DIR}`);
+  if (!fs.existsSync(userTempDir)) {
+    fs.mkdirSync(userTempDir, { recursive: true });
+    console.log(`Carpeta temporal creada en: ${userTempDir}`);
   } 
 
   if (!req.files || !req.files.video || !req.files.descriptors) {
@@ -35,7 +40,7 @@ exports.uploadVideo = async (req, res) => {
     const imagenes_descriptores = response.data.imagenes_descriptores;
     const matrices_descriptores = response.data.matrices_descriptores;
 
-    const matricesFilePath = path.join(TEMP_DIR, "matrices_descriptores.json");
+    const matricesFilePath = path.join(userTempDir, "matrices_descriptores.json");
     fs.writeFileSync(matricesFilePath, JSON.stringify(matrices_descriptores, null, 2));
     console.log(`Archivo JSON creado en: ${matricesFilePath}`);
 
@@ -45,105 +50,3 @@ exports.uploadVideo = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-
-
-
-/*exports.uploadVideo = (req, res) => {
-  console.log("Entre aVA");
-  if (!req.file) {
-    console.log("No se recibió ningún archivo");
-    return res.status(400).json({ error: "No se recibió ningún archivo" });
-  }
-
-  console.log("Entre a uploadVIdeo y recibi:", req.body.descriptors);
-
-  const filePath = req.file.path;
-  let descriptors = req.body.descriptors;
-  let descriptorParams = req.body.params;
-
-  if (descriptorParams) {
-    descriptorParams = JSON.parse(descriptorParams);
-    console.log(
-      `Los parámetros de los descriptores ${JSON.stringify(descriptorParams)}`
-    );
-  }
-
-  descriptors = descriptors
-    .replace(/[\[\]"]/g, "")
-    .split(",")
-    .map((descriptor) => descriptor.trim());
-  console.log(`Los descriptores limpios son ${descriptors}`);
-
-  // Ajusta la ruta del archivo Python
-  const scriptPath = path.join(
-    __dirname,
-    "../../descriptores/convertirAviaMat.py"
-  );
-
-  const processingPromises = descriptors.map((descriptor) => {
-    console.log(`El descriptor sanitizado es ${descriptor}`);
-
-    // Ajusta las rutas de salida para archivos MAT y PNG
-    const outputMatPath = path.join(
-      __dirname,
-      "../../uploads",
-      `${req.file.filename}_${descriptor}.mat`
-    );
-    const outputImgPath = path.join(
-      __dirname,
-      "../../uploads",
-      `${req.file.filename}_${descriptor}.png`
-    );
-
-    const params = descriptorParams[descriptor]
-      ? Object.values(descriptorParams[descriptor])
-      : [];
-    const paramArgs = params
-      .map((param) => `${param.paramName}=${param.value}`)
-      .join(" ");
-
-    const command = `python "${scriptPath}" "${filePath}" "${outputMatPath}" "${outputImgPath}" "${descriptor}" ${paramArgs}`;
-    console.log(`Ejecutando comando: ${command}`);
-
-    return new Promise((resolve, reject) => {
-      exec(command, (error, stdout, stderr) => {
-        console.log(
-          `Procesamiento de video con descriptor ${descriptor} iniciado`
-        );
-        if (error) {
-          console.error(
-            `Error al ejecutar el analizador para el descriptor ${descriptor}: ${error}`
-          );
-          return reject(
-            `Error al procesar el video para descriptor ${descriptor}`
-          );
-        }
-        console.log(stdout);
-        console.error(stderr);
-
-        if (fs.existsSync(outputImgPath)) {
-          resolve(`/uploads/${req.file.filename}_${descriptor}.png`);
-        } else {
-          reject(`Error al generar la imagen para ${descriptor}`);
-        }
-      });
-    });
-  });
-
-  Promise.all(processingPromises)
-    .then((imageUrls) => {
-      const result = imageUrls.map((url, index) => ({
-        url,
-        descriptor: descriptors[index],
-      }));
-
-      res.json({ result: "Videos procesados correctamente", images: result });
-    })
-    .catch((error) => {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "Hubo un error al procesar algunos descriptores" });
-    });
-};*/
