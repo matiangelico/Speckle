@@ -3,7 +3,6 @@ import { styled } from "styled-components";
 const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
-  // width: 100%;
   min-width: 200px; 
   max-width: 426px;
   text-align: left;
@@ -34,37 +33,31 @@ const LabelContainer = styled.div`
   label:nth-child(2) {
     color: var(--dark-400);
     font-weight: 400;
-    letter-spacing: -0.14px;
   }
 `;
 
 const StyledInput = styled.input`
   height: 45px;
-  padding: 0 1rem; /* Añadir padding interno para texto */
+  padding: 0 1rem;
   border-radius: 12px;
-  border: 2px solid
-    ${(props) =>
-      props["data-is-invalid"]
-        ? "var(--red-error, #e63946)"
-        : "var(--dark-800)"};
+  border: 2px solid ${(props) =>
+    props["data-is-invalid"] ? "var(--red-error, #e63946)" : "var(--dark-800)"};
   background: #ffffff;
   transition: border-color 0.3s ease, background-color 0.3s ease;
 
   &:hover {
-    background: #f3f3f3; /* Cambio de fondo en hover */
+    background: #f3f3f3;
   }
 
   &:focus {
     border-color: ${(props) =>
-      props["data-is-invalid"]
-        ? "var(--red-error, #e63946)"
-        : "var(--dark-800)"};
+      props["data-is-invalid"] ? "var(--red-error, #e63946)" : "var(--dark-800)"};
     background: #ffffff;
-    outline: none; /* Elimina el borde azul predeterminado */
+    outline: none;
   }
 
   &::placeholder {
-    color: var(--dark-400); /* Placeholder más claro */
+    color: var(--dark-400);
     font-size: 14px;
   }
 `;
@@ -78,14 +71,33 @@ const ErrorText = styled.span`
 const Input = ({
   primaryLabel,
   secondaryLabel,
-  type,
+  type = "text",
   id,
   name,
+  min,
+  max,
+  step,
   placeholder,
   value,
   setValue,
   error,
 }) => {
+  const handleChange = (e) => {
+    let newValue = e.target.value;
+
+    // Si el tipo es numérico, parseamos correctamente el valor
+    if (type === "number") {
+      const parsedValue = newValue === "" ? "" : Number(newValue);
+
+      // Si es NaN, no actualizamos el estado
+      if (newValue !== "" && isNaN(parsedValue)) return;
+      
+      newValue = parsedValue;
+    }
+
+    setValue(newValue);
+  };
+
   return (
     <InputContainer>
       <LabelContainer>
@@ -99,8 +111,13 @@ const Input = ({
         name={name}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={handleChange}
         data-is-invalid={error}
+        {...(type === "number" && {
+          min,
+          max,
+          step,
+        })}
       />
 
       {error && <ErrorText>{error}</ErrorText>}

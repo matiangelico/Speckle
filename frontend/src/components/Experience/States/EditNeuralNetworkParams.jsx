@@ -3,6 +3,7 @@ import SecondaryButton from "../../common/SecondaryButton";
 
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
+import NeuralNetworkEditor from '../Utils/NeuralNetworkEditor';
 
 const EditNeuralNetworkParams = ({ send }) => {
   const handleBack = () => {
@@ -22,7 +23,9 @@ const EditNeuralNetworkParams = ({ send }) => {
         </h3>
       </div>
 
-      <div></div>
+      <div>
+        <NeuralNetworkEditor />
+      </div>
 
       <div className='two-buttons-container'>
         <SecondaryButton

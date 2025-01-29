@@ -3,9 +3,11 @@ import { styled } from "styled-components";
 import CheckIcon from "../../assets/svg/icon-check.svg?react";
 
 const StyledCheckbox = styled.label`
+  position: relative;
   display: inline-flex;
   padding: 12px 20px;
   align-items: center;
+  flex-direction: row;
   gap: 10px;
   border-radius: 8px;
   transition: background-color 0.3s ease;
@@ -13,8 +15,6 @@ const StyledCheckbox = styled.label`
   &:hover {
     background-color: var(--dark-100);
   }
-
-  
 
   input {
     appearance: none;
@@ -70,7 +70,7 @@ const StyledCheckbox = styled.label`
 const Checkbox = ({ label, checked, onChange }) => {
   return (
     <StyledCheckbox>
-      <input type="checkbox" checked={checked} onChange={onChange} />
+      <input type='checkbox' checked={checked} onChange={onChange} />
       <CheckIcon /> {/* El icono ahora está posicionado encima */}
       <span>{label}</span>
     </StyledCheckbox>
@@ -83,11 +83,7 @@ const TaskCheckbox = ({ label, checked, onChange }) => {
   };
 
   return (
-    <Checkbox
-      label={label}
-      checked={checked}
-      onChange={handleCheckboxChange}
-    />
+    <Checkbox label={label} checked={checked} onChange={handleCheckboxChange} />
   );
 };
 

@@ -17,10 +17,12 @@ const StyledResultContainer = styled.div.withConfig({
   align-items: flex-start;
   border-radius: 10px;
   border: 2px solid var(--dark-800);
-  cursor: pointer; /* Cambia el cursor para indicar que el contenedor es interactivo */
+  cursor: pointer;
   transition: border 0.3s ease, background-color 0.3s ease;
-  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
-
+  box-shadow: ${({ isChecked }) =>
+    isChecked
+      ? "5px 5px 10px rgba(0, 0, 0, 0.3)"
+      : "3px 3px 5px rgba(0, 0, 0, 0.1)"};
 
   & > div:first-child {
     background-color: ${({ isChecked }) =>
