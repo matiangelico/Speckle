@@ -1,0 +1,297 @@
+{
+  "defaultValues": {
+    "descriptors": [
+      {
+        "_id": {
+          "$oid": "asdasd123123"
+        },
+        "name": "Rango Dinamico",
+        "params": []
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840daf"
+        },
+        "name": "Diferencias Pesadas",
+        "params": [
+          {
+            "paramName": "peso",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840db0"
+        },
+        "name": "Diferencias Promediadas",
+        "params": []
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840db1"
+        },
+        "name": "Fujii",
+        "params": []
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840db2"
+        },
+        "name": "Desviacion Estandar",
+        "params": []
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840db3"
+        },
+        "name": "Contraste Temporal",
+        "params": []
+      },
+      {
+        "_id": {
+          "$oid": "asdasd123123123"
+        },
+        "name": "Adri",
+        "params": []
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840db5"
+        },
+        "name": "Autocorrelacion",
+        "params": []
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840db6"
+        },
+        "name": "Frecuencia Media",
+        "params": []
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840db7"
+        },
+        "name": "Entropia Shannon",
+        "params": []
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840db8"
+        },
+        "name": "Frecuencia Corte",
+        "params": []
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840db9"
+        },
+        "name": "Wavelet Entropy",
+        "params": [
+          {
+            "paramName": "wavelet",
+            "value": "db2",
+            "unit": "tipo"
+          },
+          {
+            "paramName": "level",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840dba"
+        },
+        "name": "High Low Ratio",
+        "params": []
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840dbb"
+        },
+        "name": "Filtro Bajo",
+        "params": [
+          {
+            "paramName": "fmin",
+            "value": "0.015",
+            "unit": "Hz"
+          },
+          {
+            "paramName": "fmax",
+            "value": "0.05",
+            "unit": "Hz"
+          },
+          {
+            "paramName": "at_paso",
+            "value": "1",
+            "unit": "dB"
+          },
+          {
+            "paramName": "at_rechazo",
+            "value": "40",
+            "unit": "dB"
+          }
+        ]
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840dbc"
+        },
+        "name": "Filtro Medio",
+        "params": [
+          {
+            "paramName": "fmin",
+            "value": "0.05",
+            "unit": "Hz"
+          },
+          {
+            "paramName": "fmax",
+            "value": "0.25",
+            "unit": "Hz"
+          },
+          {
+            "paramName": "at_paso",
+            "value": "1",
+            "unit": "dB"
+          },
+          {
+            "paramName": "at_rechazo",
+            "value": "40",
+            "unit": "dB"
+          }
+        ]
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840dbd"
+        },
+        "name": "Filtro Alto",
+        "params": [
+          {
+            "paramName": "fmin",
+            "value": "0.025",
+            "unit": "Hz"
+          },
+          {
+            "paramName": "fmax",
+            "value": "0.4",
+            "unit": "Hz"
+          },
+          {
+            "paramName": "at_paso",
+            "value": "1",
+            "unit": "dB"
+          },
+          {
+            "paramName": "at_rechazo",
+            "value": "40",
+            "unit": "dB"
+          }
+        ]
+      },
+      {
+        "_id": {
+          "$oid": "671fa3de0cdae93206840dbe"
+        },
+        "name": "Fuzzy",
+        "params": []
+      }
+    ],
+    "experiencias": [
+      {
+        "name": "Experiencia 1",
+        "date": 1736154929755
+      },
+      {
+        "name": "Experiencia 2",
+        "date": 1735970127755
+      },
+      {
+        "name": "Experiencia 3",
+        "date": 1736470575755
+      },
+      {
+        "name": "Experiencia 4",
+        "date": 1736535349755
+      },
+      {
+        "name": "Experiencia 5",
+        "date": 1736158134755
+      },
+      {
+        "name": "Experiencia 6",
+        "date": 1736050674755
+      },
+      {
+        "name": "Experiencia 7",
+        "date": 1736154801755
+      }
+    ],
+    "clustering": [
+      {
+        "name": "Kmeans",
+        "params": [
+          {
+            "paramName": "nro_clusters",
+            "value": "3"
+          }
+        ]
+      },
+      {
+        "name": "MiniBatch Kmeans",
+        "params": [
+          {
+            "paramName": "nro_clusters",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "name": "Spectral Clustering",
+        "params": [
+          {
+            "paramName": "nro_clusters",
+            "value": "3"
+          }
+        ]
+      },
+      {
+        "name": "Sustractive Clustering",
+        "params": [
+          {
+            "paramName": "radius",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "name": "Promedio Gaussiano",
+        "params": [
+          {
+            "paramName": "radius",
+            "value": "5"
+          }
+        ]
+      }
+    ],
+    "redNeuronal": [
+      {
+        "Neuronas": "8",
+        "BatchNormalization": "1",
+        "Dropout": "0.1"
+      },
+      {
+        "Neuronas": "16",
+        "BatchNormalization": "0",
+        "Dropout": "0.1"
+      },
+      {
+        "Neuronas": "8",
+        "BatchNormalization": "1",
+        "Dropout": "0.15"
+      }
+    ]
+  }
+}

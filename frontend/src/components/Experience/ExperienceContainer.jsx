@@ -8,7 +8,10 @@ import { useMachine } from "@xstate/react";
 import TrainingMachine from "../../machines/trainingMachine";
 
 //Redux
-import { initializeDescriptors } from "../../reducers/trainingReducer";
+import {
+  initializeClustering,
+  initializeDescriptors,
+} from "../../reducers/trainingReducer";
 
 // Componentes de estado
 import UploadVideo from "./States/UploadVideo";
@@ -130,6 +133,7 @@ const ExperienceContainer = () => {
 
   useEffect(() => {
     dispatch(initializeDescriptors());
+    dispatch(initializeClustering());
   }, [dispatch]);
 
   // Renderiza el estado actual basado en `state.value`

@@ -1,29 +1,39 @@
 import styled from "styled-components";
 
 import { useState } from "react";
+
+//Redux
 import { useDispatch, useSelector } from "react-redux";
+import { selectDescriptorResult } from "../../../reducers/trainingReducer";
 
 //Commons
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
 import ResultContainer from "../../common/resultContainer";
 
+//Utils
+import ResultModal from "../Utils/ResultModal";
+
 //Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
-import { selectResultDescriptor } from "../../../reducers/trainingReducer";
-import ResultModal from "../Utils/ResultModal";
 
 const DescriptorResultsContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(250px, 1fr)
-  ); /* Crea columnas que se ajustan al tamaño */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 10px;
   width: 100%;
+  justify-items: center;
   height: min-content;
   overflow-y: auto;
+
+  @media (max-width: 1020px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  @media (max-width: 720px) {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
 
   @media (min-height: 900px) {
     gap: 20px;
@@ -37,14 +47,20 @@ const SelectDescriptorsResults = ({ send }) => {
   );
   const [modalInfo, setModalInfo] = useState(null);
 
-  console.log("descriptorsResults", descriptorsResults);
-
   const handleBack = () => {
     send({ type: "BACK" });
   };
 
   const handleNext = () => {
-    send({ type: "NEXT" });
+    const isAnyDescriptorChecked = descriptorsResults.some(
+      (result) => result.checked
+    );
+
+    if (isAnyDescriptorChecked) {
+      send({ type: "NEXT" });
+    } else {
+      alert("Por favor, selecciona al menos un resultado para continuar.");
+    }
   };
 
   const openModal = (image, title) => {
@@ -56,7 +72,7 @@ const SelectDescriptorsResults = ({ send }) => {
   };
 
   const handleResultSelected = (resultSelected) => {
-    dispatch(selectResultDescriptor(resultSelected));
+    dispatch(selectDescriptorResult(resultSelected));
   };
 
   return (
@@ -90,7 +106,7 @@ const SelectDescriptorsResults = ({ send }) => {
 
         <PrimaryButton
           handleClick={handleNext}
-          SVG={ArrowRightIcon}
+          RightSVG={ArrowRightIcon}
           text={"Editar parametros de clustering"}
         />
       </div>

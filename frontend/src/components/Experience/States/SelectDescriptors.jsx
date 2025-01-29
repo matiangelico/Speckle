@@ -74,9 +74,10 @@ const SelectDescriptors = ({ send }) => {
           SVG={ArrowLeftIcon}
           text={"Subir video"}
         />
+        
         <PrimaryButton
           handleClick={handleNext}
-          SVG={ArrowRightIcon}
+          RightSVG={ArrowRightIcon}
           text={"Seleccionar hiperparametros"}
         />
       </div>

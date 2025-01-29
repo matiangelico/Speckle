@@ -4,24 +4,14 @@ import SecondaryButton from "../../common/SecondaryButton";
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
 
-const EditNeuralNetworkParams = ({ context, send }) => {
+const EditNeuralNetworkParams = ({ send }) => {
   const handleBack = () => {
-    if (context.descriptors) {
-      send({ type: "BACK" }); // Avanzar al siguiente estado si hay un video
-    } else {
-      alert("Por favor, selecciona al menos un descriptor para continuar."); // Validación
-    }
+    send({ type: "BACK" });
   };
 
   const handleNext = () => {
-    if (context.descriptors) {
-      send({ type: "NEXT" }); // Avanzar al siguiente estado si hay un video
-    } else {
-      alert("Por favor, sube un video antes de continuar."); // Validación
-    }
+    send({ type: "NEXT" });
   };
-
-  console.log(context);
 
   return (
     <>
@@ -43,7 +33,7 @@ const EditNeuralNetworkParams = ({ context, send }) => {
 
         <PrimaryButton
           handleClick={handleNext}
-          SVG={ArrowRightIcon}
+          RightSVG={ArrowRightIcon}
           text={"Entrenar red neuronal"}
         />
       </div>

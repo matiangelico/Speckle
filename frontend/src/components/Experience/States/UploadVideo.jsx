@@ -45,7 +45,7 @@ const UploadVideo = ({ send }) => {
       <div className='one-button-container'>
         <PrimaryButton
           handleClick={handleNext}
-          SVG={ArrowRightIcon}
+          RightSVG={ArrowRightIcon}
           text={"Seleccionar descriptores"}
         />
       </div>

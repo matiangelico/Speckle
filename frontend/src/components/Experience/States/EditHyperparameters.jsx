@@ -10,6 +10,7 @@ import {
 
 //Commons
 import Input from "../../common/Input";
+import EmptyContainer from '../../common/EmptyContainer';
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
 
@@ -40,33 +41,6 @@ const StyledRow = styled.div`
 
   input {
     margin-ottom: 0;
-  }
-`;
-
-const EmptyContainer = styled.div`
-  display: flex;
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-  pointer-events: none;
-
-  border-radius: 8px;
-  border: 2px dashed var(--dark-300, #cbd2e0);
-  background: var(--white, #fff);
-
-  span {
-    color: var(--dark-400, #a0abc0);
-    text-align: center;
-    font-feature-settings: "calt" off;
-
-    font-family: Inter;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 150%;
-    letter-spacing: -0.16px;
   }
 `;
 
@@ -144,11 +118,7 @@ const EditHyperparameters = ({ send }) => {
           )}
         </HyperparametersContainer>
       ) : (
-        <EmptyContainer>
-          <span>
-            Los descriptores seleccionados no poseen hiperparametros editables.
-          </span>
-        </EmptyContainer>
+        <EmptyContainer message={"Los descriptores seleccionados no poseen hiperparametros editables."} />
       )}
 
       <div className='two-buttons-container'>
@@ -162,7 +132,7 @@ const EditHyperparameters = ({ send }) => {
           <SecondaryButton
             handleClick={handleSetDefaultValues}
             SVG={SlidersIcon}
-            text={"Reestablecer valores predeterminados"}
+            text={"Reestablecer valores"}
           />
         ) : (
           <></>
@@ -170,7 +140,7 @@ const EditHyperparameters = ({ send }) => {
 
         <PrimaryButton
           handleClick={handleNext}
-          SVG={ArrowRightIcon}
+          RightSVG={ArrowRightIcon}
           text={"Generar resultados"}
         />
       </div>

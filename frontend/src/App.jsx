@@ -63,7 +63,6 @@ const App = () => {
           <Header
             userName={user.name}
             userEmail={user.email}
-            pictureURL={user.picture}
           />
           <MainContent>
             <Aside />

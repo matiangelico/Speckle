@@ -1,11 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 //Utils
-import { convertToReadableDate } from '../utils/dateUtils';
+import { convertToReadableDate } from "../utils/dateUtils";
 
 //Services
-import trainingService from '../services/trainingExperience'
-
+import trainingService from "../services/trainingExperience";
 
 const traininingSlice = createSlice({
   name: "training",
@@ -14,16 +13,20 @@ const traininingSlice = createSlice({
     video: null,
     descriptors: [],
     descriptorsResults: [],
+    clustering: [],
+    clusteringResults: [],
+    neuralNetwork: [],
+    finalResult: null,
   },
   reducers: {
     setVideo(state, action) {
       return { ...state, video: action.payload };
     },
     setDescriptors(state, action) {
-      const descriptors = action.payload;
+      const descriptorsParams = action.payload;
       return {
         ...state,
-        descriptors,
+        descriptors: descriptorsParams,
       };
     },
     selectDescriptor(state, action) {
@@ -43,17 +46,13 @@ const traininingSlice = createSlice({
     },
     setHyperparameters(state, action) {
       const defaultValues = action.payload;
-      
-      console.log("defaultValues", defaultValues);
 
       const updatedDescriptors = state.descriptors.map((descriptor) => {
         const defaultDescriptor = defaultValues.find(
           (defaultDesc) => defaultDesc.name === descriptor.name
         );
-        
-        if (!defaultDescriptor) return descriptor;
 
-        console.log("pasooo 1");
+        if (!defaultDescriptor) return descriptor;
 
         const updatedHyperparameters = descriptor.hyperparameters.map(
           (param) => {
@@ -97,7 +96,7 @@ const traininingSlice = createSlice({
     setDescriptorsResults(state, action) {
       return { ...state, descriptorsResults: action.payload };
     },
-    selectResultDescriptor(state, action) {
+    selectDescriptorResult(state, action) {
       const name = action.payload;
 
       const changedResults = state.descriptorsResults.map(
@@ -112,6 +111,55 @@ const traininingSlice = createSlice({
         descriptorsResults: changedResults,
       };
     },
+    setClusteringParams(state, action) {
+      const clusteringParams = action.payload;
+      return {
+        ...state,
+        clustering: clusteringParams,
+      };
+    },
+    updateClusteringParam(state, action) {
+      const { clusteringName, parameterName, newValue } = action.payload;
+
+      const updatedClustering = state.clustering.map((cluster) => {
+        if (cluster.name === clusteringName) {
+          console.log("entro al cluster");
+
+          const updatedParameter = cluster.parameters?.map((param) => {
+            console.log(`entro al parametro con nombre ${parameterName}`);
+            if (param.paramName === parameterName) {
+              console.log("modifica parametro");
+              return { ...param, value: newValue };
+            }
+
+            return param;
+          });
+
+          return { ...cluster, parameters: updatedParameter };
+        }
+        return cluster;
+      });
+
+      return { ...state, clustering: updatedClustering };
+    },
+    setClusteringResults(state, action) {
+      return { ...state, clusteringResults: action.payload };
+    },
+    selectClusteringResult(state, action) {
+      const name = action.payload;
+
+      const changedResults = state.clusteringResults.map(
+        (result) =>
+          result.name === name
+            ? { ...result, checked: !result.checked }
+            : result
+      );
+
+      return {
+        ...state,
+        clusteringResults: changedResults,
+      };
+    },
   },
 });
 
@@ -122,10 +170,14 @@ export const {
   setHyperparameters,
   updateHyperparameter,
   setDescriptorsResults,
-  selectResultDescriptor,
-
+  selectDescriptorResult,
+  setClusteringParams,
+  updateClusteringParam,
+  setClusteringResults,
+  selectClusteringResult,
 } = traininingSlice.actions;
 
+// 1.
 export const initializeVideo = (file) => {
   const validTypes = ["video/avi"]; // Tipo MIME para archivos .avi
 
@@ -138,11 +190,12 @@ export const initializeVideo = (file) => {
   };
 };
 
+// 2.
 export const initializeDescriptors = () => {
   return (dispatch, getState) => {
-    const defaultValues = getState().defaultValues;
+    const defaultValuesDescriptors = getState().defaultValues.descriptors;
 
-    const descriptors = defaultValues.map((descriptor) => ({
+    const descriptors = defaultValuesDescriptors.map((descriptor) => ({
       name: descriptor.name,
       checked: false,
       hyperparameters: descriptor.params,
@@ -152,28 +205,59 @@ export const initializeDescriptors = () => {
   };
 };
 
+// 3.
 export const resetHyperparameters = () => {
   return (dispatch, getState) => {
-    const defaultValues = getState().defaultValues;
+    const defaultValuesDescriptors = getState().defaultValues.descriptors;
 
-    dispatch(setHyperparameters(defaultValues));
+    dispatch(setHyperparameters(defaultValuesDescriptors));
   };
 };
 
-// deprecated en el futuro
+// 4. deprecated en el futuro
 export const initializeDescriptorsResult = () => {
-  return async dispatch => {
-      const results = await trainingService.getResults()
+  return async (dispatch) => {
+    const results = await trainingService.getDescriptorsResults();
 
-      const descriptorResults = results.map((result) => ({
-        name: result.name,
-        image: result.resultImage,
-        checked: false,
-      }));
+    const descriptorResults = results.map((result) => ({
+      name: result.name,
+      image: result.resultImage,
+      checked: false,
+    }));
 
-      dispatch(setDescriptorsResults(descriptorResults))
-  }
-}
-// 
+    dispatch(setDescriptorsResults(descriptorResults));
+  };
+};
+//
+
+// 5.
+export const initializeClustering = () => {
+  return (dispatch, getState) => {
+    const defaultValuesClustering = getState().defaultValues.clustering;
+
+    const clusteringParams = defaultValuesClustering.map((cluster) => ({
+      name: cluster.name,
+      parameters: cluster.params,
+    }));
+
+    dispatch(setClusteringParams(clusteringParams));
+  };
+};
+
+// 6. deprecated en el futuro
+export const initializeClusteringResult = () => {
+  return async (dispatch) => {
+    const results = await trainingService.getClusteringResults();
+
+    const clusteringResults = results.map((result) => ({
+      name: result.name,
+      image: result.resultImage,
+      checked: false,
+    }));
+
+    dispatch(setClusteringResults(clusteringResults));
+  };
+};
+//
 
 export default traininingSlice.reducer;

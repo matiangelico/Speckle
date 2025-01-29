@@ -1,11 +1,16 @@
 import { styled } from "styled-components";
 import { useState } from "react";
 
+//Components
 import NavItem from "./NavItem";
 
+//Icons
 import SpeckleLogo from "../../../assets/svg/speckle-logo-40px.svg?react";
 import IconDumbbel from "../../../assets/svg/icon-dumbbel.svg?react";
 import IconBrain from "../../../assets/svg/icon-brain.svg?react";
+
+//Images
+import profilePicture from "../../../assets/webp/user.webp";
 
 const StyledHeader = styled.header`
   height: 12vh;
@@ -47,7 +52,7 @@ const NavigationContainer = styled.nav`
 const UserInfo = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
 `;
 
 const UserDetails = styled.div`
@@ -74,12 +79,12 @@ const ProfileImage = styled.img`
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
-  border: 2px solid var(--dark-100);
+  border: 3px solid var(--dark-200);
   object-fit: cover;
   cursor: pointer;
 `;
 
-const Header = ({ userName, userEmail, pictureURL }) => {
+const Header = ({ userName, userEmail }) => {
   const [activeItem, setActiveItem] = useState("Consulta");
 
   // Función para cambiar el enlace activo
@@ -114,7 +119,7 @@ const Header = ({ userName, userEmail, pictureURL }) => {
           <UserName>{userName}</UserName>
           <UserEmail>{userEmail}</UserEmail>
         </UserDetails>
-        <ProfileImage src={pictureURL} alt={userName} />
+        <ProfileImage src={profilePicture} alt={userName} />
       </UserInfo>
     </StyledHeader>
   );

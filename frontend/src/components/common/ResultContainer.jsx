@@ -11,7 +11,7 @@ const StyledResultContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "isChecked",
 })`
   display: flex;
-  width: 18rem;
+  // max-width: 18rem;
   background-color: var(--white);
   flex-direction: column;
   align-items: flex-start;

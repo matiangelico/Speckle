@@ -43,7 +43,7 @@ const NeuralNetworkResult = ({ context, send }) => {
 
         <PrimaryButton
           handleClick={handleNext}
-          SVG={ArrowRightIcon}
+          RightSVG={ArrowRightIcon}
           text={"DESCARGAR"}
         />
       </div>

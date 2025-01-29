@@ -1,27 +1,79 @@
+import styled from "styled-components";
+
+import { useState } from "react";
+
+//Redux
+import { useDispatch, useSelector } from "react-redux";
+import { selectClusteringResult } from "../../../reducers/trainingReducer";
+
+//Commons
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
+import ResultContainer from "../../common/resultContainer";
 
+//Utils
+import ResultModal from "../Utils/ResultModal";
+
+//Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
 
-const SelectClusteringResults = ({ context, send }) => {
+const ClusteringResultsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+  width: 100%;
+  justify-items: center;
+  height: min-content;
+  overflow-y: auto;
+
+  @media (max-width: 1020px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  @media (max-width: 720px) {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  @media (min-height: 900px) {
+    gap: 20px;
+  }
+`;
+
+const SelectClusteringResults = ({ send }) => {
+  const dispatch = useDispatch();
+  const clusteringResults = useSelector(
+    (state) => state.training.clusteringResults
+  );
+  const [modalInfo, setModalInfo] = useState(null);
+
   const handleBack = () => {
-    if (context.descriptors) {
-      send({ type: "BACK" }); // Avanzar al siguiente estado si hay un video
-    } else {
-      alert("Por favor, selecciona al menos un descriptor para continuar."); // Validación
-    }
+    send({ type: "BACK" })
   };
 
   const handleNext = () => {
-    if (context.descriptors) {
-      send({ type: "NEXT" }); // Avanzar al siguiente estado si hay un video
+    const isAnyClusteringChecked = clusteringResults.some(
+      (result) => result.checked
+    );
+
+    if (isAnyClusteringChecked) {
+      send({ type: "NEXT" });
     } else {
-      alert("Por favor, sube un video antes de continuar."); // Validación
+      alert("Por favor, selecciona al menos un resultado para continuar.");
     }
   };
 
-  console.log(context);
+  const openModal = (image, title) => {
+    setModalInfo({ image, title });
+  };
+
+  const closeModal = () => {
+    setModalInfo(null);
+  };
+
+  const handleResultSelected = (resultSelected) => {
+    dispatch(selectClusteringResult(resultSelected));
+  };
 
   return (
     <>
@@ -32,7 +84,18 @@ const SelectClusteringResults = ({ context, send }) => {
         </h3>
       </div>
 
-      <div></div>
+      <ClusteringResultsContainer>
+        {clusteringResults.map((result, index) => (
+          <ResultContainer
+            key={index}
+            title={result.name}
+            checked={result.checked}
+            base64Image={result.image}
+            handleSelect={handleResultSelected}
+            handleClickInfo={() => openModal(result.image, result.name)}
+          />
+        ))}
+      </ClusteringResultsContainer>
 
       <div className='two-buttons-container'>
         <SecondaryButton
@@ -43,10 +106,17 @@ const SelectClusteringResults = ({ context, send }) => {
 
         <PrimaryButton
           handleClick={handleNext}
-          SVG={ArrowRightIcon}
+          RightSVG={ArrowRightIcon}
           text={"Generar resultados de clustering"}
         />
       </div>
+
+      <ResultModal
+        image={modalInfo?.image}
+        title={modalInfo?.title}
+        isOpen={!!modalInfo}
+        onClose={closeModal}
+      />
     </>
   );
 };
