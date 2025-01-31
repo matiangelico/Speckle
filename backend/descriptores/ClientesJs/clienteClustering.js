@@ -5,7 +5,6 @@ const FormData = require('form-data');
 require('dotenv').config({path:'../.env'});
 
 const agent = new https.Agent({ rejectUnauthorized: false });
-
 const API_KEY = process.env.API_KEY
 
 const matrices_descriptores = require('../output/matrices_descriptores.json');

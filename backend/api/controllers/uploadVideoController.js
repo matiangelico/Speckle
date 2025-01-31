@@ -2,6 +2,13 @@ const FormData = require("form-data");
 const fs = require("fs");
 const axios = require("axios");
 const path = require("path");
+const https = require('https');
+
+
+require('dotenv').config({path:'../../.env'});
+
+const agent = new https.Agent({ rejectUnauthorized: false });
+const API_KEY = process.env.API_KEY
 
 exports.uploadVideo = async (req, res) => {
   console.log("Auth payload:", req.auth?.payload); 
@@ -26,6 +33,8 @@ exports.uploadVideo = async (req, res) => {
 
   const descriptors = JSON.parse(fs.readFileSync(descriptorsPath, 'utf8'));
 
+  console.log ("Enviando a endpoint python");
+
   try {
     const formData = new FormData();
     const videoStream = fs.createReadStream(videoPath);
@@ -33,9 +42,17 @@ exports.uploadVideo = async (req, res) => {
     formData.append("video_experiencia", videoStream, req.files.video[0].originalname);  
     formData.append("datos_descriptores", JSON.stringify(descriptors)); 
 
-    const response = await axios.post("http://localhost:8000/descriptores", formData, {
-      headers: formData.getHeaders(),
+    console.log ("Le mando a endpoint python");
+
+    const response = await axios.post("https://localhost:8000/descriptores", formData, {
+      headers: {
+        'x-api-key': API_KEY,
+        ...formData.getHeaders()
+      },
+      httpsAgent: agent
     });
+
+    console.log("Terminando");
 
     const imagenes_descriptores = response.data.imagenes_descriptores;
     const matrices_descriptores = response.data.matrices_descriptores;
