@@ -97,7 +97,9 @@ const ResultContainer = ({
   base64Image,
 }) => {
   const toggleSelection = () => {
-    handleSelect(title, !checked);
+    if (handleSelect) {
+      handleSelect(title, !checked);
+    }
   };
 
   return (

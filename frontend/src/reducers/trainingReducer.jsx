@@ -9,19 +9,27 @@ import trainingService from "../services/trainingExperience";
 const traininingSlice = createSlice({
   name: "training",
   initialState: {
+    name: "Nuevo entrenamiento",
     createdAt: convertToReadableDate(Date.now()),
     video: null,
     descriptors: [],
     descriptorsResults: [],
     clustering: [],
     clusteringResults: [],
-    neuralNetwork: [],
-    finalResult: null,
+    neuralNetworkLayers: [],
+    layersTemplate: null,
+    trainingResult: null,
   },
   reducers: {
+    // 0
+    setName(state, action) {
+      return { ...state, name: action.payload };
+    },
+    // 1
     setVideo(state, action) {
       return { ...state, video: action.payload };
     },
+    // 2
     setDescriptors(state, action) {
       const descriptorsParams = action.payload;
       return {
@@ -44,6 +52,7 @@ const traininingSlice = createSlice({
         descriptors: changedDescriptors,
       };
     },
+    // 3
     setHyperparameters(state, action) {
       const defaultValues = action.payload;
 
@@ -93,6 +102,7 @@ const traininingSlice = createSlice({
 
       return { ...state, descriptors: updatedDescriptors };
     },
+    // 4
     setDescriptorsResults(state, action) {
       return { ...state, descriptorsResults: action.payload };
     },
@@ -111,6 +121,7 @@ const traininingSlice = createSlice({
         descriptorsResults: changedResults,
       };
     },
+    // 5
     setClusteringParams(state, action) {
       const clusteringParams = action.payload;
       return {
@@ -123,12 +134,8 @@ const traininingSlice = createSlice({
 
       const updatedClustering = state.clustering.map((cluster) => {
         if (cluster.name === clusteringName) {
-          console.log("entro al cluster");
-
           const updatedParameter = cluster.parameters?.map((param) => {
-            console.log(`entro al parametro con nombre ${parameterName}`);
             if (param.paramName === parameterName) {
-              console.log("modifica parametro");
               return { ...param, value: newValue };
             }
 
@@ -142,17 +149,15 @@ const traininingSlice = createSlice({
 
       return { ...state, clustering: updatedClustering };
     },
+    // 6
     setClusteringResults(state, action) {
       return { ...state, clusteringResults: action.payload };
     },
     selectClusteringResult(state, action) {
       const name = action.payload;
 
-      const changedResults = state.clusteringResults.map(
-        (result) =>
-          result.name === name
-            ? { ...result, checked: !result.checked }
-            : result
+      const changedResults = state.clusteringResults.map((result) =>
+        result.name === name ? { ...result, checked: !result.checked } : result
       );
 
       return {
@@ -160,21 +165,47 @@ const traininingSlice = createSlice({
         clusteringResults: changedResults,
       };
     },
+    // 7
+    setNeuralNetworkLayers(state, action) {
+      const neuralNetwork = action.payload;
+      return {
+        ...state,
+        neuralNetworkLayers: neuralNetwork,
+      };
+    },
+    setTemplateLayers(state, action) {
+      const neuralNetworkLayer = action.payload;
+      return {
+        ...state,
+        layersTemplate: neuralNetworkLayer,
+      };
+    },
+    setTrainingResult(state, action) {
+      const result = action.payload;
+      return {
+        ...state,
+        trainingResult: result,
+      };
+    },
   },
 });
 
 export const {
-  setVideo,
-  setDescriptors,
+  setName, //0
+  setVideo, //1
+  setDescriptors, //2
   selectDescriptor,
-  setHyperparameters,
+  setHyperparameters, //3
   updateHyperparameter,
-  setDescriptorsResults,
+  setDescriptorsResults, //4
   selectDescriptorResult,
-  setClusteringParams,
+  setClusteringParams, //5
   updateClusteringParam,
-  setClusteringResults,
+  setClusteringResults, //6
   selectClusteringResult,
+  setNeuralNetworkLayers, //7
+  setTemplateLayers,
+  setTrainingResult, //8
 } = traininingSlice.actions;
 
 // 1.
@@ -260,4 +291,28 @@ export const initializeClusteringResult = () => {
 };
 //
 
+// 7.
+export const initializeNeuralNetwork = () => {
+  return (dispatch, getState) => {
+    const defaultValuesNeuralNetwork = getState().defaultValues.neuralNetwork;
+    const arrayNeuralNetworkLayers = [defaultValuesNeuralNetwork];
+
+    dispatch(setNeuralNetworkLayers(arrayNeuralNetworkLayers));
+    dispatch(setTemplateLayers(defaultValuesNeuralNetwork));
+  };
+};
+
+// 8. deprecated en el futuro
+export const initializeTrainingResult = () => {
+  return async (dispatch) => {
+    const result = await trainingService.getTrainingResults();
+    
+    const trainingResult = {
+      image: result,
+    };
+    
+    dispatch(setTrainingResult(trainingResult));
+  };
+};
+//
 export default traininingSlice.reducer;

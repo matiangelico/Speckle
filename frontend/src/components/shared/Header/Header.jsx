@@ -85,7 +85,7 @@ const ProfileImage = styled.img`
 `;
 
 const Header = ({ userName, userEmail }) => {
-  const [activeItem, setActiveItem] = useState("Consulta");
+  const [activeItem, setActiveItem] = useState("Entrenamiento");
 
   // Función para cambiar el enlace activo
   const handleNavItemClick = (item) => {

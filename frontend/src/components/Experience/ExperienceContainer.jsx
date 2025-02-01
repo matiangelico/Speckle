@@ -9,8 +9,10 @@ import TrainingMachine from "../../machines/trainingMachine";
 
 //Redux
 import {
+  setName,
   initializeClustering,
   initializeDescriptors,
+  initializeNeuralNetwork,
 } from "../../reducers/trainingReducer";
 
 // Componentes de estado
@@ -25,6 +27,7 @@ import NeuralNetworkResult from "./States/NeuralNetworkResult";
 
 // Commons
 import SecondaryButton from "../common/SecondaryButton";
+import EditableTitle from "../common/EditableTitle";
 
 // Icons
 import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
@@ -36,33 +39,42 @@ const StyledExperienceContainer = styled.main`
 `;
 
 const ExperienceHeader = styled.div`
+  font-family: Inter;
   height: 10vh;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  // grid-template-columns: auto auto 1fr auto;
   padding: 0.25rem 2rem;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
   border-bottom: 2px solid var(--dark-500);
 
-  h1 {
-    color: var(--dark-800);
-    font-size: 1.8rem;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 130%; /* 2.6rem */
+  &:has(:nth-child(3):last-child) {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  &:has(:nth-child(4)) {
+    grid-template-columns: auto auto 1fr auto;
+
+    & > :nth-child(1) {
+      margin-left: -20px;
+      margin-right: -20px;
+    }
   }
 
   p {
     color: var(--dark-400);
     font-feature-settings: "calt" off;
 
-    /* WF Body/Body Medium */
     font-size: 1rem;
     font-style: normal;
     font-weight: 400;
     line-height: 150%; /* 1.5rem */
     letter-spacing: -0.01rem;
+  }
+
+  svg {
+    color: var(--dark-800);
   }
 
   @media (min-height: 900px) {
@@ -134,6 +146,7 @@ const ExperienceContainer = () => {
   useEffect(() => {
     dispatch(initializeDescriptors());
     dispatch(initializeClustering());
+    dispatch(initializeNeuralNetwork());
   }, [dispatch]);
 
   // Renderiza el estado actual basado en `state.value`
@@ -160,10 +173,19 @@ const ExperienceContainer = () => {
     }
   };
 
+  const handleSaveTitle = (newTitle) => {
+    console.log("Nuevo título guardado:", newTitle);
+
+    dispatch(setName(newTitle));
+  };
+
   return (
     <StyledExperienceContainer>
       <ExperienceHeader>
-        <h1>Contenido Principal</h1>
+        <EditableTitle
+          initialTitle='Nuevo entrenamiento'
+          onSave={handleSaveTitle}
+        />
         <p>27 de octubre de 2024, 20:33</p>
         <SecondaryButton SVG={NewExperienceIcon} text={"Nueva experiencia"} />
       </ExperienceHeader>

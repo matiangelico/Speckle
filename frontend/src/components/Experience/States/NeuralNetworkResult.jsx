@@ -1,27 +1,52 @@
+import styled from "styled-components";
+
+import { useState } from "react";
+
+//Redux
+import { useSelector } from "react-redux";
+
+//Components
+import ResultContainer from "../../common/resultContainer";
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
 
-import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
+//Utils
+import ResultModal from "../Utils/ResultModal";
+
+//Icons
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
+import SaveIcon from "../../../assets/svg/icon-save.svg?react";
 
-const NeuralNetworkResult = ({ context, send }) => {
+const CenterContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: min-content;
+  overflow-y: auto;
+
+  @media (min-height: 900px) {
+    height: 100%;
+  }
+`;
+
+const NeuralNetworkResult = ({ send }) => {
+  const trainingName = useSelector((state) => state.training.name);
+  const result = useSelector((state) => state.training.trainingResult);
+  const [modalInfo, setModalInfo] = useState(null);
+
   const handleBack = () => {
-    if (context.descriptors) {
-      send({ type: "BACK" }); // Avanzar al siguiente estado si hay un video
-    } else {
-      alert("Por favor, selecciona al menos un descriptor para continuar."); // Validación
-    }
+    send({ type: "BACK" });
   };
 
-  const handleNext = () => {
-    if (context.descriptors) {
-      send({ type: "NEXT" }); // Avanzar al siguiente estado si hay un video
-    } else {
-      alert("Por favor, sube un video antes de continuar."); // Validación
-    }
+  const handleSaveTraining = () => {};
+
+  const openModal = (image, title) => {
+    setModalInfo({ image, title });
   };
 
-  console.log(context);
+  const closeModal = () => {
+    setModalInfo(null);
+  };
 
   return (
     <>
@@ -32,21 +57,39 @@ const NeuralNetworkResult = ({ context, send }) => {
         </h3>
       </div>
 
-      <div></div>
+      {result && (
+        <CenterContainer>
+          <ResultContainer
+            title={trainingName}
+            checked={false}
+            base64Image={result.image}
+            handleClickInfo={() => openModal(result.image, trainingName)}
+          />
+        </CenterContainer>
+      )}
 
       <div className='two-buttons-container'>
         <SecondaryButton
+          className='content'
           handleClick={handleBack}
           SVG={ArrowLeftIcon}
-          text={"GUARDAR"}
+          text={"Editar parámetros de la red neuronal"}
         />
 
         <PrimaryButton
-          handleClick={handleNext}
-          RightSVG={ArrowRightIcon}
-          text={"DESCARGAR"}
+          className='content'
+          handleClick={handleSaveTraining}
+          RightSVG={SaveIcon}
+          text={"Guardar entrenamieto"}
         />
       </div>
+
+      <ResultModal
+        image={modalInfo?.image}
+        title={modalInfo?.title}
+        isOpen={!!modalInfo}
+        onClose={closeModal}
+      />
     </>
   );
 };
