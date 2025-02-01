@@ -2,6 +2,12 @@ const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs').promises;
 const path = require('path');
+const https = require('https');
+
+require('dotenv').config({path:'../../.env'});
+
+const agent = new https.Agent({ rejectUnauthorized: false });
+const API_KEY = process.env.API_KEY
 
 const uploadsBasePath = path.join(__dirname, '../../uploads/temp');
 
@@ -40,8 +46,12 @@ const entrenamientoRed = async (req, res, next) => {
         trainingForm.append('matriz_clustering', JSON.stringify(selectedClustering), 'clustering.json');
         trainingForm.append('parametros_entrenamiento', JSON.stringify(parametros));
 
-        const { data } = await axios.post('http://localhost:8000/entrenamientoRed', trainingForm, {
-            headers: trainingForm.getHeaders(),
+        const { data } = await axios.post('https://localhost:8000/entrenamientoRed', trainingForm, {
+            headers: {
+                'x-api-key': API_KEY,
+                ...trainingForm.getHeaders()
+              },
+            httpsAgent: agent,
             responseType: 'arraybuffer'
         });
 
@@ -77,8 +87,12 @@ const PrediccionRed = async (req, res) => {
         predictionForm.append('modelo_entrenado', modelo, 'modelo.keras');
         predictionForm.append('matrices_descriptores', filteredClustering, 'clustering.json');
 
-        const { data } = await axios.post('http://localhost:8000/prediccionRed', predictionForm, {
-            headers: predictionForm.getHeaders()
+        const { data } = await axios.post('https://localhost:8000/prediccionRed', predictionForm, {
+            headers: {
+                'x-api-key': API_KEY,
+                ...predictionForm.getHeaders()
+              },
+            httpsAgent: agent,
         });
 
         res.json({

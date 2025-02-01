@@ -2,6 +2,13 @@ const fs = require("fs");
 const FormData = require("form-data");
 const axios = require("axios");
 const path = require("path");
+const https = require('https');
+
+
+require('dotenv').config({path:'../../.env'});
+
+const agent = new https.Agent({ rejectUnauthorized: false });
+const API_KEY = process.env.API_KEY
 
 exports.calculateClustering = async (req, res) => {
   const { descriptores, clustering } = req.body;
@@ -51,8 +58,12 @@ exports.calculateClustering = async (req, res) => {
       contentType: "application/json",
     });
 
-    const response = await axios.post("http://localhost:8000/clustering", formData, {
-      headers: formData.getHeaders(),
+    const response = await axios.post("https://localhost:8000/clustering", formData, {
+      headers: {
+        'x-api-key': API_KEY,
+        ...formData.getHeaders()
+      },
+      httpsAgent: agent
     });
 
     console.log("Respuesta de la API Python:", response.data);

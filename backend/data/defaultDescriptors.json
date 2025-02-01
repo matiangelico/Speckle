@@ -1,6 +1,10 @@
 {
     "descriptors": [
       {
+        "name": "Rango Dinamico",
+        "params": []
+      },
+      {
         "name": "Diferencias Pesadas",
         "params": [
           {
@@ -26,11 +30,11 @@
         "params": []
       },
       {
-        "name": "Media",
+        "name": "Autocorrelacion",
         "params": []
       },
       {
-        "name": "Autocorrelacion",
+        "name": "Fuzzy",
         "params": []
       },
       {
@@ -60,12 +64,7 @@
       },
       {
         "name": "High Low Ratio",
-        "params": [
-          {
-            "paramName": "fs",
-            "value": "0.9"
-          }
-        ]
+        "params": []
       },
       {
         "name": "Filtro Bajo",
@@ -85,10 +84,6 @@
           {
             "paramName": "at_rechazo",
             "value": "40"
-          },
-          {
-            "paramName": "fs",
-            "value": "1.0"
           }
         ]
       },
@@ -110,10 +105,6 @@
           {
             "paramName": "at_rechazo",
             "value": "40"
-          },
-          {
-            "paramName": "fs",
-            "value": "1.0"
           }
         ]
       },
@@ -135,15 +126,11 @@
           {
             "paramName": "at_rechazo",
             "value": "40"
-          },
-          {
-            "paramName": "fs",
-            "value": "1.0"
           }
         ]
       },
       {
-        "name": "Fuzzy",
+        "name": "Adri",
         "params": []
       }
     ]
