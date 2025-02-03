@@ -88,7 +88,7 @@ const EditClusteringParams = ({ send }) => {
                   primaryLabel={param.paramName}
                   secondaryLabel={clustering.name}
                   type='number'
-                  id={param.paramName}
+                  id={index}
                   name={param.paramName}
                   value={param.value}
                   setValue={(newValue) =>

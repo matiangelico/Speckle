@@ -1,11 +1,13 @@
 import styled from "styled-components";
 
-import { useState } from "react";
-
 //Components
 import Input from "../../common/Input";
 import TaskCheckbox from "../../common/CheckBox";
-import PrimaryButton from "../../common/PrimaryButton";
+
+//Icons
+import ImageIcon from "../../../assets/svg/icon-image.svg?react";
+import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
+import LayerIcon from "../../../assets/svg/icon-layers.svg?react";
 
 const EditorContainer = styled.div`
   display: flex;
@@ -18,8 +20,9 @@ const EditorContainer = styled.div`
 const VisualContainer = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 100%;
-  height: 300px;
+  height: 320px;
   border: 2px solid var(--dark-800);
   border-radius: 12px;
   margin-bottom: 10px;
@@ -36,12 +39,23 @@ const ParametersContainer = styled.div`
 `;
 
 const LayerContainer = styled.div`
-  height: 100%;
+  // height: 100%;
   display: flex;
-  flex-direction: column;
+  // flex-direction: column;
+  flex-direction: row;
   align-items: center;
   margin: 10px;
   gap: 8px;
+
+  > :nth-child(2) {
+    margin-top: 20px;
+  }
+`;
+
+const LayerWithIcon = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const Layer = styled.div`
@@ -89,67 +103,36 @@ const ExtraNeurons = styled.div`
   margin-top: 5px;
 `;
 
-const NeuralNetworkEditor = () => {
-  const [layers, setLayers] = useState([
-    { neurons: 5, batchNorm: false, dropout: 0 },
-  ]);
-
-  const addLayer = () => {
-    setLayers([...layers, { neurons: 5, batchNorm: false, dropout: 0 }]);
-  };
-
-  const removeLayer = () => {
-    if (layers.length > 1) {
-      setLayers(layers.slice(0, -1));
-    }
-  };
-
-  const updateLayer = (index, field, value) => {
-    const newLayers = [...layers];
-
-    switch (field) {
-      case "neurons": {
-        const validatedValue = value > 128 ? 128 : value;
-
-        newLayers[index][field] = validatedValue;
-        break;
-      }
-      case "batchNorm":
-        {
-          newLayers[index][field] = !newLayers[index][field];
-        }
-        break;
-      case "dropout":
-        {
-          const validatedValue = value === "" ? 0 : Math.min(Math.max(value, 0), 1);
-          newLayers[index][field] = validatedValue;
-        }
-        break;
-    }
-
-    setLayers(newLayers);
-  };
-
+const NeuralNetworkEditor = ({ layers, updateLayer }) => {
   return (
     <EditorContainer>
       <VisualContainer>
+        <ImageIcon />
+        <ArrowRightIcon />
         {layers.map((layer, index) => (
-          <Layer key={index}>
-            <label>{`Capa-${index + 1}`}</label>
-            {Array.from({ length: Math.min(layer.neurons, 10) }).map((_, i) => (
-              <Neuron key={i} batchNorm={layer.batchNorm} />
-            ))}
-            {layer.neurons > 10 && (
-              <ExtraNeurons>+{layer.neurons - 10}</ExtraNeurons>
-            )}
-          </Layer>
+          <LayerWithIcon key={index}>
+            <Layer>
+              <label>{`Capa-${index + 1}`}</label>
+              {Array.from({ length: Math.min(layer.neurons, 10) }).map(
+                (_, i) => (
+                  <Neuron key={i} batchNorm={layer.batchNorm} />
+                )
+              )}
+              {layer.neurons > 10 && (
+                <ExtraNeurons>+{layer.neurons - 10}</ExtraNeurons>
+              )}
+            </Layer>
+            <ArrowRightIcon />
+          </LayerWithIcon>
         ))}
+        <LayerIcon />
       </VisualContainer>
       <ParametersContainer>
         {layers.map((layer, index) => (
           <LayerContainer key={index}>
             <Input
-              primaryLabel={`Neuronas-${index + 1}`}
+              primaryLabel={`Neuronas`}
+              secondaryLabel={`Capa-${index + 1}`}
               type='number'
               id={`neurons-${index}`}
               name={`neurons-${index}`}
@@ -157,7 +140,7 @@ const NeuralNetworkEditor = () => {
               max='128'
               step='1'
               placeholder='Neuronas'
-              value={layer.neurons || ""}
+              value={layer.neurons !== undefined ? layer.neurons : 0}
               setValue={(value) =>
                 updateLayer(
                   index,
@@ -168,14 +151,15 @@ const NeuralNetworkEditor = () => {
             />
             <TaskCheckbox
               key={index}
-              label={`Batch normalization-${index}`}
-              checked={layer.batchNorm}
+              label={`Batch normalization-${index + 1}`}
+              checked={layer.batchNorm !== undefined ? layer.batchNorm : false}
               onChange={(value) => {
                 updateLayer(index, "batchNorm", value);
               }}
             />
             <Input
-              primaryLabel='Dropout'
+              primaryLabel={`Dropout`}
+              secondaryLabel={`Capa-${index + 1}`}
               type='number'
               id={`dropout-${index}`}
               name={`dropout-${index}`}
@@ -194,12 +178,6 @@ const NeuralNetworkEditor = () => {
           </LayerContainer>
         ))}
       </ParametersContainer>
-
-      {/* Botones de control */}
-      <div style={{ display: "flex", gap: "10px" }}>
-        <PrimaryButton text='Agregar Capa' handleClick={addLayer} />
-        <PrimaryButton text='Eliminar Capa' handleClick={removeLayer} />
-      </div>
     </EditorContainer>
   );
 };

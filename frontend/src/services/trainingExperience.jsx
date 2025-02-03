@@ -14,8 +14,14 @@ const getClusteringResults = async () => {
   
   return response.data;
 };
+
+const getTrainingResults = async () => {
+  const response = await axios.get(`${baseUrl}/resultadoEntrenamiento`);
+  
+  return response.data;
+};
 // ================
 
-const trainingExperienceServices = { getDescriptorsResults, getClusteringResults };
+const trainingExperienceServices = { getDescriptorsResults, getClusteringResults, getTrainingResults };
 
 export default trainingExperienceServices;
