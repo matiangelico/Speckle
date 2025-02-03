@@ -8,14 +8,14 @@ const paramSchema = new Schema({
 
 const descriptorSchema = new Schema({
   name: { type: String, required: true },
-  params: [paramSchema]
+  params: { type: [paramSchema], default: [] }
 }, { _id: false });
 
 const userDescriptorSchema = new Schema({
   userId: { type: String, required: true, unique: true },
   descriptors: { 
     type: [descriptorSchema],
-    default: () => require('../../data/defaultDescriptors.json') // Default directo
+    default: () => require('../../data/defaultDescriptors.json').descriptors
   }
 });
 
