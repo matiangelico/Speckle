@@ -21,6 +21,7 @@ import RemoveLayerIcon from "../../../assets/svg/icon-divide-circle.svg?react";
 const EditNeuralNetworkParams = ({ send }) => {
   const dispatch = useDispatch();
   const layerTemplate = useSelector((state) => state.training.layersTemplate);
+  // const layerTemplate = useSelector({neurons: 128, batchNorm: false, dropout: 0});
   const layers = useSelector((state) => state.training.neuralNetworkLayers);
 
   const handleBack = () => {

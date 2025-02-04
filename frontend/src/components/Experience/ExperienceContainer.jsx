@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 // Maquina de estados
 import { useMachine } from "@xstate/react";
@@ -16,14 +16,14 @@ import {
 } from "../../reducers/trainingReducer";
 
 // Componentes de estado
-import UploadVideo from "./States/UploadVideo";
-import SelectDescriptors from "./States/SelectDescriptors";
-import EditHyperparameters from "./States/EditHyperparameters";
-import SelectDescriptorsResults from "./States/SelectDescriptorsResults";
-import EditClusteringParams from "./States/EditClusteringParams";
-import SelectClusteringResults from "./States/SelectClusteringResults";
-import EditNeuralNetworkParams from "./States/EditNeuralNetworkParams";
-import NeuralNetworkResult from "./States/NeuralNetworkResult";
+import UploadVideo from "./States/1_UploadVideo";
+import SelectDescriptors from "./States/2_SelectDescriptors";
+import EditHyperparameters from "./States/3_EditHyperparameters";
+import SelectDescriptorsResults from "./States/4_SelectDescriptorsResults";
+import EditClusteringParams from "./States/5_EditClusteringParams";
+import SelectClusteringResults from "./States/6_SelectClusteringResults";
+import EditNeuralNetworkParams from "./States/7_EditNeuralNetworkParams";
+import NeuralNetworkResult from "./States/8_NeuralNetworkResult";
 
 // Commons
 import SecondaryButton from "../common/SecondaryButton";
@@ -142,10 +142,24 @@ const ExperienceContent = styled.div`
 const ExperienceContainer = () => {
   const dispatch = useDispatch();
   const [state, send] = useMachine(TrainingMachine);
+  //2.
+  const descriptors = useSelector((state) => state.training.descriptors);
+  //3.
+  const chekedDescriptors = descriptors.filter(
+    (descriptor) => descriptor.checked && descriptor.hyperparameters.length > 0
+  );
+  //5.
+  const clusteringParams = useSelector((state) => state.training.clustering);
 
-  useEffect(() => {
+  useEffect(() => { //Descritors
     dispatch(initializeDescriptors());
+  }, [dispatch]);
+
+  useEffect(() => { //Clustering
     dispatch(initializeClustering());
+  }, [dispatch]);
+
+  useEffect(() => { //Neural Network
     dispatch(initializeNeuralNetwork());
   }, [dispatch]);
 
@@ -153,21 +167,21 @@ const ExperienceContainer = () => {
   const renderState = () => {
     switch (state.value) {
       case "UPLOAD_VIDEO": //1
-        return <UploadVideo context={state.context} send={send} />;
+        return <UploadVideo send={send} />;
       case "SELECT_DESCRIPTORS": //2
-        return <SelectDescriptors context={state.context} send={send} />;
+        return <SelectDescriptors send={send} descriptors={descriptors} />;
       case "EDIT_HYPERPARAMETERS": //3
-        return <EditHyperparameters context={state.context} send={send} />;
+        return <EditHyperparameters send={send} chekedDescriptors={chekedDescriptors}/>;
       case "SELECT_DESCRIPTOR_RESULTS": //4
-        return <SelectDescriptorsResults context={state.context} send={send} />;
+        return <SelectDescriptorsResults send={send} />;
       case "EDIT_CLUSTER_PARAMS": //5
-        return <EditClusteringParams context={state.context} send={send} />;
+        return <EditClusteringParams send={send} clusteringParams={clusteringParams} />;
       case "SELECT_CLUSTERING_RESULTS": //6
-        return <SelectClusteringResults context={state.context} send={send} />;
+        return <SelectClusteringResults send={send} />;
       case "EDIT_NEURAL_NETWORK_PARAMS": //7
-        return <EditNeuralNetworkParams context={state.context} send={send} />;
+        return <EditNeuralNetworkParams  send={send} />;
       case "NEURAL_NETWORK_RESULTS": //8
-        return <NeuralNetworkResult context={state.context} send={send} />;
+        return <NeuralNetworkResult send={send} />;
       default:
         return null;
     }

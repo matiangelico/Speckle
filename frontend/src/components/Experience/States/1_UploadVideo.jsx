@@ -6,7 +6,7 @@ import FileDropArea from "../Utils/FileDropArea";
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 
 //Redux
-import { initializeVideo } from "../../../reducers/trainingReducer";
+import { setVideo } from "../../../reducers/trainingReducer";
 import { useDispatch, useSelector } from 'react-redux';
 
 const UploadVideo = ({ send }) => {
@@ -22,7 +22,15 @@ const UploadVideo = ({ send }) => {
   };
 
   const handleFileDrop = (file) => {
-    dispatch(initializeVideo(file));
+    const validTypes = ["video/avi"]; // Tipo MIME para archivos .avi
+
+    if (!validTypes.includes(file.type)) {
+      throw new Error("Solo se permite cargar archivos .avi");
+      //MANEJAR ERROR
+    }
+
+    dispatch(setVideo(file));
+    // dispatch(initializeVideo(file));
   };
   
   return (

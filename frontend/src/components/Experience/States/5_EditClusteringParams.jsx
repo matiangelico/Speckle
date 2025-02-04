@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 //Redux
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   initializeClustering,
   updateClusteringParam,
@@ -40,9 +40,9 @@ const ClusteringParamContainer = styled.div`
   }
 `;
 
-const EditClusteringParams = ({ send }) => {
+const EditClusteringParams = ({ send, clusteringParams }) => {
   const dispatch = useDispatch();
-  const clusteringParams = useSelector((state) => state.training.clustering);
+  // const clusteringParams = useSelector((state) => state.training.clustering);
 
   const handleBack = () => {
     send({ type: "BACK" });

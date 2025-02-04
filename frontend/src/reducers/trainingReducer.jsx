@@ -208,19 +208,6 @@ export const {
   setTrainingResult, //8
 } = traininingSlice.actions;
 
-// 1.
-export const initializeVideo = (file) => {
-  const validTypes = ["video/avi"]; // Tipo MIME para archivos .avi
-
-  if (!validTypes.includes(file.type)) {
-    throw new Error("Solo se permite cargar archivos .avi");
-  }
-
-  return (dispatch) => {
-    dispatch(setVideo(file));
-  };
-};
-
 // 2.
 export const initializeDescriptors = () => {
   return (dispatch, getState) => {
@@ -315,4 +302,5 @@ export const initializeTrainingResult = () => {
   };
 };
 //
+
 export default traininingSlice.reducer;
