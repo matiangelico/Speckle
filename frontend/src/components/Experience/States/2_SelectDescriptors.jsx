@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 //Redux
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { selectDescriptor } from "../../../reducers/trainingReducer";
 
 //Commons
@@ -22,9 +22,9 @@ const StyledDescriptorsContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-const SelectDescriptors = ({ send }) => {
+const SelectDescriptors = ({ send, descriptors }) => {
   const dispatch = useDispatch();
-  const descriptors = useSelector((state) => state.training.descriptors);
+  // const descriptors = useSelector((state) => state.training.descriptors);
 
   const handleBack = () => {
     send({ type: "BACK" });
