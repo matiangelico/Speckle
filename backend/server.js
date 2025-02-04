@@ -10,6 +10,7 @@ const descriptorRoutes = require("./api/routes/descriptorRoutes");
 const uploadVideoRoutes = require("./api/routes/uploadVideoRoutes");
 const clusteringRoutes = require("./api/routes/clusteringRoutes");
 const trainingRoutes = require("./api/routes/trainingRoutes");
+const experienceRoutes = require("./api/routes/experienceRoutes");
 
 app.use(cors());
 app.use(express.json()); 
@@ -32,6 +33,7 @@ app.use("/descriptor", descriptorRoutes);
 app.use("/uploadVideo", uploadVideoRoutes);
 app.use("/clustering", clusteringRoutes);
 app.use("/training", trainingRoutes);
+app.use("/experience", experienceRoutes);
 
 
 const PORT = 5000;
