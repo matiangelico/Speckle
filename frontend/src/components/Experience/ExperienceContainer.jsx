@@ -8,6 +8,7 @@ import { useMachine } from "@xstate/react";
 import TrainingMachine from "../../machines/trainingMachine";
 
 //Redux
+// import { createNotification } from "../../reducers/notificationReducer";
 import {
   resetTraining,
   setName,
@@ -29,6 +30,7 @@ import NeuralNetworkResult from "./States/8_NeuralNetworkResult";
 // Commons
 import SecondaryButton from "../common/SecondaryButton";
 import EditableTitle from "../common/EditableTitle";
+import Notification from "../common/Notification";
 
 // Icons
 import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
@@ -43,7 +45,6 @@ const ExperienceHeader = styled.div`
   font-family: Inter;
   height: 10vh;
   display: grid;
-  // grid-template-columns: auto auto 1fr auto;
   padding: 0.25rem 2rem;
   justify-content: space-between;
   align-items: center;
@@ -60,6 +61,13 @@ const ExperienceHeader = styled.div`
     & > :nth-child(1) {
       margin-left: -20px;
       margin-right: -20px;
+    }
+
+    & > :nth-child(2) {
+      max-width: 40vw; /* Ajusta el ancho máximo */
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   }
 
@@ -218,13 +226,14 @@ const ExperienceContainer = () => {
     send({ type: "RESET" });
   };
 
+  // const handleShowNotification = () => {
+  //   dispatch(createNotification(`Hola soy una notificacion!`));
+  // };
+
   return (
     <StyledExperienceContainer>
       <ExperienceHeader>
-        <EditableTitle
-          initialTitle={trainingName}
-          onSave={handleSaveTitle}
-        />
+        <EditableTitle initialTitle={trainingName} onSave={handleSaveTitle} />
         <p>27 de octubre de 2024, 20:33</p>
         <SecondaryButton
           SVG={NewExperienceIcon}
@@ -233,6 +242,7 @@ const ExperienceContainer = () => {
         />
       </ExperienceHeader>
       <ExperienceContent>{renderState()}</ExperienceContent>
+      <Notification />
     </StyledExperienceContainer>
   );
 };

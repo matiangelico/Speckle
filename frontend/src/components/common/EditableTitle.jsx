@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 //Icons
 import EditIcon from "../../assets/svg/icon-edit.svg?react";
@@ -40,6 +40,11 @@ const EditableTitle = ({ initialTitle, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(initialTitle);
   const [tempTitle, setTempTitle] = useState(initialTitle); // Guarda el título temporalmente
+
+  useEffect(() => {
+    setTitle(initialTitle);
+    setTempTitle(initialTitle);
+  }, [initialTitle]);
 
   const handleDoubleClick = () => {
     setIsEditing(true);

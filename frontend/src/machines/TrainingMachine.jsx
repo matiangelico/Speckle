@@ -4,7 +4,7 @@ const TrainingMachine = createMachine({
   id: "training",
   initial: "UPLOAD_VIDEO",
   on: {
-    RESET: ".UPLOAD_VIDEO"
+    RESET: ".UPLOAD_VIDEO",
   },
   states: {
     UPLOAD_VIDEO: {
