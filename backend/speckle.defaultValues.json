@@ -1,4 +1,12 @@
-[{
+[
+{
+  "_id": {
+    "$oid": "671fa3de0cdae93206840daf"
+  },
+  "name": "Rango Dinamico",
+  "params": []
+},
+{
   "_id": {
     "$oid": "671fa3de0cdae93206840daf"
   },
@@ -42,7 +50,7 @@
   "_id": {
     "$oid": "671fa3de0cdae93206840db4"
   },
-  "name": "Media",
+  "name": "Adri",
   "params": []
 },
 {
@@ -94,12 +102,7 @@
     "$oid": "671fa3de0cdae93206840dba"
   },
   "name": "High Low Ratio",
-  "params": [
-    {
-      "paramName": "fs",
-      "value": "0.9"
-    }
-  ]
+  "params": []
 },
 {
   "_id": {
@@ -122,10 +125,6 @@
     {
       "paramName": "at_rechazo",
       "value": "40"
-    },
-    {
-      "paramName": "fs",
-      "value": "1.0"
     }
   ]
 },
@@ -150,10 +149,6 @@
     {
       "paramName": "at_rechazo",
       "value": "40"
-    },
-    {
-      "paramName": "fs",
-      "value": "1.0"
     }
   ]
 },
@@ -178,10 +173,6 @@
     {
       "paramName": "at_rechazo",
       "value": "40"
-    },
-    {
-      "paramName": "fs",
-      "value": "1.0"
     }
   ]
 },
