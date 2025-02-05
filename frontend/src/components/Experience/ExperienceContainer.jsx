@@ -9,6 +9,7 @@ import TrainingMachine from "../../machines/trainingMachine";
 
 //Redux
 import {
+  resetTraining,
   setName,
   initializeClustering,
   initializeDescriptors,
@@ -142,6 +143,8 @@ const ExperienceContent = styled.div`
 const ExperienceContainer = () => {
   const dispatch = useDispatch();
   const [state, send] = useMachine(TrainingMachine);
+  //0.
+  const trainingName = useSelector((state) => state.training.name);
   //2.
   const descriptors = useSelector((state) => state.training.descriptors);
   //3.
@@ -151,19 +154,22 @@ const ExperienceContainer = () => {
   //5.
   const clusteringParams = useSelector((state) => state.training.clustering);
 
-  useEffect(() => { //Descritors
+  useEffect(() => {
+    //Descritors
     dispatch(initializeDescriptors());
   }, [dispatch]);
 
-  useEffect(() => { //Clustering
+  useEffect(() => {
+    //Clustering
     dispatch(initializeClustering());
   }, [dispatch]);
 
-  useEffect(() => { //Neural Network
+  useEffect(() => {
+    //Neural Network
     dispatch(initializeNeuralNetwork());
   }, [dispatch]);
 
-  // Renderiza el estado actual basado en `state.value`
+  // Renderiza el estado actual
   const renderState = () => {
     switch (state.value) {
       case "UPLOAD_VIDEO": //1
@@ -171,15 +177,25 @@ const ExperienceContainer = () => {
       case "SELECT_DESCRIPTORS": //2
         return <SelectDescriptors send={send} descriptors={descriptors} />;
       case "EDIT_HYPERPARAMETERS": //3
-        return <EditHyperparameters send={send} chekedDescriptors={chekedDescriptors}/>;
+        return (
+          <EditHyperparameters
+            send={send}
+            chekedDescriptors={chekedDescriptors}
+          />
+        );
       case "SELECT_DESCRIPTOR_RESULTS": //4
         return <SelectDescriptorsResults send={send} />;
       case "EDIT_CLUSTER_PARAMS": //5
-        return <EditClusteringParams send={send} clusteringParams={clusteringParams} />;
+        return (
+          <EditClusteringParams
+            send={send}
+            clusteringParams={clusteringParams}
+          />
+        );
       case "SELECT_CLUSTERING_RESULTS": //6
         return <SelectClusteringResults send={send} />;
       case "EDIT_NEURAL_NETWORK_PARAMS": //7
-        return <EditNeuralNetworkParams  send={send} />;
+        return <EditNeuralNetworkParams send={send} />;
       case "NEURAL_NETWORK_RESULTS": //8
         return <NeuralNetworkResult send={send} />;
       default:
@@ -189,19 +205,32 @@ const ExperienceContainer = () => {
 
   const handleSaveTitle = (newTitle) => {
     console.log("Nuevo título guardado:", newTitle);
-
     dispatch(setName(newTitle));
+  };
+
+  const handleReset = () => {
+    //Training Reducer
+    dispatch(resetTraining());
+    dispatch(initializeDescriptors());
+    dispatch(initializeClustering());
+    dispatch(initializeNeuralNetwork());
+    //State Machine
+    send({ type: "RESET" });
   };
 
   return (
     <StyledExperienceContainer>
       <ExperienceHeader>
         <EditableTitle
-          initialTitle='Nuevo entrenamiento'
+          initialTitle={trainingName}
           onSave={handleSaveTitle}
         />
         <p>27 de octubre de 2024, 20:33</p>
-        <SecondaryButton SVG={NewExperienceIcon} text={"Nueva experiencia"} />
+        <SecondaryButton
+          SVG={NewExperienceIcon}
+          text={"Nuevo entrenamiento"}
+          handleClick={handleReset}
+        />
       </ExperienceHeader>
       <ExperienceContent>{renderState()}</ExperienceContent>
     </StyledExperienceContainer>

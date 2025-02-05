@@ -3,6 +3,9 @@ import { createMachine } from "xstate";
 const TrainingMachine = createMachine({
   id: "training",
   initial: "UPLOAD_VIDEO",
+  on: {
+    RESET: ".UPLOAD_VIDEO"
+  },
   states: {
     UPLOAD_VIDEO: {
       on: {

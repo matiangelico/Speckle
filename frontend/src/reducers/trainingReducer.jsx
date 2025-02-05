@@ -6,22 +6,25 @@ import { convertToReadableDate } from "../utils/dateUtils";
 //Services
 import trainingService from "../services/trainingExperience";
 
+export const initialTrainingState = {
+  name: "Nuevo entrenamiento",
+  createdAt: convertToReadableDate(Date.now()),
+  video: null,
+  descriptors: [],
+  descriptorsResults: [],
+  clustering: [],
+  clusteringResults: [],
+  neuralNetworkLayers: [],
+  layersTemplate: null,
+  trainingResult: null,
+};
+
 const traininingSlice = createSlice({
   name: "training",
-  initialState: {
-    name: "Nuevo entrenamiento",
-    createdAt: convertToReadableDate(Date.now()),
-    video: null,
-    descriptors: [],
-    descriptorsResults: [],
-    clustering: [],
-    clusteringResults: [],
-    neuralNetworkLayers: [],
-    layersTemplate: null,
-    trainingResult: null,
-  },
+  initialState: initialTrainingState,
   reducers: {
     // 0
+    resetTraining: () => initialTrainingState,
     setName(state, action) {
       return { ...state, name: action.payload };
     },
@@ -191,6 +194,7 @@ const traininingSlice = createSlice({
 });
 
 export const {
+  resetTraining,
   setName, //0
   setVideo, //1
   setDescriptors, //2

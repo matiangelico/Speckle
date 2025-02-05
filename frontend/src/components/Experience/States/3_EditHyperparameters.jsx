@@ -47,10 +47,6 @@ const StyledRow = styled.div`
 
 const EditHyperparameters = ({ send, chekedDescriptors }) => {
   const dispatch = useDispatch();
-  // const descriptors = useSelector((state) => state.training.descriptors);
-  // const chekedDescriptors = descriptors.filter(
-  //   (descriptor) => descriptor.checked && descriptor.hyperparameters.length > 0
-  // );
 
   const handleBack = () => {
     send({ type: "BACK" });
