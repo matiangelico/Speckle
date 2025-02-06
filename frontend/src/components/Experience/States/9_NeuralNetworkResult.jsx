@@ -51,9 +51,13 @@ const NeuralNetworkResult = ({ send }) => {
   return (
     <>
       <div className='steps-container'>
-        <h2>8. Resultado entrenamiento red neuronal</h2>
+        <h2>9. Visualizar resultado del entrenamiento de la red neuronal</h2>
         <h3>
-          Explora y elige los archivos que deseas cargar desde tu computadora
+          Visualice los resultados finales del entrenamiento de la red neuronal.
+          Además de poder ampliar la imagen, descargar la matriz resultante o
+          imprimir la imagen, tendrá la opción de guardar el entrenamiento para
+          futuras consultas. Para iniciar un nuevo ciclo de entrenamiento,
+          simplemente presione el botón “Nuevo entrenamiento”.
         </h3>
       </div>
 

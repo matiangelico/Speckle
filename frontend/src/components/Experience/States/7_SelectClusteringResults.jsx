@@ -5,6 +5,7 @@ import { useState } from "react";
 //Redux
 import { useDispatch, useSelector } from "react-redux";
 import { selectClusteringResult } from "../../../reducers/trainingReducer";
+import { createNotification } from "../../../reducers/notificationReducer";
 
 //Commons
 import PrimaryButton from "../../common/PrimaryButton";
@@ -48,7 +49,7 @@ const SelectClusteringResults = ({ send }) => {
   const [modalInfo, setModalInfo] = useState(null);
 
   const handleBack = () => {
-    send({ type: "BACK" })
+    send({ type: "BACK" });
   };
 
   const handleNext = () => {
@@ -59,7 +60,12 @@ const SelectClusteringResults = ({ send }) => {
     if (isAnyClusteringChecked) {
       send({ type: "NEXT" });
     } else {
-      alert("Por favor, selecciona al menos un resultado para continuar.");
+      dispatch(
+        createNotification(
+          "Por favor, selecciona al menos un resultado para continuar.",
+          "error"
+        )
+      );
     }
   };
 
@@ -78,9 +84,13 @@ const SelectClusteringResults = ({ send }) => {
   return (
     <>
       <div className='steps-container'>
-        <h2>6. Seleccionar resultados de clustering</h2>
+        <h2>7. Seleccionar resultados de clustering</h2>
         <h3>
-          Explora y elige los archivos que deseas cargar desde tu computadora
+          Examine los resultados obtenidos tras aplicar los algoritmos de
+          clustering. Podrá ampliar las imágenes para ver detalles, descargar la
+          matriz resultante o imprimir la imagen correspondiente. Seleccione al
+          menos un resultado para proceder al siguiente nivel de análisis con la
+          red neuronal.
         </h3>
       </div>
 

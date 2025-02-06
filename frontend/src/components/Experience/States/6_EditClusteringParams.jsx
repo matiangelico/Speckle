@@ -3,9 +3,9 @@ import styled from "styled-components";
 //Redux
 import { useDispatch } from "react-redux";
 import {
-  initializeClustering,
   updateClusteringParam,
   initializeClusteringResult,
+  resetClusteringParams,
 } from "../../../reducers/trainingReducer";
 
 //Components
@@ -40,9 +40,11 @@ const ClusteringParamContainer = styled.div`
   }
 `;
 
-const EditClusteringParams = ({ send, clusteringParams }) => {
+const EditClusteringParams = ({ send, chekedClustering }) => {
   const dispatch = useDispatch();
-  // const clusteringParams = useSelector((state) => state.training.clustering);
+  const chekedClusteringParams = chekedClustering.filter(
+    (clustering) => clustering.parameters.length > 0
+  );
 
   const handleBack = () => {
     send({ type: "BACK" });
@@ -51,7 +53,10 @@ const EditClusteringParams = ({ send, clusteringParams }) => {
   const handleNext = () => {
     dispatch(initializeClusteringResult());
 
-    send({ type: "NEXT" });
+    if (chekedClusteringParams.length !== 0) {
+      // ALGUNA VALIDACION DE HIPERPARAMETROS?
+      send({ type: "NEXT" });
+    }
   };
 
   const handleChangeValue = (clusteringName, paramName, newValue) => {
@@ -65,21 +70,24 @@ const EditClusteringParams = ({ send, clusteringParams }) => {
   };
 
   const handleSetDefaultValues = () => {
-    dispatch(initializeClustering());
+    dispatch(resetClusteringParams());
   };
 
   return (
     <>
       <div className='steps-container'>
-        <h2>5. Editar parametros de clustering</h2>
+        <h2>6. Editar parametros de clustering</h2>
         <h3>
-          Explora y elige los archivos que deseas cargar desde tu computadora
+          Ajuste los parámetros de entrada de los algoritmos de clustering, en
+          caso de que sean personalizables. Si no es necesario modificar
+          parámetros, avance al siguiente paso. El botón “Restablecer valores”
+          permitirá restaurar la configuración por defecto en cualquier momento.
         </h3>
       </div>
 
-      {clusteringParams.length > 0 ? (
+      {chekedClusteringParams.length > 0 ? (
         <ClusteringParamContainer>
-          {clusteringParams.map(
+          {chekedClusteringParams.map(
             (clustering, index) =>
               clustering.parameters?.length > 0 &&
               clustering.parameters.map((param) => (
@@ -113,11 +121,11 @@ const EditClusteringParams = ({ send, clusteringParams }) => {
           text={"Seleccionar resultados de descriptores"}
         />
 
-        {clusteringParams.length > 0 ? (
+        {chekedClusteringParams.length > 0 ? (
           <SecondaryButton
             handleClick={handleSetDefaultValues}
             SVG={SlidersIcon}
-            text={"Reestablecer valores"}
+            text={"Restablecer valores"}
           />
         ) : (
           <></>

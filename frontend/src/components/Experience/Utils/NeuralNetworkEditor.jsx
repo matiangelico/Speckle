@@ -26,8 +26,16 @@ const VisualContainer = styled.div`
   border: 2px solid var(--dark-800);
   border-radius: 12px;
   margin-bottom: 10px;
-  gap: 20px;
+  gap: 10px;
   overflow-x: auto;
+
+  & > :nth-child(1) {
+    margin-right: 10px;
+  }
+
+  & >:last-child {
+    margin-left: 10px;
+  }
 `;
 
 const ParametersContainer = styled.div`
@@ -56,6 +64,7 @@ const LayerWithIcon = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 10px;
 `;
 
 const Layer = styled.div`

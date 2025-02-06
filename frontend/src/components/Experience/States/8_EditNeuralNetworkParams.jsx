@@ -6,6 +6,7 @@ import {
   setNeuralNetworkLayers,
   initializeTrainingResult,
 } from "../../../reducers/trainingReducer";
+import { createNotification } from "../../../reducers/notificationReducer";
 
 //Components
 import PrimaryButton from "../../common/PrimaryButton";
@@ -43,6 +44,8 @@ const EditNeuralNetworkParams = ({ send }) => {
   const handleRemoveLayer = () => {
     if (layers.length > 1) {
       dispatch(setNeuralNetworkLayers(layers.slice(0, -1)));
+    } else {
+      dispatch(createNotification("La cantidad minima de capaz es uno."));
     }
   };
 
@@ -72,9 +75,12 @@ const EditNeuralNetworkParams = ({ send }) => {
   return (
     <>
       <div className='steps-container'>
-        <h2>7. Editar parámetros de la red neuronal</h2>
+        <h2>8. Editar parámetros de la red neuronal</h2>
         <h3>
-          Explora y elige los archivos que deseas cargar desde tu computadora
+          Configure la arquitectura de la red neuronal ajustando la cantidad de
+          capas, el número de neuronas por capa y parámetros como batch
+          normalization y dropout. Estos ajustes serán determinantes para el
+          rendimiento del entrenamiento final.
         </h3>
       </div>
 

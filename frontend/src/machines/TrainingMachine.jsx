@@ -27,12 +27,18 @@ const TrainingMachine = createMachine({
     SELECT_DESCRIPTOR_RESULTS: {
       on: {
         BACK: "EDIT_HYPERPARAMETERS",
+        NEXT: "SELECT_CLUSTERING",
+      },
+    },
+    SELECT_CLUSTERING: {
+      on: {
+        BACK: "SELECT_DESCRIPTOR_RESULTS",
         NEXT: "EDIT_CLUSTER_PARAMS",
       },
     },
     EDIT_CLUSTER_PARAMS: {
       on: {
-        BACK: "SELECT_DESCRIPTOR_RESULTS",
+        BACK: "SELECT_CLUSTERING",
         NEXT: "SELECT_CLUSTERING_RESULTS",
       },
     },
