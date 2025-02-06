@@ -50,6 +50,7 @@ const ExperienceHeader = styled.div`
   align-items: center;
   gap: 1rem;
   border-bottom: 2px solid var(--dark-500);
+  z-index: 2;
 
   &:has(:nth-child(3):last-child) {
     grid-template-columns: auto 1fr auto;
@@ -109,6 +110,7 @@ const ExperienceContent = styled.div`
     align-items: flex-start;
     align-self: stretch;
     box-shadow: 0px 10px 10px rgb(255 255 255 / 100%);
+    z-index: 2;
   }
 
   .steps-container h2 {
@@ -118,7 +120,7 @@ const ExperienceContent = styled.div`
     font-size: 1.6rem;
     font-style: normal;
     font-weight: 700;
-    line-height: 130%; /* 2.6rem */
+    line-height: 140%; /* 2.6rem */
   }
 
   .steps-container h3 {
@@ -127,8 +129,8 @@ const ExperienceContent = styled.div`
     font-family: Inter;
     font-size: 1rem;
     font-style: normal;
-    font-weight: 700;
-    line-height: 140%; /* 1.4rem */
+    font-weight: 600;
+    line-height: 150%;
   }
 
   .one-button-container {

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 //Components
 import Input from "../../common/Input";
@@ -8,6 +8,46 @@ import TaskCheckbox from "../../common/CheckBox";
 import ImageIcon from "../../../assets/svg/icon-image.svg?react";
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import LayerIcon from "../../../assets/svg/icon-layers.svg?react";
+
+const getColor = (value) => {
+  switch (value) {
+    case 0:
+      return "#FFFFFF";
+    case 0.1:
+      return "#E8E8E9";
+    case 0.2:
+      return "#D1D2D2";
+    case 0.3:
+      return "#BBBBBB";
+    case 0.4:
+      return "#A4A4A5";
+    case 0.5:
+      return "#8D8D8E";
+    case 0.6:
+      return "#767778";
+    case 0.7:
+      return "#5F6062";
+    case 0.8:
+      return "#49494B";
+    case 0.9:
+      return "#323335";
+    case 1:
+      return "#1B1C1E";
+    default:
+      return "#FFFFFF";
+  }
+}
+
+const getBatchColor = (value) => {
+  switch (true) {
+    case value >= 0 && value <= 0.4:
+      return "#080A11";
+    case value >= 0.5 && value <= 1:
+      return "#FFFFFF";
+    default:
+      return "#FFFFFF";
+  }
+}
 
 const EditorContainer = styled.div`
   display: flex;
@@ -33,7 +73,7 @@ const VisualContainer = styled.div`
     margin-right: 10px;
   }
 
-  & >:last-child {
+  & > :last-child {
     margin-left: 10px;
   }
 `;
@@ -89,15 +129,31 @@ const Layer = styled.div`
 `;
 
 const Neuron = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "batchNorm",
+  shouldForwardProp: (prop) => prop !== "dropout" && prop !== "batchNorm",
 })`
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: ${({ batchNorm }) =>
-    batchNorm ? "var(--dark-300)" : "var(--white)"};
+  background-color: ${({ dropout }) =>
+    getColor(dropout !== undefined ? dropout : 0)};
   border: 2px solid var(--dark-800);
   margin: 2px;
+  position: relative;
+
+  ${({ batchNorm }) =>
+    batchNorm &&
+    css`
+      &::after {
+        content: "N";
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 14px;
+        color: ${({ dropout }) =>
+          getBatchColor(dropout !== undefined ? dropout : 0)};
+      }
+    `}
 `;
 
 const ExtraNeurons = styled.div`
@@ -124,7 +180,11 @@ const NeuralNetworkEditor = ({ layers, updateLayer }) => {
               <label>{`Capa-${index + 1}`}</label>
               {Array.from({ length: Math.min(layer.neurons, 10) }).map(
                 (_, i) => (
-                  <Neuron key={i} batchNorm={layer.batchNorm} />
+                  <Neuron
+                    key={i}
+                    batchNorm={layer.batchNorm}
+                    dropout={layer.dropout}
+                  />
                 )
               )}
               {layer.neurons > 10 && (

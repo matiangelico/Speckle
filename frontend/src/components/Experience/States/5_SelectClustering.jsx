@@ -64,11 +64,11 @@ const SelectClusteringAlgorithms = ({ send, clusteringAlgorithms }) => {
 
       {clusteringAlgorithms && (
         <StyledDescriptorsContainer>
-          {clusteringAlgorithms.map((descriptor, index) => (
+          {clusteringAlgorithms.map((algorithm, index) => (
             <TaskCheckbox
               key={index}
-              label={descriptor.name}
-              checked={descriptor.checked}
+              label={algorithm.name}
+              checked={algorithm.checked}
               onChange={handleDescriptorSelected} // Actualiza el estado de "checked"
             />
           ))}
