@@ -1,0 +1,23 @@
+[ 
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840dbe"
+    },
+    "name": "Fuzzy",
+    "params": []
+  },
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840db1"
+    },
+    "name": "Fujii",
+    "params": []
+  },
+  {
+    "_id": {
+      "$oid": "671fa3de0cdae93206840db4"
+    },
+    "name": "Adri",
+    "params": []
+  }
+]

@@ -1,0 +1,17 @@
+[
+    {
+        "Neuronas" : "8",
+        "BatchNormalization" :"1",
+        "Dropout" : "0.1" 
+    },
+    {
+        "Neuronas" : "16",
+        "BatchNormalization" :"0",
+        "Dropout" : "0." 
+    },
+    {
+        "Neuronas" : "8",
+        "BatchNormalization" :"1",
+        "Dropout" : "0.15" 
+    }
+]
