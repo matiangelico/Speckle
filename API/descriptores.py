@@ -1,5 +1,4 @@
 import numpy as np
-import scipy.io as sio
 from scipy.signal import welch, ellip, sosfilt, ellipord
 from normalizar import normalizar
 

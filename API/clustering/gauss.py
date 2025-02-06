@@ -20,7 +20,7 @@ def bc(tensor, radius,nro_clusters=15):
     
     num_clusters = max(0, min(max_clusters, num_clusters+1))
     
-    print(f"Número de clusters estimado: {num_clusters}")
+    #print(f"Número de clusters estimado: {num_clusters}")
     
     percentiles = np.percentile(density, np.linspace(0, 100, nro_clusters + 1))
     

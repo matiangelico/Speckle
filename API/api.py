@@ -1,3 +1,5 @@
+#python -m uvicorn api:app --reload --ssl-keyfile key.pem --ssl-certfile cert.pem
+
 from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks, Header, HTTPException
 from fastapi.responses import FileResponse
 import descriptores as ds
@@ -105,7 +107,8 @@ async def clustering(x_api_key: str = Header(None),matrices_descriptores: Upload
 
     for datos in clust_params:
         rutina = rutinas_clustering.get(datos['name'])
-        param = int(datos['radius']) if (datos['name']=="Sustractive Clustering"or datos['name']=="Promedio Gaussiano")else int(datos['nro_clusters'])
+        parametros = datos['params'][0]
+        param = int(parametros['value']) 
         print(f"Nombre del Clustering: {datos['name']}. Parametro {param}")
         matriz = rutina(tensor,param).tolist()
         imagenes = {"nombre_clustering" : datos['name'],"imagen_clustering" : gi.colorMap(matriz)}

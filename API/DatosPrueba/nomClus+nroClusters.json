@@ -1,24 +1,40 @@
 [
     {
-        "name" : "Kmeans",
-        "nro_clusters" :"3" 
+      "name": "Kmeans",
+      "params": [
+        {
+          "paramName": "nro_clusters",
+          "value": "3"
+        }
+      ]
     },
     {
-        "name" : "MiniBatch Kmeans",
-        "nro_clusters" :"3" 
+      "name": "MiniBatch Kmeans",
+      "params": [
+        {
+          "paramName": "nro_clusters",
+          "value": "5"
+        }
+      ]
     },
     {
-        "name" : "Spectral Clustering",
-        "nro_clusters" :"3"
+      "name": "Spectral Clustering",
+      "params": [
+        {
+          "paramName": "nro_clusters",
+          "value": "3"
+        }
+      ]
     },
     {
-        "name" : "Sustractive Clustering",
-        "radius" :"5"
-    },
-    {
-        "name" : "Promedio Gaussiano",
-        "radius" :"5" 
+      "name": "Promedio Gaussiano",
+      "params": [
+        {
+          "paramName": "radius",
+          "value": "5"
+        }
+      ]
     }
-]
+  ]
 
 
