@@ -6,9 +6,10 @@ import SpeckleIcon from "../../assets/svg/speckle-favicon.svg?react";
 import AlertIcon from "../../assets/svg/icon-alert.svg?react";
 import CheckSquareIcon from "../../assets/svg/icon-check-square.svg?react";
 
-const slideUp = keyframes`
+// Animación que desliza de arriba hacia abajo
+const slideDown = keyframes`
   from {
-    transform: translate(-50%, 100%);
+    transform: translate(-50%, -100%);
     opacity: 0;
   }
   to {
@@ -35,18 +36,18 @@ const StyledNotification = styled.div`
   }};
 
   position: fixed;
-  bottom: 20px;
+  top: 20px; /* Se posiciona en la parte superior */
   left: 50%;
   transform: translate(-50%, 0);
   z-index: 1000;
 
-  animation: ${slideUp} 0.5s ease-out;
+  animation: ${slideDown} 0.5s ease-out;
 `;
 
 const IconWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding: 12px 12px 12px 12px;
+  padding: 12px;
   border-right: 2px solid var(--dark-800);
   border-radius: 8px 0 0 8px;
   background-color: ${({ type }) => {
@@ -97,7 +98,9 @@ const Notification = () => {
     <>
       {notification && (
         <StyledNotification type={notification.type}>
-          <IconWrapper type={notification.type}>{getIcon(notification.type)}</IconWrapper>
+          <IconWrapper type={notification.type}>
+            {getIcon(notification.type)}
+          </IconWrapper>
           <TextWrapper>
             <span>{notification.message}</span>
           </TextWrapper>

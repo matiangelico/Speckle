@@ -3,6 +3,7 @@ import styled from "styled-components";
 //Redux
 import { useDispatch } from "react-redux";
 import { selectDescriptor } from "../../../reducers/trainingReducer";
+import { createNotification } from "../../../reducers/notificationReducer";
 
 //Commons
 import TaskCheckbox from "../../common/CheckBox";
@@ -24,7 +25,6 @@ const StyledDescriptorsContainer = styled.div`
 
 const SelectDescriptors = ({ send, descriptors }) => {
   const dispatch = useDispatch();
-  // const descriptors = useSelector((state) => state.training.descriptors);
 
   const handleBack = () => {
     send({ type: "BACK" });
@@ -38,7 +38,12 @@ const SelectDescriptors = ({ send, descriptors }) => {
     if (isAnyDescriptorChecked) {
       send({ type: "NEXT" });
     } else {
-      alert("Por favor, selecciona al menos un descriptor para continuar.");
+      dispatch(
+        createNotification(
+          "Por favor, selecciona al menos un descriptor para continuar.",
+          "error"
+        )
+      );
     }
   };
 
@@ -51,7 +56,9 @@ const SelectDescriptors = ({ send, descriptors }) => {
       <div className='steps-container'>
         <h2>2. Seleccionar descriptores</h2>
         <h3>
-          Explora y selecciona los descriptores relevantes para tu análisis.
+          Elija uno o más descriptores que se emplearán para extraer
+          características relevantes del contenido del video. Estos descriptores
+          determinarán la forma en que se procesará la imagen.
         </h3>
       </div>
 
@@ -74,7 +81,7 @@ const SelectDescriptors = ({ send, descriptors }) => {
           SVG={ArrowLeftIcon}
           text={"Subir video"}
         />
-        
+
         <PrimaryButton
           handleClick={handleNext}
           RightSVG={ArrowRightIcon}

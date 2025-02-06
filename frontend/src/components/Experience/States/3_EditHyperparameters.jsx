@@ -11,7 +11,7 @@ import {
 
 //Commons
 import Input from "../../common/Input";
-import EmptyContainer from '../../common/EmptyContainer';
+import EmptyContainer from "../../common/EmptyContainer";
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
 
@@ -47,17 +47,18 @@ const StyledRow = styled.div`
 
 const EditHyperparameters = ({ send, chekedDescriptors }) => {
   const dispatch = useDispatch();
+  const chekedHyperparameters = chekedDescriptors.filter(
+    (descriptor) => descriptor.hyperparameters.length > 0
+  );
 
   const handleBack = () => {
     send({ type: "BACK" });
   };
 
   const handleNext = () => {
-    dispatch(initializeDescriptorsResult())
+    dispatch(initializeDescriptorsResult());
 
-    if (chekedDescriptors.length === 0) {
-      send({ type: "NEXT" });
-    } else {
+    if (chekedDescriptors.length !== 0) {
       // ALGUNA VALIDACION DE HIPERPARAMETROS?
       send({ type: "NEXT" });
     }
@@ -82,11 +83,15 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
       <div className='steps-container'>
         <h2>3. Seleccionar hiperparametros</h2>
         <h3>
-          Explora y elige los archivos que deseas cargar desde tu computadora
+          Si los descriptores seleccionados disponen de hiperparámetros
+          ajustables, modifique sus valores para optimizar el análisis. En caso
+          contrario, avance al siguiente paso. Use el botón “Restablecer
+          valores” para volver a la configuración predeterminada en cualquier
+          momento.
         </h3>
       </div>
 
-      {chekedDescriptors.length > 0 ? (
+      {chekedHyperparameters.length > 0 ? (
         <HyperparametersContainer>
           {chekedDescriptors.map(
             (descriptor, index) =>
@@ -115,7 +120,11 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
           )}
         </HyperparametersContainer>
       ) : (
-        <EmptyContainer message={"Los descriptores seleccionados no poseen hiperparametros editables."} />
+        <EmptyContainer
+          message={
+            "Los descriptores seleccionados no poseen hiperparametros editables."
+          }
+        />
       )}
 
       <div className='two-buttons-container'>
@@ -125,11 +134,11 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
           text={"Seleccionar descriptores"}
         />
 
-        {chekedDescriptors.length > 0 ? (
+        {chekedHyperparameters.length > 0 ? (
           <SecondaryButton
             handleClick={handleSetDefaultValues}
             SVG={SlidersIcon}
-            text={"Reestablecer valores"}
+            text={"Restablecer valores"}
           />
         ) : (
           <></>

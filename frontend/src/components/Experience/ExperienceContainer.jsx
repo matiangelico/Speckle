@@ -8,7 +8,6 @@ import { useMachine } from "@xstate/react";
 import TrainingMachine from "../../machines/trainingMachine";
 
 //Redux
-// import { createNotification } from "../../reducers/notificationReducer";
 import {
   resetTraining,
   setName,
@@ -22,10 +21,11 @@ import UploadVideo from "./States/1_UploadVideo";
 import SelectDescriptors from "./States/2_SelectDescriptors";
 import EditHyperparameters from "./States/3_EditHyperparameters";
 import SelectDescriptorsResults from "./States/4_SelectDescriptorsResults";
-import EditClusteringParams from "./States/5_EditClusteringParams";
-import SelectClusteringResults from "./States/6_SelectClusteringResults";
-import EditNeuralNetworkParams from "./States/7_EditNeuralNetworkParams";
-import NeuralNetworkResult from "./States/8_NeuralNetworkResult";
+import SelectClustering from "./States/5_SelectClustering";
+import EditClusteringParams from "./States/6_EditClusteringParams";
+import SelectClusteringResults from "./States/7_SelectClusteringResults";
+import EditNeuralNetworkParams from "./States/8_EditNeuralNetworkParams";
+import NeuralNetworkResult from "./States/9_NeuralNetworkResult";
 
 // Commons
 import SecondaryButton from "../common/SecondaryButton";
@@ -157,10 +157,12 @@ const ExperienceContainer = () => {
   const descriptors = useSelector((state) => state.training.descriptors);
   //3.
   const chekedDescriptors = descriptors.filter(
-    (descriptor) => descriptor.checked && descriptor.hyperparameters.length > 0
+    (descriptor) => descriptor.checked
   );
   //5.
-  const clusteringParams = useSelector((state) => state.training.clustering);
+  const clustering = useSelector((state) => state.training.clustering);
+  //6.
+  const chekedClustering = clustering.filter((algorithm) => algorithm.checked);
 
   useEffect(() => {
     //Descritors
@@ -193,18 +195,22 @@ const ExperienceContainer = () => {
         );
       case "SELECT_DESCRIPTOR_RESULTS": //4
         return <SelectDescriptorsResults send={send} />;
-      case "EDIT_CLUSTER_PARAMS": //5
+      case "SELECT_CLUSTERING": //5
+        return (
+          <SelectClustering send={send} clusteringAlgorithms={clustering} />
+        );
+      case "EDIT_CLUSTER_PARAMS": //6
         return (
           <EditClusteringParams
             send={send}
-            clusteringParams={clusteringParams}
+            chekedClustering={chekedClustering}
           />
         );
-      case "SELECT_CLUSTERING_RESULTS": //6
+      case "SELECT_CLUSTERING_RESULTS": //7
         return <SelectClusteringResults send={send} />;
-      case "EDIT_NEURAL_NETWORK_PARAMS": //7
+      case "EDIT_NEURAL_NETWORK_PARAMS": //8
         return <EditNeuralNetworkParams send={send} />;
-      case "NEURAL_NETWORK_RESULTS": //8
+      case "NEURAL_NETWORK_RESULTS": //9
         return <NeuralNetworkResult send={send} />;
       default:
         return null;
@@ -225,10 +231,6 @@ const ExperienceContainer = () => {
     //State Machine
     send({ type: "RESET" });
   };
-
-  // const handleShowNotification = () => {
-  //   dispatch(createNotification(`Hola soy una notificacion!`));
-  // };
 
   return (
     <StyledExperienceContainer>

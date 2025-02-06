@@ -6,8 +6,9 @@ import FileDropArea from "../Utils/FileDropArea";
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 
 //Redux
+import { useDispatch, useSelector } from "react-redux";
+import { createNotification } from "../../../reducers/notificationReducer";
 import { setVideo } from "../../../reducers/trainingReducer";
-import { useDispatch, useSelector } from 'react-redux';
 
 const UploadVideo = ({ send }) => {
   const dispatch = useDispatch();
@@ -17,7 +18,9 @@ const UploadVideo = ({ send }) => {
     if (video) {
       send({ type: "NEXT" });
     } else {
-      alert("Por favor, sube un video antes de continuar.");
+      dispatch(
+        createNotification("Por favor, sube un video antes de continuar.")
+      );
     }
   };
 
@@ -25,29 +28,30 @@ const UploadVideo = ({ send }) => {
     const validTypes = ["video/avi"]; // Tipo MIME para archivos .avi
 
     if (!validTypes.includes(file.type)) {
-      throw new Error("Solo se permite cargar archivos .avi");
-      //MANEJAR ERROR
+      dispatch(
+        createNotification("Solo se permite cargar archivos .avi", "error")
+      );
+      return;
     }
 
     dispatch(setVideo(file));
-    // dispatch(initializeVideo(file));
   };
-  
+
   return (
     <>
       <div className='steps-container'>
         <h2>1. Subir video</h2>
         <h3>
-          Explora y elige los archivos que deseas cargar desde tu computadora
+          Adjunte el archivo de video que servirá como entrada para el
+          entrenamiento. Verifique que el formato y la calidad del video sean
+          compatibles con los requerimientos del sistema.
         </h3>
       </div>
 
       <FileDropArea
         onFileDrop={handleFileDrop}
         fileName={video?.name || ""}
-        fileSize={
-          video ? (video.size / (1024 * 1024)).toFixed(2) : ""
-        }
+        fileSize={video ? (video.size / (1024 * 1024)).toFixed(2) : ""}
       />
 
       <div className='one-button-container'>

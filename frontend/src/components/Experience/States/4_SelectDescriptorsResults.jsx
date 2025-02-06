@@ -5,6 +5,7 @@ import { useState } from "react";
 //Redux
 import { useDispatch, useSelector } from "react-redux";
 import { selectDescriptorResult } from "../../../reducers/trainingReducer";
+import { createNotification } from "../../../reducers/notificationReducer";
 
 //Commons
 import PrimaryButton from "../../common/PrimaryButton";
@@ -59,7 +60,12 @@ const SelectDescriptorsResults = ({ send }) => {
     if (isAnyDescriptorChecked) {
       send({ type: "NEXT" });
     } else {
-      alert("Por favor, selecciona al menos un resultado para continuar.");
+      dispatch(
+        createNotification(
+          "Por favor, selecciona al menos un resultado para continuar.",
+          "error"
+        )
+      );
     }
   };
 
@@ -80,7 +86,11 @@ const SelectDescriptorsResults = ({ send }) => {
       <div className='steps-container'>
         <h2>4. Seleccionar resultados de descriptores</h2>
         <h3>
-          Explora y elige los archivos que deseas cargar desde tu computadora
+          Revise los resultados generados por los descriptores. Podrá ampliar
+          las imágenes para examinar detalles, descargar la matriz resultante o
+          imprimir la imagen de un descriptor específico. Es imprescindible
+          seleccionar al menos un resultado para continuar con el procesamiento
+          mediante algoritmos de clustering.
         </h3>
       </div>
 
