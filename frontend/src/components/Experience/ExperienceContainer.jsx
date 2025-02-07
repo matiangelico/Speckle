@@ -31,9 +31,11 @@ import NeuralNetworkResult from "./States/9_NeuralNetworkResult";
 import SecondaryButton from "../common/SecondaryButton";
 import EditableTitle from "../common/EditableTitle";
 import Notification from "../common/Notification";
+import ConfirmationAlert from "../common/ConfirmationAlert";
 
 // Icons
 import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
+import { showConfirmationAlertAsync } from "../../reducers/alertReducer";
 
 const StyledExperienceContainer = styled.main`
   height: 87vh;
@@ -224,14 +226,23 @@ const ExperienceContainer = () => {
     dispatch(setName(newTitle));
   };
 
-  const handleReset = () => {
-    //Training Reducer
-    dispatch(resetTraining());
-    dispatch(initializeDescriptors());
-    dispatch(initializeClustering());
-    dispatch(initializeNeuralNetwork());
-    //State Machine
-    send({ type: "RESET" });
+  const handleReset = async () => {
+    const resultado = await dispatch(
+      showConfirmationAlertAsync({
+        title: "Nuevo entrenamiento",
+        message:
+          '¿Deseas comenzar un nuevo entrenamiento?\nAl hacerlo, se perderá todo el progreso actual. Si prefieres conservarlo, tendrás la opción de guardarlo al final del proceso para consultarlo en la sección "Consulta".',
+      })
+    );
+    if (resultado) {
+      //Training Reducer
+      dispatch(resetTraining());
+      dispatch(initializeDescriptors());
+      dispatch(initializeClustering());
+      dispatch(initializeNeuralNetwork());
+      //State Machine
+      send({ type: "RESET" });
+    }
   };
 
   return (
@@ -247,6 +258,7 @@ const ExperienceContainer = () => {
       </ExperienceHeader>
       <ExperienceContent>{renderState()}</ExperienceContent>
       <Notification />
+      <ConfirmationAlert />
     </StyledExperienceContainer>
   );
 };

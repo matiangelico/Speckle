@@ -51,8 +51,7 @@ const App = () => {
   // getToken()
 
   ReactModal.setAppElement("#root");
-
-
+  
   return (
     <>
       <GlobalStyles /> {/*No funciona en React Native*/}

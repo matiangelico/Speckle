@@ -4,6 +4,7 @@ import defaultValuesReducer from "./defaultValuesReducer";
 // import experienceReducer from "./experienceReducer";
 import trainingReducer from "./trainingReducer";
 import notificationReducer from "./notificationReducer";
+import confirmationAlert from "./alertReducer.jsx"
 import loaderReducer from './loaderReducer';
 
 const store = configureStore({
@@ -12,6 +13,7 @@ const store = configureStore({
     // experiences: experienceReducer,
     training: trainingReducer,
     notification: notificationReducer,
+    confirmationAlert: confirmationAlert,
     loader: loaderReducer,
   },
   // Deshabilitar la validación de serialización
