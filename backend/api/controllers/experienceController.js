@@ -36,7 +36,6 @@ exports.getExperience = async (req, res) => {
   }
 };
 
-// Obtener todas las experiencias de un usuario (solo nombres)
 exports.getUserExperiences = async (req, res) => {
   try {
     const userId = req.auth.payload.sub;
