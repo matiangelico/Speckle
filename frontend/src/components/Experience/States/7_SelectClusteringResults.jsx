@@ -117,7 +117,7 @@ const SelectClusteringResults = ({ send }) => {
         <PrimaryButton
           handleClick={handleNext}
           RightSVG={ArrowRightIcon}
-          text={"Generar resultados de clustering"}
+          text={"Editar parámetros de la red neuronal"}
         />
       </div>
 

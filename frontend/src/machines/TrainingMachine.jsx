@@ -51,12 +51,18 @@ const TrainingMachine = createMachine({
     EDIT_NEURAL_NETWORK_PARAMS: {
       on: {
         BACK: "SELECT_CLUSTERING_RESULTS",
+        NEXT: "EDIT_NEURAL_NETWORK_LAYERS",
+      },
+    },
+    EDIT_NEURAL_NETWORK_LAYERS: {
+      on: {
+        BACK: "EDIT_NEURAL_NETWORK_PARAMS",
         NEXT: "NEURAL_NETWORK_RESULTS",
       },
     },
     NEURAL_NETWORK_RESULTS: {
       on: {
-        BACK: "EDIT_NEURAL_NETWORK_PARAMS",
+        BACK: "EDIT_NEURAL_NETWORK_LAYERS",
       },
     },
   },

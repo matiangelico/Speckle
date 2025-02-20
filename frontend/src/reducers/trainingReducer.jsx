@@ -14,6 +14,7 @@ export const initialTrainingState = {
   descriptorsResults: [],
   clustering: [],
   clusteringResults: [],
+  neuralNetworkParams: [],
   neuralNetworkLayers: [],
   layersTemplate: null,
   trainingResult: null,
@@ -53,6 +54,28 @@ const traininingSlice = createSlice({
       return {
         ...state,
         descriptors: changedDescriptors,
+      };
+    },
+    selectAllDescriptors(state) {
+      const updatedDescriptors = state.descriptors.map((descriptor) => ({
+        ...descriptor,
+        checked: true, // Selecciona el descriptor
+      }));
+
+      return {
+        ...state,
+        descriptors: updatedDescriptors,
+      };
+    },
+    deselectAllDescriptors(state) {
+      const updatedDescriptors = state.descriptors.map((descriptor) => ({
+        ...descriptor,
+        checked: false, // Deselecciona el descriptor
+      }));
+
+      return {
+        ...state,
+        descriptors: updatedDescriptors,
       };
     },
     // 3
@@ -147,13 +170,54 @@ const traininingSlice = createSlice({
         clustering: changedClustering,
       };
     },
-    // 6
-    setClusteringParams(state, action) {
-      const clusteringParams = action.payload;
+    selectAllClustering(state) {
+      const updatedClusterings = state.clustering.map((cluster) => ({
+        ...cluster,
+        checked: true,
+      }));
+
       return {
         ...state,
-        clustering: clusteringParams,
+        clustering: updatedClusterings,
       };
+    },
+    deselectAllClustering(state) {
+      const updatedClusterings = state.clustering.map((cluster) => ({
+        ...cluster,
+        checked: false,
+      }));
+
+      return {
+        ...state,
+        clustering: updatedClusterings,
+      };
+    },
+    // 6
+    setClusteringParams(state, action) {
+      const defaultValues = action.payload;
+
+      const updatedClustering = state.clustering.map((cluster) => {
+        const defaultCluster = defaultValues.find(
+          (defaultCl) => defaultCl.name === cluster.name
+        );
+
+        if (!defaultCluster) return cluster;
+
+        const updatedParameters = cluster.parameters.map((param) => {
+          const defaultParam = defaultCluster.params.find(
+            (defParam) => defParam.paramName === param.paramName
+          );
+
+          if (defaultParam && param.value !== defaultParam.value) {
+            return { ...param, value: defaultParam.value };
+          }
+          return param;
+        });
+
+        return { ...cluster, parameters: updatedParameters };
+      });
+
+      return { ...state, clustering: updatedClustering };
     },
     updateClusteringParam(state, action) {
       const { clusteringName, parameterName, newValue } = action.payload;
@@ -192,7 +256,28 @@ const traininingSlice = createSlice({
         clusteringResults: changedResults,
       };
     },
-    // 8
+    setNeuralNetworkParams(state, action) {
+      const neuralNetworkParams = action.payload;
+      return {
+        ...state,
+        neuralNetworkParams: neuralNetworkParams,
+      };
+    },
+    updateNeuralNetworkParams(state, action) {
+      const { parameterName, newValue } = action.payload;
+
+      const updatedParams = state.neuralNetworkParams.map((param) => {
+        if (param.name === parameterName) {
+          return { ...param, value: newValue };
+        } else {
+          return param;
+        }
+      });
+
+      return { ...state, neuralNetworkParams: updatedParams };
+    },
+
+    // 9
     setNeuralNetworkLayers(state, action) {
       const neuralNetwork = action.payload;
       return {
@@ -207,7 +292,7 @@ const traininingSlice = createSlice({
         layersTemplate: neuralNetworkLayer,
       };
     },
-    // 9
+    // 10
     setTrainingResult(state, action) {
       const result = action.payload;
       return {
@@ -220,23 +305,29 @@ const traininingSlice = createSlice({
 
 export const {
   resetTraining, //0
-  setName, 
+  setName,
   setVideo, //1
   setDescriptors, //2
   selectDescriptor,
+  selectAllDescriptors,
+  deselectAllDescriptors,
   setHyperparameters, //3
   updateHyperparameter,
   setDescriptorsResults, //4
   selectDescriptorResult,
   setClustering, //5
-  selectClustering, 
+  selectClustering,
+  selectAllClustering,
+  deselectAllClustering,
   setClusteringParams, //6
   updateClusteringParam,
   setClusteringResults, //7
   selectClusteringResult,
-  setNeuralNetworkLayers, //8
+  setNeuralNetworkParams, //8
+  updateNeuralNetworkParams,
+  setNeuralNetworkLayers, //9
   setTemplateLayers,
-  setTrainingResult, //9
+  setTrainingResult, //10
 } = traininingSlice.actions;
 
 // 2.
@@ -290,7 +381,7 @@ export const initializeClustering = () => {
       parameters: cluster.params,
     }));
 
-    dispatch(setClusteringParams(clusteringParams));
+    dispatch(setClustering(clusteringParams));
   };
 };
 
@@ -320,17 +411,28 @@ export const initializeClusteringResult = () => {
 //
 
 // 8.
-export const initializeNeuralNetwork = () => {
+export const initializeNeuralNetworkParams = () => {
   return (dispatch, getState) => {
-    const defaultValuesNeuralNetwork = getState().defaultValues.neuralNetwork;
-    const arrayNeuralNetworkLayers = [defaultValuesNeuralNetwork];
+    const defaultValuesNeuralNetworkParams =
+      getState().defaultValues.neuralNetworkParams;
 
-    dispatch(setNeuralNetworkLayers(arrayNeuralNetworkLayers));
-    dispatch(setTemplateLayers(defaultValuesNeuralNetwork));
+    dispatch(setNeuralNetworkParams(defaultValuesNeuralNetworkParams));
   };
 };
 
-// 9. deprecated en el futuro
+// 9.
+export const initializeNeuralNetworkLayers = () => {
+  return (dispatch, getState) => {
+    const arrayNeuralNetworkLayers =
+      getState().defaultValues.neuralNetworkLayers;
+    const neuralNetworkLayerTemplate = arrayNeuralNetworkLayers.at(-1);
+
+    dispatch(setNeuralNetworkLayers(arrayNeuralNetworkLayers));
+    dispatch(setTemplateLayers(neuralNetworkLayerTemplate));
+  };
+};
+
+// 10. deprecated en el futuro
 export const initializeTrainingResult = () => {
   return async (dispatch) => {
     const result = await trainingService.getTrainingResults();

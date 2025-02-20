@@ -77,7 +77,7 @@ const NeuralNetworkResult = ({ send }) => {
           className='content'
           handleClick={handleBack}
           SVG={ArrowLeftIcon}
-          text={"Editar parámetros de la red neuronal"}
+          text={"Editar capas de la red neuronal"}
         />
 
         <PrimaryButton

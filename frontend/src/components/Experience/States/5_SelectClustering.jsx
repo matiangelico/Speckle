@@ -1,8 +1,14 @@
 import styled from "styled-components";
 
+import { useState } from "react";
+
 //Redux
 import { useDispatch } from "react-redux";
-import { selectClustering } from "../../../reducers/trainingReducer";
+import {
+  selectClustering,
+  selectAllClustering,
+  deselectAllClustering,
+} from "../../../reducers/trainingReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
 
 //Commons
@@ -13,6 +19,7 @@ import SecondaryButton from "../../common/SecondaryButton";
 //Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
+import YesNoIcon from "../../../assets/svg/icon-yes-no.svg?react";
 
 const StyledDescriptorsContainer = styled.div`
   display: flex;
@@ -25,6 +32,7 @@ const StyledDescriptorsContainer = styled.div`
 
 const SelectClusteringAlgorithms = ({ send, clusteringAlgorithms }) => {
   const dispatch = useDispatch();
+  const [allSelected, setAllSelected] = useState(false);
 
   const handleBack = () => {
     send({ type: "BACK" });
@@ -49,6 +57,16 @@ const SelectClusteringAlgorithms = ({ send, clusteringAlgorithms }) => {
 
   const handleDescriptorSelected = (descriptorChanged) => {
     dispatch(selectClustering(descriptorChanged));
+  };
+
+  const handleSelectAll = () => {
+    dispatch(selectAllClustering());
+    setAllSelected(true);
+  };
+
+  const handleDeselectAll = () => {
+    dispatch(deselectAllClustering());
+    setAllSelected(false);
   };
 
   return (
@@ -79,13 +97,27 @@ const SelectClusteringAlgorithms = ({ send, clusteringAlgorithms }) => {
         <SecondaryButton
           handleClick={handleBack}
           SVG={ArrowLeftIcon}
-          text={"Subir video"}
+          text={"Seleccionar resultados de descriptores"}
         />
+
+        {allSelected ? (
+          <SecondaryButton
+            handleClick={handleDeselectAll}
+            SVG={YesNoIcon}
+            text={"Deseleccionar todos"}
+          />
+        ) : (
+          <PrimaryButton
+            handleClick={handleSelectAll}
+            LeftSVG={YesNoIcon}
+            text={"Seleccionar todos"}
+          />
+        )}
 
         <PrimaryButton
           handleClick={handleNext}
           RightSVG={ArrowRightIcon}
-          text={"Seleccionar hiperparametros"}
+          text={"Editar parametros de clustering"}
         />
       </div>
     </>

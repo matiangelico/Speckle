@@ -2,200 +2,186 @@
   "defaultValues": {
     "descriptors": [
       {
-        "_id": {
-          "$oid": "asdasd123123"
-        },
-        "name": "Rango Dinamico",
+        "name": "Dynamic Range (DR)",
         "params": []
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840daf"
-        },
-        "name": "Diferencias Pesadas",
+        "name": "Subtraction Average of consecutive pixel intensities (SA)",
         "params": [
           {
-            "paramName": "peso",
+            "paramName": "Weight",
+            "type": "number",
             "value": "5"
           }
         ]
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840db0"
-        },
-        "name": "Diferencias Promediadas",
+        "name": "Averaged Diferences (AD)",
         "params": []
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840db1"
-        },
-        "name": "Fujii",
+        "name": "Weighted Generalized Diferences (WGD)",
         "params": []
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840db2"
-        },
-        "name": "Desviacion Estandar",
+        "name": "Standard Deviation (SD)",
         "params": []
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840db3"
-        },
-        "name": "Contraste Temporal",
+        "name": "Temporal contrast (TC)",
         "params": []
       },
       {
-        "_id": {
-          "$oid": "asdasd123123123"
-        },
-        "name": "Adri",
+        "name": "Significant Changes Count (SCC)",
         "params": []
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840db5"
-        },
-        "name": "Autocorrelacion",
+        "name": "Autocorrelation (AC)",
         "params": []
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840db6"
-        },
-        "name": "Frecuencia Media",
+        "name": "Medium Frequency (MF)",
         "params": []
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840db7"
-        },
-        "name": "Entropia Shannon",
+        "name": "Shannon Wavelet Entropy (SWE)",
         "params": []
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840db8"
-        },
-        "name": "Frecuencia Corte",
+        "name": "Cut off Frequency (CF)",
         "params": []
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840db9"
-        },
-        "name": "Wavelet Entropy",
+        "name": "Wavelet Entropy (WE)",
         "params": [
           {
-            "paramName": "wavelet",
+            "paramName": "Wavelet",
             "value": "db2",
-            "unit": "tipo"
+            "type": "select",
+            "options": [
+              { "value": "db1", "label": "db1" },
+              { "value": "db2", "label": "db2" },
+              { "value": "db3", "label": "db3" },
+              { "value": "db4", "label": "db4" },
+              { "value": "db5", "label": "db5" },
+              { "value": "db6", "label": "db6" },
+              { "value": "db7", "label": "db7" },
+              { "value": "db8", "label": "db8" },
+              { "value": "db9", "label": "db9" },
+              { "value": "db10", "label": "db10" }
+            ]
           },
           {
-            "paramName": "level",
+            "paramName": "Level",
             "value": "5"
           }
         ]
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840dba"
-        },
-        "name": "High Low Ratio",
+        "name": "High to Low Ratio (HLR)",
         "params": []
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840dbb"
-        },
-        "name": "Filtro Bajo",
+        "name": "Low Frequency Energy Band (LFEB)",
         "params": [
           {
-            "paramName": "fmin",
+            "paramName": "Fmin",
+            "type": "number",
             "value": "0.015",
+            "min": "0",
             "unit": "Hz"
           },
           {
-            "paramName": "fmax",
+            "paramName": "Fmax",
+            "type": "number",
             "value": "0.05",
+            "min": "0",
             "unit": "Hz"
           },
           {
-            "paramName": "at_paso",
+            "paramName": "At paso",
+            "type": "number",
             "value": "1",
+            "min": "0",
             "unit": "dB"
           },
           {
-            "paramName": "at_rechazo",
+            "paramName": "At rechazo",
+            "type": "number",
             "value": "40",
+            "min": "0",
             "unit": "dB"
           }
         ]
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840dbc"
-        },
-        "name": "Filtro Medio",
+        "name": "Medium Frequency Energy Band (MFEB)",
         "params": [
           {
-            "paramName": "fmin",
+            "paramName": "Fmin",
+            "type": "number",
+            "value": "0.015",
+            "min": "0",
+            "unit": "Hz"
+          },
+          {
+            "paramName": "Fmax",
+            "type": "number",
             "value": "0.05",
+            "min": "0",
             "unit": "Hz"
           },
           {
-            "paramName": "fmax",
-            "value": "0.25",
-            "unit": "Hz"
-          },
-          {
-            "paramName": "at_paso",
+            "paramName": "At paso",
+            "type": "number",
             "value": "1",
+            "min": "0",
             "unit": "dB"
           },
           {
-            "paramName": "at_rechazo",
+            "paramName": "At rechazo",
+            "type": "number",
             "value": "40",
+            "min": "0",
             "unit": "dB"
           }
         ]
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840dbd"
-        },
-        "name": "Filtro Alto",
+        "name": "High Frequency Energy Band (HFEB)",
         "params": [
           {
-            "paramName": "fmin",
-            "value": "0.025",
+            "paramName": "Fmin",
+            "type": "number",
+            "value": "0.015",
+            "min": "0",
             "unit": "Hz"
           },
           {
-            "paramName": "fmax",
-            "value": "0.4",
+            "paramName": "Fmax",
+            "type": "number",
+            "value": "0.05",
+            "min": "0",
             "unit": "Hz"
           },
           {
-            "paramName": "at_paso",
+            "paramName": "At paso",
+            "type": "number",
             "value": "1",
+            "min": "0",
             "unit": "dB"
           },
           {
-            "paramName": "at_rechazo",
+            "paramName": "At rechazo",
+            "type": "number",
             "value": "40",
+            "min": "0",
             "unit": "dB"
           }
         ]
       },
       {
-        "_id": {
-          "$oid": "671fa3de0cdae93206840dbe"
-        },
-        "name": "Fuzzy",
+        "name": "Fuzzy Granularity (FG)",
         "params": []
       }
     ],
@@ -235,6 +221,10 @@
         "params": [
           {
             "paramName": "nro_clusters",
+            "type": "number",
+            "min": "1",
+            "max": "20",
+            "step": "1",
             "value": "3"
           }
         ]
@@ -244,6 +234,10 @@
         "params": [
           {
             "paramName": "nro_clusters",
+            "type": "number",
+            "min": "1",
+            "max": "20",
+            "step": "1",
             "value": "5"
           }
         ]
@@ -253,6 +247,10 @@
         "params": [
           {
             "paramName": "nro_clusters",
+            "type": "number",
+            "min": "1",
+            "max": "20",
+            "step": "1",
             "value": "3"
           }
         ]
@@ -262,6 +260,10 @@
         "params": [
           {
             "paramName": "radius",
+            "type": "number",
+            "min": "0",
+            "max": "100",
+            "step": "0.05",
             "value": "5"
           }
         ]
@@ -271,15 +273,48 @@
         "params": [
           {
             "paramName": "radius",
+            "type": "number",
+            "min": "0",
+            "max": "100",
+            "step": "0.05",
             "value": "5"
           }
         ]
       }
     ],
-    "neuralNetwork": {
-      "neurons": "8",
-      "batchNorm": "1",
-      "dropout": "0.1"
-    }
+    "neuralNetworkParams": [
+      {
+        "name": "Epochs",
+        "value": "8",
+        "type": "number"
+      },
+      {
+        "name": "Batch Size",
+        "value": "1",
+        "type": "number"
+      },
+      {
+        "name": "Early Stopping",
+        "value": "1",
+        "type": "checkbox"
+      }
+    ],
+    "neuralNetworkLayers": [
+      {
+        "neurons": "32",
+        "batchNorm": "1",
+        "dropout": "0.1"
+      },
+      {
+        "neurons": "16",
+        "batchNorm": "1",
+        "dropout": "0.1"
+      },
+      {
+        "neurons": "8",
+        "batchNorm": "1",
+        "dropout": "0.1"
+      }
+    ]
   }
 }

@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
-  min-width: 200px; 
+  min-width: 200px;
   max-width: 426px;
   text-align: left;
 `;
@@ -40,8 +40,11 @@ const StyledInput = styled.input`
   height: 45px;
   padding: 0 1rem;
   border-radius: 12px;
-  border: 2px solid ${(props) =>
-    props["data-is-invalid"] ? "var(--red-error, #e63946)" : "var(--dark-800)"};
+  border: 2px solid
+    ${(props) =>
+      props["data-is-invalid"]
+        ? "var(--red-error, #e63946)"
+        : "var(--dark-800)"};
   background: #ffffff;
   transition: border-color 0.3s ease, background-color 0.3s ease;
 
@@ -51,7 +54,9 @@ const StyledInput = styled.input`
 
   &:focus {
     border-color: ${(props) =>
-      props["data-is-invalid"] ? "var(--red-error, #e63946)" : "var(--dark-800)"};
+      props["data-is-invalid"]
+        ? "var(--red-error, #e63946)"
+        : "var(--dark-800)"};
     background: #ffffff;
     outline: none;
   }
@@ -85,14 +90,26 @@ const Input = ({
   const handleChange = (e) => {
     let newValue = e.target.value;
 
-    // Si el tipo es numérico, parseamos correctamente el valor
+    // Si el tipo es numérico, parseamos el valor y lo truncamos según los límites
     if (type === "number") {
-      const parsedValue = newValue === "" ? "" : Number(newValue);
+      // Si el input está vacío, se deja vacío
+      if (newValue === "") {
+        setValue("");
+        return;
+      }
 
-      // Si es NaN, no actualizamos el estado
-      if (newValue !== "" && isNaN(parsedValue)) return;
-      
-      newValue = parsedValue;
+      const parsedValue = Number(newValue);
+      // Si no es un número válido, no actualizamos el estado
+      if (isNaN(parsedValue)) return;
+
+      // Validamos los límites: si el número es menor al mínimo o mayor al máximo, se trunca
+      if (typeof min !== "undefined" && parsedValue < min) {
+        newValue = min;
+      } else if (typeof max !== "undefined" && parsedValue > max) {
+        newValue = max;
+      } else {
+        newValue = parsedValue;
+      }
     }
 
     setValue(newValue);

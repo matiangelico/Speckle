@@ -20,14 +20,21 @@ import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
 import SlidersIcon from "../../../assets/svg/icon-sliders.svg?react";
 
+//Utils
+import { extractTextBetweenParentheses } from "../../../utils/stringUtils";
+import Select from "../../common/Select";
+
 const HyperparametersContainer = styled.div`
   display: grid;
-  gap: 10px 10px;
+  gap: 10px;
+  grid-auto-rows: min-content;
   width: 100%;
-  // padding-bottom: 10px;
-  height: min-content;
-  // max-height: 45vh;
-  overflow-y: auto;
+
+  /* Personaliza el ancho de la barra */
+  &::-webkit-scrollbar {
+    width: 0px;
+    box-sizing: content-box;
+  }
 
   @media (min-height: 900px) {
     // max-height: 60vh;
@@ -41,7 +48,7 @@ const StyledRow = styled.div`
   gap: 10px;
 
   input {
-    margin-ottom: 0;
+    margin-bottom: 0;
   }
 `;
 
@@ -60,6 +67,7 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
 
     if (chekedDescriptors.length !== 0) {
       // ALGUNA VALIDACION DE HIPERPARAMETROS?
+
       send({ type: "NEXT" });
     }
   };
@@ -97,24 +105,53 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
             (descriptor, index) =>
               descriptor.hyperparameters?.length > 0 && (
                 <StyledRow key={index}>
-                  {descriptor.hyperparameters.map((param, paramIndex) => (
-                    <Input
-                      key={paramIndex}
-                      primaryLabel={param.paramName}
-                      secondaryLabel={descriptor.name}
-                      type='number'
-                      id={param.paramName}
-                      name={param.paramName}
-                      value={param.value}
-                      setValue={(newValue) =>
-                        handleChangeValue(
-                          descriptor.name,
-                          param.paramName,
-                          newValue
-                        )
-                      }
-                    />
-                  ))}
+                  {descriptor.hyperparameters.map((param, paramIndex) =>
+                    param.type === "select" ? (
+                      <Select
+                        key={paramIndex}
+                        primaryLabel={param.paramName}
+                        secondaryLabel={`(${extractTextBetweenParentheses(
+                          descriptor.name
+                        )})`}
+                        id={param.paramName}
+                        name={param.paramName}
+                        placeholder='Seleccionar...'
+                        value={param.value}
+                        onChange={(newValue) =>
+                          handleChangeValue(
+                            descriptor.name,
+                            param.paramName,
+                            newValue
+                          )
+                        }
+                        options={param.options}
+                        error=''
+                        searchable={true}
+                      />
+                    ) : (
+                      <Input
+                        key={paramIndex}
+                        primaryLabel={param.paramName}
+                        secondaryLabel={`(${extractTextBetweenParentheses(
+                          descriptor.name
+                        )})`}
+                        type={param.type ? param.type : "number"}
+                        id={param.paramName}
+                        name={param.paramName}
+                        min={param.min ? param.min : 0}
+                        max={param.max ? param.max : 10000}
+                        step={param.step ? param.step : 0.01}
+                        value={param.value}
+                        setValue={(newValue) =>
+                          handleChangeValue(
+                            descriptor.name,
+                            param.paramName,
+                            newValue
+                          )
+                        }
+                      />
+                    )
+                  )}
                 </StyledRow>
               )
           )}

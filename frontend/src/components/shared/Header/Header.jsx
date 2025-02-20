@@ -13,12 +13,16 @@ import IconBrain from "../../../assets/svg/icon-brain.svg?react";
 import profilePicture from "../../../assets/webp/user.webp";
 
 const StyledHeader = styled.header`
-  height: 12vh;
+  height: 10vh;
   display: flex;
   padding: 1rem 2rem;
   justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid var(--dark-500);
+
+  @media (min-height: 900px) {
+    height: 8vh;
+  }
 `;
 
 const LogoContainer = styled.div`

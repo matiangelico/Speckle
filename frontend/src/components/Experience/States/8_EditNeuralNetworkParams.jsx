@@ -1,76 +1,92 @@
-// import styled from "styled-components";
+import styled from "styled-components";
 
 //Redux
-import { useDispatch, useSelector } from "react-redux";
-import {
-  setNeuralNetworkLayers,
-  initializeTrainingResult,
-} from "../../../reducers/trainingReducer";
-import { createNotification } from "../../../reducers/notificationReducer";
+import { useDispatch } from "react-redux";
+import { updateNeuralNetworkParams } from "../../../reducers/trainingReducer";
+
+// import { createNotification } from "../../../reducers/notificationReducer";
 
 //Components
+import Input from "../../common/Input";
+import EmptyContainer from "../../common/EmptyContainer";
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
 
 //Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
-import NeuralNetworkEditor from "../Utils/NeuralNetworkEditor";
-import AddLayerIcon from "../../../assets/svg/icon-lus-circle.svg?react";
-import RemoveLayerIcon from "../../../assets/svg/icon-divide-circle.svg?react";
+import TaskCheckbox from "../../common/CheckBox";
 
-const EditNeuralNetworkParams = ({ send }) => {
+const NeuralNetworkParamsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  // justify-content: center;
+  align-items: end;
+  gap: 10px 10px;
+  width: 100%;
+  height: min-content;
+  overflow-y: auto;
+
+  @media (min-width: 1020px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (min-width: 1920px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (min-height: 900px) {
+    gap: 20px;
+  }
+`;
+
+const EditNeuralNetworkParams = ({ send, networkParams }) => {
   const dispatch = useDispatch();
-  const layerTemplate = useSelector((state) => state.training.layersTemplate);
-  // const layerTemplate = useSelector({neurons: 128, batchNorm: false, dropout: 0});
-  const layers = useSelector((state) => state.training.neuralNetworkLayers);
+  console.log("networkParams", networkParams);
 
   const handleBack = () => {
     send({ type: "BACK" });
   };
 
   const handleNext = () => {
-    dispatch(initializeTrainingResult());
-
+    // ALGUNA VALIDACION DE HIPERPARAMETROS?
     send({ type: "NEXT" });
   };
 
-  const handleAddLayer = () => {
-    const updatedLayers = [...layers, layerTemplate];
-
-    dispatch(setNeuralNetworkLayers(updatedLayers));
-  };
-
-  const handleRemoveLayer = () => {
-    if (layers.length > 1) {
-      dispatch(setNeuralNetworkLayers(layers.slice(0, -1)));
-    } else {
-      dispatch(createNotification("La cantidad minima de capaz es uno."));
-    }
-  };
-
-  const handleUpdateLayer = (index, field, value) => {
-    const newLayers = layers.map((layer, i) =>
-      i === index ? { ...layer } : layer
-    );
-
-    switch (field) {
-      case "neurons":
-        newLayers[index][field] = Math.min(value, 128);
+  const handleChangeValue = (paramName, newValue) => {
+    switch (paramName) {
+      case "Épocas":
+      case "Batch Size":
+        dispatch(
+          updateNeuralNetworkParams({
+            parameterName: paramName,
+            newValue: newValue,
+          })
+        );
         break;
-      case "batchNorm":
-        newLayers[index][field] = !newLayers[index][field];
-        break;
-      case "dropout":
-        newLayers[index][field] =
-          value === "" ? 0 : Math.min(Math.max(value, 0), 1);
+      case "Early Stopping":
+        {
+          const actValue = networkParams.find(
+            (param) =>
+              param.name === "Early Stopping" && param.type === "checkbox"
+          );
+
+          dispatch(
+            updateNeuralNetworkParams({
+              parameterName: paramName,
+              newValue: !actValue.value,
+            })
+          );
+        }
         break;
       default:
         break;
     }
-
-    dispatch(setNeuralNetworkLayers(newLayers));
   };
+
+  // const handleSetDefaultValues = () => {
+  //   dispatch(resetClusteringParams());
+  // };
 
   return (
     <>
@@ -79,12 +95,45 @@ const EditNeuralNetworkParams = ({ send }) => {
         <h3>
           Configure la arquitectura de la red neuronal ajustando la cantidad de
           capas, el número de neuronas por capa y parámetros como batch
-          normalization y dropout. Estos ajustes serán determinantes para el
-          rendimiento del entrenamiento final.
+          normalization y dropout.
         </h3>
       </div>
 
-      <NeuralNetworkEditor layers={layers} updateLayer={handleUpdateLayer} />
+      {networkParams.length > 0 ? (
+        <NeuralNetworkParamsContainer>
+          {networkParams.map((parameter, index) =>
+            parameter.type === "number" ? (
+              <Input
+                key={index}
+                primaryLabel={parameter.name}
+                type="number"
+                id={index}
+                name={parameter.name}
+                min={0}
+                max={100}
+                step={1}
+                value={parameter.value}
+                setValue={(newValue) =>
+                  handleChangeValue(parameter.name, newValue)
+                }
+              />
+            ) : (
+              <TaskCheckbox
+                key={index}
+                label={parameter.name}
+                checked={
+                  parameter.value !== undefined ? parameter.value : false
+                }
+                onChange={(newValue) =>
+                  handleChangeValue(parameter.name, newValue)
+                }
+              />
+            )
+          )}
+        </NeuralNetworkParamsContainer>
+      ) : (
+        <EmptyContainer message='No parametros de la red neuronal editables.' />
+      )}
 
       <div className='two-buttons-container'>
         <SecondaryButton
@@ -94,20 +143,9 @@ const EditNeuralNetworkParams = ({ send }) => {
         />
 
         <PrimaryButton
-          text='Agregar Capa'
-          LeftSVG={AddLayerIcon}
-          handleClick={handleAddLayer}
-        />
-        <PrimaryButton
-          text='Eliminar Capa'
-          LeftSVG={RemoveLayerIcon}
-          handleClick={handleRemoveLayer}
-        />
-
-        <PrimaryButton
           handleClick={handleNext}
           RightSVG={ArrowRightIcon}
-          text='Entrenar red neuronal'
+          text='Editar capas de la red neuronal'
         />
       </div>
     </>

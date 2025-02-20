@@ -1,6 +1,12 @@
 import { styled } from "styled-components";
+
 import { useDropzone } from "react-dropzone";
 
+//Redux
+import { useDispatch } from "react-redux";
+import { createNotification } from "../../../reducers/notificationReducer";
+
+//Icons
 import UploadFileIcon from "../../../assets/svg/icon-upload-file.svg?react";
 
 const StyledFileDropArea = styled.div`
@@ -65,13 +71,19 @@ const StyledFileSize = styled.p`
 `;
 
 const FileDropArea = ({ onFileDrop, fileName, fileSize }) => {
+  const dispatch = useDispatch();
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
         onFileDrop(file);
       } else {
-        alert("No se seleccionó ningún archivo.");
+        dispatch(
+          createNotification(
+            "No se seleccionó ningún archivo o el formato no es el correcto.",
+            "error"
+          )
+        );
       }
     },
     multiple: false,

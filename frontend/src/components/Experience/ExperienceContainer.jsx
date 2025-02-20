@@ -1,20 +1,22 @@
 import { styled } from "styled-components";
 
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 // Maquina de estados
 import { useMachine } from "@xstate/react";
 import TrainingMachine from "../../machines/trainingMachine";
 
 //Redux
+import { useDispatch, useSelector } from "react-redux";
 import {
   resetTraining,
   setName,
   initializeClustering,
   initializeDescriptors,
-  initializeNeuralNetwork,
+  initializeNeuralNetworkParams,
+  initializeNeuralNetworkLayers,
 } from "../../reducers/trainingReducer";
+import { showConfirmationAlertAsync } from "../../reducers/alertReducer";
 
 // Componentes de estado
 import UploadVideo from "./States/1_UploadVideo";
@@ -25,7 +27,8 @@ import SelectClustering from "./States/5_SelectClustering";
 import EditClusteringParams from "./States/6_EditClusteringParams";
 import SelectClusteringResults from "./States/7_SelectClusteringResults";
 import EditNeuralNetworkParams from "./States/8_EditNeuralNetworkParams";
-import NeuralNetworkResult from "./States/9_NeuralNetworkResult";
+import EditNeuralNetworkLayers from "./States/9_EditNeuralNetworkLayers";
+import NeuralNetworkResult from "./States/10_NeuralNetworkResult";
 
 // Commons
 import SecondaryButton from "../common/SecondaryButton";
@@ -35,12 +38,15 @@ import ConfirmationAlert from "../common/ConfirmationAlert";
 
 // Icons
 import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
-import { showConfirmationAlertAsync } from "../../reducers/alertReducer";
 
 const StyledExperienceContainer = styled.main`
-  height: 87vh;
+  height: 89vh;
   display: grid;
   grid-template-rows: auto 1fr;
+
+  @media (min-height: 900px) {
+    height: 91vh;
+  }
 `;
 
 const ExperienceHeader = styled.div`
@@ -101,6 +107,29 @@ const ExperienceContent = styled.div`
   padding: 0rem 2rem 1rem 2rem;
   gap: 1rem;
   overflow-y: auto;
+
+  /* Personaliza el ancho de la barra */
+  &::-webkit-scrollbar {
+    width: 6px;
+    box-sizing: content-box;
+  }
+
+  /* Color del track (fondo de la barra) */
+  &::-webkit-scrollbar-track {
+    background: var(--dark-200);
+    // border-radius: 6px;
+  }
+
+  /* Color y estilo de la “thumb” (la parte que se mueve) */
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--dark-400);
+    // border-radius: 6px;
+  }
+
+  /* Efecto hover para la thumb */
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--dark-300);
+  }
 
   .steps-container {
     position: sticky;
@@ -167,6 +196,10 @@ const ExperienceContainer = () => {
   const clustering = useSelector((state) => state.training.clustering);
   //6.
   const chekedClustering = clustering.filter((algorithm) => algorithm.checked);
+  //8.
+  const neuralNetworkParams = useSelector(
+    (state) => state.training.neuralNetworkParams
+  );
 
   useEffect(() => {
     //Descritors
@@ -179,8 +212,13 @@ const ExperienceContainer = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    //Neural Network
-    dispatch(initializeNeuralNetwork());
+    //Neural Network Params
+    dispatch(initializeNeuralNetworkParams());
+  }, [dispatch]);
+
+  useEffect(() => {
+    //Neural Network Layers
+    dispatch(initializeNeuralNetworkLayers());
   }, [dispatch]);
 
   // Renderiza el estado actual
@@ -213,8 +251,15 @@ const ExperienceContainer = () => {
       case "SELECT_CLUSTERING_RESULTS": //7
         return <SelectClusteringResults send={send} />;
       case "EDIT_NEURAL_NETWORK_PARAMS": //8
-        return <EditNeuralNetworkParams send={send} />;
-      case "NEURAL_NETWORK_RESULTS": //9
+        return (
+          <EditNeuralNetworkParams
+            send={send}
+            networkParams={neuralNetworkParams}
+          />
+        );
+      case "EDIT_NEURAL_NETWORK_LAYERS": //9
+        return <EditNeuralNetworkLayers send={send} />;
+      case "NEURAL_NETWORK_RESULTS": //10
         return <NeuralNetworkResult send={send} />;
       default:
         return null;
@@ -227,19 +272,19 @@ const ExperienceContainer = () => {
   };
 
   const handleReset = async () => {
-    const resultado = await dispatch(
+    const answer = await dispatch(
       showConfirmationAlertAsync({
         title: "Nuevo entrenamiento",
         message:
           '¿Deseas comenzar un nuevo entrenamiento?\nAl hacerlo, se perderá todo el progreso actual. Si prefieres conservarlo, tendrás la opción de guardarlo al final del proceso para consultarlo en la sección "Consulta".',
       })
     );
-    if (resultado) {
+    if (answer) {
       //Training Reducer
       dispatch(resetTraining());
       dispatch(initializeDescriptors());
       dispatch(initializeClustering());
-      dispatch(initializeNeuralNetwork());
+      dispatch(initializeNeuralNetworkLayers());
       //State Machine
       send({ type: "RESET" });
     }

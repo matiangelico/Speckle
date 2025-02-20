@@ -80,8 +80,7 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
         <h3>
           Ajuste los parámetros de entrada de los algoritmos de clustering, en
           caso de que sean personalizables. Si no es necesario modificar
-          parámetros, avance al siguiente paso. El botón “Restablecer valores”
-          permitirá restaurar la configuración por defecto en cualquier momento.
+          parámetros, avance al siguiente paso.
         </h3>
       </div>
 
@@ -90,14 +89,17 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
           {chekedClusteringParams.map(
             (clustering, index) =>
               clustering.parameters?.length > 0 &&
-              clustering.parameters.map((param) => (
+              clustering.parameters.map((param) => (     
                 <Input
                   key={index}
                   primaryLabel={param.paramName}
                   secondaryLabel={clustering.name}
-                  type='number'
+                  type={param.type ? param.type : "number"}
                   id={index}
                   name={param.paramName}
+                  min={param.min ? param.min : 1}
+                  max={param.max ? param.max : 20}
+                  step={param.step ? param.step : 0.01}
                   value={param.value}
                   setValue={(newValue) =>
                     handleChangeValue(
@@ -118,7 +120,7 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
         <SecondaryButton
           handleClick={handleBack}
           SVG={ArrowLeftIcon}
-          text={"Seleccionar resultados de descriptores"}
+          text={"Seleccionar algoritmos de clustering"}
         />
 
         {chekedClusteringParams.length > 0 ? (
@@ -134,7 +136,7 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
         <PrimaryButton
           handleClick={handleNext}
           RightSVG={ArrowRightIcon}
-          text={"Generar resultados de clustering"}
+          text={"Seleccionar resultados de clustering"}
         />
       </div>
     </>

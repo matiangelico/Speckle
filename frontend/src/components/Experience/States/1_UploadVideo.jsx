@@ -43,8 +43,7 @@ const UploadVideo = ({ send }) => {
         <h2>1. Subir video</h2>
         <h3>
           Adjunte el archivo de video que servirá como entrada para el
-          entrenamiento. Verifique que el formato y la calidad del video sean
-          compatibles con los requerimientos del sistema.
+          entrenamiento.
         </h3>
       </div>
 
