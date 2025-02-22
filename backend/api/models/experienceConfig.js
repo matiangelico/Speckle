@@ -7,7 +7,7 @@ const experienceSchema = new Schema({
   name: { type: String, required: true }, 
   videoName: { type: String, required: true },
   descriptors: { type: [descriptorSchema], required: true },
-  trainedModel: { type: String, required: true }
+  trainedModel: { type: Buffer, required: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Experience", experienceSchema);

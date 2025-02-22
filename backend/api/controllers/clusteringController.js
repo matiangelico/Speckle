@@ -7,6 +7,8 @@ const https = require('https');
 
 require('dotenv').config({path:'../../.env'});
 
+const ClusteringConfig = require('../models/clusteringConfig');
+
 const agent = new https.Agent({ rejectUnauthorized: false });
 const API_KEY = process.env.API_KEY
 
@@ -83,5 +85,21 @@ exports.calculateClustering = async (req, res) => {
   } catch (error) {
     console.error("Error al procesar la solicitud:", error.message);
     res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getClusteringConfig = async (req, res) => {
+  try {
+    const clusteringConfig = await ClusteringConfig.findOne();
+
+    if (!clusteringConfig) {
+      return res.status(404).json({ error: "No se encontraron valores por defecto" });
+    }
+
+    res.status(200).json(clusteringConfig);
+
+  } catch (error) {
+    console.error('Error al obtener valores por defecto:', error);
+    res.status(500).json({ error: "Error al procesar la solicitud" });
   }
 };
