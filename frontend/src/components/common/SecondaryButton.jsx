@@ -95,7 +95,6 @@ const SecondaryButton = ({ SVG, text, handleClick, disabled, ariaLabel }) => {
 
 export default SecondaryButton;
 
-
 {
   /* <SecondaryButton
   text="Cancelar"

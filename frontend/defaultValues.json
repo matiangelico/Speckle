@@ -7,13 +7,7 @@
       },
       {
         "name": "Subtraction Average of consecutive pixel intensities (SA)",
-        "params": [
-          {
-            "paramName": "Weight",
-            "type": "number",
-            "value": "5"
-          }
-        ]
+        "params": []
       },
       {
         "name": "Averaged Diferences (AD)",
@@ -21,7 +15,13 @@
       },
       {
         "name": "Weighted Generalized Diferences (WGD)",
-        "params": []
+        "params": [
+          {
+            "paramName": "Weight",
+            "type": "number",
+            "value": "5"
+          }
+        ]
       },
       {
         "name": "Standard Deviation (SD)",
@@ -218,9 +218,11 @@
     "clustering": [
       {
         "name": "Kmeans",
+        "id": "kmeans",
         "params": [
           {
-            "paramName": "nro_clusters",
+            "paramName": "Cantidad de clusters",
+            "paramId": "nroClusters",
             "type": "number",
             "min": "1",
             "max": "20",
@@ -231,9 +233,11 @@
       },
       {
         "name": "MiniBatch Kmeans",
+        "id": "miniBatchKmeans",
         "params": [
           {
-            "paramName": "nro_clusters",
+            "paramName": "Cantidad de clusters",
+            "paramId": "nroClusters",
             "type": "number",
             "min": "1",
             "max": "20",
@@ -243,10 +247,12 @@
         ]
       },
       {
-        "name": "Spectral Clustering",
+        "name": "Bisecting Kmeans",
+        "id": "bisectingKmeans",
         "params": [
           {
-            "paramName": "nro_clusters",
+            "paramName": "Cantidad de clusters",
+            "paramId": "nroClusters",
             "type": "number",
             "min": "1",
             "max": "20",
@@ -256,28 +262,68 @@
         ]
       },
       {
-        "name": "Sustractive Clustering",
+        "name": "HDBSCAN",
+        "id": "hdbscan",
         "params": [
           {
-            "paramName": "radius",
+            "paramName": "min_cluster_size",
+            "paramId": "minClusterSize",
             "type": "number",
             "min": "0",
             "max": "100",
             "step": "0.05",
-            "value": "5"
+            "value": "3"
+          },
+          {
+            "paramName": "Épsilon",
+            "paramId": "epsilon",
+            "type": "number",
+            "min": "0",
+            "max": "100",
+            "step": "0.05",
+            "value": "0.05"
           }
         ]
       },
       {
-        "name": "Promedio Gaussiano",
+        "name": "Subtractive Clustering",
+        "id": "subtractiveClustering",
         "params": [
           {
-            "paramName": "radius",
+            "paramName": "Radio de clustering (ra)",
+            "paramId": "ra",
             "type": "number",
             "min": "0",
             "max": "100",
             "step": "0.05",
-            "value": "5"
+            "value": "0.5"
+          },
+          {
+            "paramName": "Factor de reducción (rb)",
+            "paramId": "rb",
+            "type": "number",
+            "min": "0",
+            "max": "100",
+            "step": "0.05",
+            "value": "1.0"
+          },
+          {
+            "paramName": "Umbral de aceptación (eUp)",
+            "paramId": "eUp",
+            "type": "number",
+            "min": "0",
+            "max": "100",
+            "step": "0.05",
+            "value": "0.6"
+          },
+          {
+            "paramName": "Umbral de rechazo (eDown)",
+            "paramId": "eDown",
+            "type": "number",
+            "min": "0",
+            "max": "100",
+            "step": "0.05",
+            "value": "0.6"
           }
         ]
       }

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 
 //Components
-import ResultContainer from "../../common/resultContainer";
+import ResultContainer from "../../common/ResultContainer";
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
 

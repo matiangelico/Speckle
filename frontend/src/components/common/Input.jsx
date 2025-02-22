@@ -16,6 +16,7 @@ const LabelContainer = styled.div`
   align-self: stretch;
   margin-bottom: 0.5rem;
   padding: 0 0.1rem;
+  gap: 1rem;
 
   label {
     font-family: Inter, sans-serif;
@@ -28,11 +29,13 @@ const LabelContainer = styled.div`
   label:nth-child(1) {
     color: var(--dark-800);
     font-weight: 500;
+    text-align: left;
   }
 
   label:nth-child(2) {
     color: var(--dark-400);
     font-weight: 400;
+    text-align: right;
   }
 `;
 

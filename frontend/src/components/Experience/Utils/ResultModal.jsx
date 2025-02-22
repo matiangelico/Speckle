@@ -2,14 +2,31 @@ import { styled } from "styled-components";
 
 import ReactModal from "react-modal";
 
+//Redux
+import { useDispatch } from "react-redux";
+import { createNotification } from "../../../reducers/notificationReducer";
+
 //Components
 import SvgButton from "../../common/SvgButton";
-import PrimaryButton from "../../common/PrimaryButton";
-import SecondaryButton from "../../common/SecondaryButton";
 import Base64Image from "../../common/Base64Image";
+import SecondaryDownloadButton from "../../common/SecondaryDownloadButton";
+import PrimaryDownloadButton from "../../common/PrimaryDownloadButton";
 
 //Utils
-import { downloadImage } from "../../../utils/downloadUtils";
+import {
+  downloadTxt,
+  downloadCsv,
+  downloadJson,
+} from "../../../utils/matrixUtils";
+import {
+  downloadPng,
+  downloadJpg,
+  downloadSvg,
+  downloadPdf,
+} from "../../../utils/imagesUtils";
+
+//Services
+import trainingService from "../../../services/trainingExperience";
 
 //Icons
 import DownloadIcon from "../../../assets/svg/icon-download.svg?react";
@@ -66,7 +83,7 @@ const ButtonSection = styled.div`
 
   button {
     display: flex;
-    padding: 8px 16px;
+    padding: 8px 12px;
     justify-content: center;
     align-items: center;
     gap: 8px;
@@ -86,16 +103,82 @@ const ResultModal = ({
   modalClassName = "Modal",
   overlayClassName = "Overlay",
 }) => {
+  const dispatch = useDispatch();
+  const matrixAvailableFormats = [
+    { value: "txt", label: "TXT" },
+    { value: "csv", label: "CSV" },
+    { value: "json", label: "JSON" },
+  ];
+  const imageAvailableFormats = [
+    { value: "png", label: "PNG" },
+    { value: "jpg", label: "JPG" },
+    { value: "svg", label: "SVG" },
+    { value: "pdf", label: "PDF" },
+  ];
+
   if (!image) return null; // No renderizar si no hay imagen
 
-  const handleDownloadMatrix = () => {
-    console.log("implementar descarga xd");
+  const downloadByFormat = (format, image, title) => {
+    switch (format.toUpperCase()) {
+      //Matrix
+      case "TXT":
+        return downloadTxt(image, `${title}-matrix.txt`);
+      case "CSV":
+        return downloadCsv(image, `${title}-matrix.csv`);
+      case "JSON":
+        return downloadJson(image, `${title}-matrix.json`);
+      //Image
+      case "PNG":
+        return downloadPng(image, `${title}-image.png`);
+      case "JPG":
+        return downloadJpg(image, `${title}-image.jpg`);
+      case "SVG":
+        return downloadSvg(image, `${title}-image.svg`);
+      case "PDF":
+        return downloadPdf(image, `${title}-image.pdf`);
+      default:
+        return downloadPng(image, `${title}-image.png`);
+    }
   };
 
-  const handleDownloadImage = () => {
-    if (image) {
-      downloadImage(image, `${title}-image.png`);
+  const handleDownload = async (format) => {
+    const isMatrix = matrixAvailableFormats.some(
+      (formatToCheck) => formatToCheck.value === format
+    );
+    let matrix = null;
+
+    if (isMatrix) {
+      try {
+        matrix = await trainingService.getDescriptorsMatrix();
+        console.log(matrix);
+      } catch (error) {
+        console.error("Error:", error);
+        dispatch(
+          createNotification(
+            `Hubo un error al intentar generar la matriz.`,
+            "error"
+          )
+        );
+      }
     }
+
+    downloadByFormat(format, matrix === null ? image : matrix, title)
+      .then(() => {
+        dispatch(
+          createNotification(
+            `${format.toUpperCase()} descargado correctamente.`,
+            "success"
+          )
+        );
+      })
+      .catch(() => {
+        dispatch(
+          createNotification(
+            `Error al descargar el ${format.toUpperCase()}.`,
+            "error"
+          )
+        );
+      });
   };
 
   return (
@@ -114,16 +197,20 @@ const ResultModal = ({
 
       <ModalContent>
         <Base64Image base64Image={image} title={title} />
+
         <ButtonSection>
-          <SecondaryButton
-            handleClick={handleDownloadMatrix}
+          <SecondaryDownloadButton
             SVG={FileTextIcon}
-            text={"Descargar matriz"}
+            onDownload={handleDownload}
+            defaultFormat='txt'
+            formats={matrixAvailableFormats}
           />
-          <PrimaryButton
-            handleClick={handleDownloadImage}
-            LeftSVG={DownloadIcon}
-            text={"Imprimir imagen"}
+
+          <PrimaryDownloadButton
+            SVG={DownloadIcon}
+            onDownload={handleDownload}
+            defaultFormat='png'
+            formats={imageAvailableFormats}
           />
         </ButtonSection>
       </ModalContent>

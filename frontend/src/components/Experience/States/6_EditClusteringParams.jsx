@@ -21,22 +21,29 @@ import SlidersIcon from "../../../assets/svg/icon-sliders.svg?react";
 
 const ClusteringParamContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px 10px;
+  gap: 10px;
+  grid-auto-rows: min-content;
   width: 100%;
-  height: min-content;
-  overflow-y: auto;
 
-  @media (min-width: 1020px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @media (min-width: 1920px) {
-    grid-template-columns: repeat(4, 1fr);
+  /* Personaliza el ancho de la barra */
+  &::-webkit-scrollbar {
+    width: 0px;
+    box-sizing: content-box;
   }
 
   @media (min-height: 900px) {
+    // max-height: 60vh;
     gap: 20px;
+  }
+`;
+
+const StyledRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+
+  input {
+    margin-bottom: 0;
   }
 `;
 
@@ -88,28 +95,31 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
         <ClusteringParamContainer>
           {chekedClusteringParams.map(
             (clustering, index) =>
-              clustering.parameters?.length > 0 &&
-              clustering.parameters.map((param) => (     
-                <Input
-                  key={index}
-                  primaryLabel={param.paramName}
-                  secondaryLabel={clustering.name}
-                  type={param.type ? param.type : "number"}
-                  id={index}
-                  name={param.paramName}
-                  min={param.min ? param.min : 1}
-                  max={param.max ? param.max : 20}
-                  step={param.step ? param.step : 0.01}
-                  value={param.value}
-                  setValue={(newValue) =>
-                    handleChangeValue(
-                      clustering.name,
-                      param.paramName,
-                      newValue
-                    )
-                  }
-                />
-              ))
+              clustering.parameters?.length > 0 && (
+                <StyledRow key={index}>
+                  {clustering.parameters.map((param) => (
+                    <Input
+                      key={index}
+                      primaryLabel={param.paramName}
+                      secondaryLabel={clustering.name}
+                      type={param.type ? param.type : "number"}
+                      id={index}
+                      name={param.paramName}
+                      min={param.min ? param.min : 1}
+                      max={param.max ? param.max : 20}
+                      step={param.step ? param.step : 0.01}
+                      value={param.value}
+                      setValue={(newValue) =>
+                        handleChangeValue(
+                          clustering.name,
+                          param.paramName,
+                          newValue
+                        )
+                      }
+                    />
+                  ))}
+                </StyledRow>
+              )
           )}
         </ClusteringParamContainer>
       ) : (

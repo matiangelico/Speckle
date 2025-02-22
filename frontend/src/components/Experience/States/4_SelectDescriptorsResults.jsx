@@ -10,7 +10,7 @@ import { createNotification } from "../../../reducers/notificationReducer";
 //Commons
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
-import ResultContainer from "../../common/resultContainer";
+import ResultContainer from "../../common/ResultContainer";
 
 //Utils
 import ResultModal from "../Utils/ResultModal";
