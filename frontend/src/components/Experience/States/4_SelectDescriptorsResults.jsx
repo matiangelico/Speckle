@@ -62,8 +62,7 @@ const SelectDescriptorsResults = ({ send }) => {
     } else {
       dispatch(
         createNotification(
-          "Por favor, selecciona al menos un resultado para continuar.",
-          "error"
+          "Por favor, selecciona al menos un resultado para continuar."
         )
       );
     }
@@ -124,6 +123,7 @@ const SelectDescriptorsResults = ({ send }) => {
       <ResultModal
         image={modalInfo?.image}
         title={modalInfo?.title}
+        
         isOpen={!!modalInfo}
         onClose={closeModal}
       />

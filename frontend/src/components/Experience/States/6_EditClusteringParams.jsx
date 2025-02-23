@@ -97,13 +97,13 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
             (clustering, index) =>
               clustering.parameters?.length > 0 && (
                 <StyledRow key={index}>
-                  {clustering.parameters.map((param) => (
+                  {clustering.parameters.map((param, paramIndex) => (
                     <Input
-                      key={index}
+                      key={paramIndex}
                       primaryLabel={param.paramName}
                       secondaryLabel={clustering.name}
                       type={param.type ? param.type : "number"}
-                      id={index}
+                      id={`${index}-${paramIndex}`}
                       name={param.paramName}
                       min={param.min ? param.min : 1}
                       max={param.max ? param.max : 20}

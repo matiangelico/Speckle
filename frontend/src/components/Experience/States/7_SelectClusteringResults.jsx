@@ -10,7 +10,7 @@ import { createNotification } from "../../../reducers/notificationReducer";
 //Commons
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
-import ResultContainer from "../../common/resultContainer";
+import ResultContainer from "../../common/ResultContainer";
 
 //Utils
 import ResultModal from "../Utils/ResultModal";
@@ -62,15 +62,14 @@ const SelectClusteringResults = ({ send }) => {
     } else {
       dispatch(
         createNotification(
-          "Por favor, selecciona al menos un resultado para continuar.",
-          "error"
+          "Por favor, selecciona al menos un resultado para continuar."
         )
       );
     }
   };
 
-  const openModal = (image, title) => {
-    setModalInfo({ image, title });
+  const openModal = (image, title, subtitle) => {
+    setModalInfo({ image, title, subtitle });
   };
 
   const closeModal = () => {
@@ -99,10 +98,11 @@ const SelectClusteringResults = ({ send }) => {
           <ResultContainer
             key={index}
             title={result.name}
+            subtitle={result.clusterCenters}
             checked={result.checked}
             base64Image={result.image}
             handleSelect={handleResultSelected}
-            handleClickInfo={() => openModal(result.image, result.name)}
+            handleClickInfo={() => openModal(result.image, result.name, result.clusterCenters)}
           />
         ))}
       </ClusteringResultsContainer>
@@ -124,6 +124,7 @@ const SelectClusteringResults = ({ send }) => {
       <ResultModal
         image={modalInfo?.image}
         title={modalInfo?.title}
+        subtitle={modalInfo?.subtitle}
         isOpen={!!modalInfo}
         onClose={closeModal}
       />

@@ -39,6 +39,9 @@ import ConfirmationAlert from "../common/ConfirmationAlert";
 // Icons
 import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
 
+//Utils
+import { convertToReadableDate } from "../../utils/dateUtils";
+
 const StyledExperienceContainer = styled.main`
   height: 89vh;
   display: grid;
@@ -186,6 +189,7 @@ const ExperienceContainer = () => {
   const [state, send] = useMachine(TrainingMachine);
   //0.
   const trainingName = useSelector((state) => state.training.name);
+  const createdAt = useSelector((state) => state.training.createdAt);
   //2.
   const descriptors = useSelector((state) => state.training.descriptors);
   //3.
@@ -294,7 +298,7 @@ const ExperienceContainer = () => {
     <StyledExperienceContainer>
       <ExperienceHeader>
         <EditableTitle initialTitle={trainingName} onSave={handleSaveTitle} />
-        <p>27 de octubre de 2024, 20:33</p>
+        <p>{convertToReadableDate(createdAt)}</p>
         <SecondaryButton
           SVG={NewExperienceIcon}
           text={"Nuevo entrenamiento"}

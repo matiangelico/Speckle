@@ -114,7 +114,7 @@ const Layer = styled.div`
   justify-content: center;
   margin: 10px;
 
-  label {
+  span {
     color: var(--dark-800);
     font-feature-settings: "calt" off;
 
@@ -177,7 +177,7 @@ const NeuralNetworkEditor = ({ layers, updateLayer }) => {
         {layers.map((layer, index) => (
           <LayerWithIcon key={index}>
             <Layer>
-              <label>{`Capa-${index + 1}`}</label>
+              <span id={index}>{`Capa-${index + 1}`}</span>
               {Array.from({ length: Math.min(layer.neurons, 10) }).map(
                 (_, i) => (
                   <Neuron

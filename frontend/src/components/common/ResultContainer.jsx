@@ -35,6 +35,17 @@ const StyledResultContainer = styled.div.withConfig({
       isChecked ? "var(--white)" : "var(--dark-800)"};
   }
 
+  p {
+    color: var(--dark-400);
+    font-feature-settings: "calt" off;
+
+    font-size: 0.8rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: -0.01rem;
+  }
+
   &:hover {
     & > div:first-child {
       background-color: ${({ isChecked }) =>
@@ -48,6 +59,7 @@ const StyledResultContainer = styled.div.withConfig({
         isChecked ? "var(--dark-300)" : "var(--dark-400)"};
 
       span,
+      p,
       svg {
         color: ${({ isChecked }) =>
           isChecked ? "var(--dark-800)" : "var(--white)"};
@@ -61,13 +73,20 @@ const StyledResultContainer = styled.div.withConfig({
 `;
 
 const ResultHeader = styled.div`
-  display: flex;
+  display: grid;
   padding-left: 10px;
   align-items: center;
   align-self: stretch;
   justify-content: space-between;
+  gap: 6px;
   border-radius: 8px 8px 0px 0px;
   border-bottom: 2px solid var(--dark-800, #2d3648);
+
+  grid-template-columns: ${({ childCount }) =>
+    childCount === 2 ? "1fr auto" : 
+    childCount === 3 ? "auto 1fr auto" :
+    "1fr" // un valor por defecto si no son 2 o 3
+  };
 
   span {
     font-feature-settings: "calt" off;
@@ -93,6 +112,7 @@ const ResultContainer = ({
   handleClickInfo,
   handleSelect,
   title,
+  subtitle,
   checked,
   base64Image,
 }) => {
@@ -110,8 +130,9 @@ const ResultContainer = ({
       aria-checked={checked}
       tabIndex='0' // Hacer el contenedor accesible con el teclado
     >
-      <ResultHeader>
+      <ResultHeader childCount={subtitle ? 3 : 2}>
         <span>{title}</span>
+        {subtitle && <p>{subtitle} clusters</p>}
         <SvgButton SvgIcon={InfoIcon} onClick={handleClickInfo} />
       </ResultHeader>
       <ResultContent>

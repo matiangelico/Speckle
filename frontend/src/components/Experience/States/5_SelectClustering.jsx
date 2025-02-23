@@ -48,8 +48,7 @@ const SelectClusteringAlgorithms = ({ send, clusteringAlgorithms }) => {
     } else {
       dispatch(
         createNotification(
-          "Por favor, selecciona al menos un descriptor para continuar.",
-          "error"
+          "Por favor, selecciona al menos un descriptor para continuar."
         )
       );
     }

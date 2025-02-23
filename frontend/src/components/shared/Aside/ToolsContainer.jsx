@@ -33,7 +33,7 @@ const ToolsContainer = () => {
   return (
     <StyledToolsContainer>
       <SearchIcon />
-      <input type='text' placeholder='Buscar...' className='search-bar' />
+      <input id='searchInput' type='text' placeholder='Buscar...' className='search-bar' />
       {/* <FilterIcon /> */}
     </StyledToolsContainer>
   );

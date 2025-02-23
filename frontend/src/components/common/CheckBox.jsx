@@ -70,7 +70,7 @@ const StyledCheckbox = styled.label`
 const Checkbox = ({ label, checked, onChange }) => {
   return (
     <StyledCheckbox>
-      <input type='checkbox' checked={checked} onChange={onChange} />
+      <input id={label} type='checkbox' checked={checked} onChange={onChange} />
       <CheckIcon /> {/* El icono ahora está posicionado encima */}
       <span>{label}</span>
     </StyledCheckbox>

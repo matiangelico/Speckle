@@ -25,33 +25,49 @@ import {
   downloadPdf,
 } from "../../../utils/imagesUtils";
 
-//Services
-import trainingService from "../../../services/trainingExperience";
-
 //Icons
 import DownloadIcon from "../../../assets/svg/icon-download.svg?react";
 import CrossIcon from "../../../assets/svg/icon-x.svg?react";
 import FileTextIcon from "../../../assets/svg/icon-file-text.svg?react";
 
+//Services
+import trainingService from "../../../services/trainingExperience";
+
 // Modal & Overlay styles in GlobalStyles
 
 const ModalHeader = styled.div`
-  display: flex;
-  height: 54px;
-  padding: 8px 4px 8px 24px;
+  display: grid;
+  // height: 54px;
+  padding: 2px 4px 2px 24px;
   align-items: center;
-  flex-shrink: 0;
   align-self: stretch;
-
+  flex-shrink: 0;
+  gap: 8px;
   border-radius: 16px 16px 0 0;
   border-bottom: 2px solid var(--dark-800, #2d3648);
   background: var(--white);
+
+  grid-template-columns: ${
+    ({ childCount }) =>
+      childCount === 2 ? "1fr auto" : childCount === 3 ? "auto 1fr auto" : "1fr" // un valor por defecto si no son 2 o 3
+  };
 
   h2 {
     flex: 1;
     font-size: 1.2rem;
     font-weight: 700;
     color: var(--dark-800, #2d3648);
+  }
+
+  p {
+    color: var(--dark-400);
+    font-feature-settings: "calt" off;
+
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: -0.01rem;
   }
 
   svg {
@@ -97,7 +113,8 @@ const ButtonSection = styled.div`
 
 const ResultModal = ({
   image,
-  title = "Modal text!",
+  title,
+  subtitle,
   isOpen,
   onClose,
   modalClassName = "Modal",
@@ -189,9 +206,9 @@ const ResultModal = ({
       overlayClassName={overlayClassName}
       shouldCloseOnOverlayClick={true} // Habilita cierre al hacer clic en el overlay
     >
-      <ModalHeader>
+      <ModalHeader childCount={subtitle ? 3 : 2}>
         <h2>{title}</h2>
-        {/* Botón de cerrar modal */}
+        {subtitle && <p>{subtitle} clusters</p>}
         <SvgButton SvgIcon={CrossIcon} onClick={onClose} />
       </ModalHeader>
 

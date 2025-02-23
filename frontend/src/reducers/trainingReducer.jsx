@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 //Utils
-import { convertToReadableDate } from "../utils/dateUtils";
+import { convertToTimestamp } from "../utils/dateUtils";
 
 //Services
 import trainingService from "../services/trainingExperience";
 
 export const initialTrainingState = {
   name: "Nuevo entrenamiento",
-  createdAt: convertToReadableDate(Date.now()),
+  createdAt: convertToTimestamp(Date.now()),
   video: null,
   descriptors: [],
   descriptorsResults: [],
@@ -401,6 +401,7 @@ export const initializeClusteringResult = () => {
 
     const clusteringResults = results.map((result) => ({
       name: result.name,
+      clusterCenters: result.clusterCenters || 99,
       image: result.resultImage,
       checked: false,
     }));

@@ -113,7 +113,7 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
                         secondaryLabel={`(${extractTextBetweenParentheses(
                           descriptor.name
                         )})`}
-                        id={param.paramName}
+                        id={`${index}-${paramIndex}`}
                         name={param.paramName}
                         placeholder='Seleccionar...'
                         value={param.value}
@@ -136,7 +136,7 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
                           descriptor.name
                         )})`}
                         type={param.type ? param.type : "number"}
-                        id={param.paramName}
+                        id={`${index}-${paramIndex}`}
                         name={param.paramName}
                         min={param.min ? param.min : 0}
                         max={param.max ? param.max : 10000}

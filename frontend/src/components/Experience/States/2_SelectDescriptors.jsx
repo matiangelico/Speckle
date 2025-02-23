@@ -48,8 +48,7 @@ const SelectDescriptors = ({ send, descriptors }) => {
     } else {
       dispatch(
         createNotification(
-          "Por favor, selecciona al menos un descriptor para continuar.",
-          "error"
+          "Por favor, selecciona al menos un descriptor para continuar."
         )
       );
     }
