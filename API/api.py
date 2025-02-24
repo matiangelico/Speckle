@@ -1,21 +1,22 @@
 #python -m uvicorn api:app --reload --ssl-keyfile key.pem --ssl-certfile cert.pem
 
 from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks, Header, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import JSONResponse, FileResponse
 import descriptores as ds
 import numpy as np
 import json
 import aviamat
 import generaImagen as gi
-from clustering import kmeans,minibatchKmeans,gauss,spectralClustering,sustractivo
+from clustering import kmeans,minibatchKmeans,sustractivo,bisectingKMeans,hdbscan,spectralClustering
 import redneuronal.entrenamiento as train
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from tensorflow import keras
 from tensorflow import metrics
-from normalizar import normalizar
 from dotenv import load_dotenv
 import uvicorn
+import zipfile
+import io
 
 app = FastAPI() 
 
@@ -23,31 +24,31 @@ load_dotenv()
 API_KEY = os.getenv("API_KEY")
 
 rutinas_clustering = {
-    "Kmeans" : kmeans.km,
-    "MiniBatch Kmeans" : minibatchKmeans.mbkm,
-    "Promedio Gaussiano" : gauss.bc,
-    "Spectral Clustering" : spectralClustering.sc,
-    "Sustractive Clustering": sustractivo.sus,
+    "kmeans" : kmeans.km,
+    "miniBatchKmeans" : minibatchKmeans.mbkm,
+    "bisectingKmeans" : bisectingKMeans.bKm,
+    "hdbscan" : hdbscan.hd,
+    "subtractiveClustering": sustractivo.sub,
 }
 
 rutinas_descriptores = {
-    "Rango Dinamico" : ds.rangoDinamico,
-    "Diferencias Pesadas" : ds.diferenciasPesadas,
-    "Diferencias Promediadas": ds.diferenciasPromediadas,
-    "Fujii": ds.fujii,
-    "Desviacion Estandar": ds.desviacionEstandar,
-    "Contraste Temporal" : ds.contrasteTemporal,
-    "Autocorrelacion": ds.autoCorrelacion,
-    "Fuzzy": ds.fuzzy,
-    "Frecuencia Media": ds.frecuenciaMedia,
-    "Entropia Shannon": ds.entropiaShannon,
-    "Frecuencia Corte": ds.frecuenciaCorte,
-    "Wavelet Entropy": ds.waveletEntropy,
-    "High Low Ratio": ds.highLowRatio,
-    "Filtro Bajo": ds.filtro,
-    "Filtro Medio": ds.filtro,
-    "Filtro Alto": ds.filtro,
-    "Adri": ds.adri,
+    "Dynamic Range (DR)" : ds.rangoDinamico,
+    "Weighted Generalized Diferences (WGD)" : ds.diferenciasPesadas,
+    "Subtraction Average of consecutive pixel intensities (SA)": ds.diferenciasPromediadas,
+    "Averaged Diferences (AD)": ds.fujii,
+    "Standard Deviation (SD)": ds.desviacionEstandar,
+    "Temporal contrast (TC)" : ds.contrasteTemporal,
+    "Autocorrelation (AC)": ds.autoCorrelacion,
+    "Fuzzy Granularity (FG)": ds.fuzzy,
+    "Medium Frequency (MF)": ds.frecuenciaMedia,
+    "Shannon Wavelet Entropy (SWE)": ds.entropiaShannon,
+    "Cut off Frequency (CF)": ds.frecuenciaCorte,
+    "Wavelet Entropy (WE)": ds.waveletEntropy,
+    "High to Low Ratio (HLR)": ds.highLowRatio,
+    "Low Frequency Energy Band (LFEB)": ds.filtro,
+    "Medium Frequency Energy Band (MFEB)": ds.filtro,
+    "High Frequency Energy Band (HFEB)": ds.filtro,
+    "Significant Changes Count (SCC)": ds.adri,
 }
 
 async def validaApiKey(x_api_key):
@@ -62,24 +63,34 @@ async def descriptores(x_api_key: str = Header(None),video_experiencia: UploadFi
     print(f"Archivo recibido: {video_experiencia.filename}, tamaño: {len(videoAvi)} bytes")
     tensor = np.array(aviamat.videoamat(videoAvi)).transpose(1,2,0).astype(np.uint8)
     desc_params = json.loads(datos_descriptores)
-
-    print(f"JSON recibido: {desc_params}")
     
     respuesta_imagenes = []
     respuesta_matrices =[]
     for datos in  desc_params:
+        nombre = datos['id']
+        rutina = rutinas_descriptores.get(nombre)
+        print(f"Nombre del descriptor: {nombre}")
+        params = datos['params']
         parametros = []
-        rutina = rutinas_descriptores.get(datos['name'])
-        print(f"Nombre del descriptor: {datos['name']}")
-        for parametro in datos['params']:
-            parametros.append(parametro['value'])    
+        if (nombre == 'Low Frequency Energy Band (LFEB)' or nombre == 'Medium Frequency Energy Band (MFEB)' or nombre == 'High Frequency Energy Band (HFEB)'):    
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'fmin'), None))
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'fmax'), None))
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'atPaso'), None))
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'atRechazo'), None))
+        elif (nombre == 'Weighted Generalized Diferences (WGD)'): 
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'weight'), None))
+        elif (nombre == 'Wavelet Entropy (WE)'):
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'wavelet'), None))
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'level'), None))                
 
         matriz = rutina(tensor,*parametros).tolist()
-        imagenes = {"nombre_descriptor" : datos['name'],"imagen_descriptor" : gi.colorMap(matriz)}
-        matrices = {"nombre_descriptor" : datos['name'],"matriz_descriptor" : matriz}
+        imagenes = {"nombre_descriptor" : nombre,"imagen_descriptor" : gi.colorMap(matriz)}
+        matrices = {"nombre_descriptor" : nombre,"matriz_descriptor" : matriz}
         respuesta_imagenes.append(imagenes)
-        respuesta_matrices.append(matrices)
+        respuesta_matrices.append(matrices)    
+        
     return {"matrices_descriptores":respuesta_matrices,"imagenes_descriptores":respuesta_imagenes}
+
 
 
 @app.post("/clustering")
@@ -103,16 +114,28 @@ async def clustering(x_api_key: str = Header(None),matrices_descriptores: Upload
         tensor[:, :, t] = np.array(datos['matriz_descriptor'])
 
     respuesta_imagenes = []
-    respuesta_matrices =[]
+    respuesta_matrices =[] 
 
     for datos in clust_params:
-        rutina = rutinas_clustering.get(datos['name'])
-        parametros = datos['params'][0]
-        param = int(parametros['value']) 
-        print(f"Nombre del Clustering: {datos['name']}. Parametro {param}")
-        matriz = rutina(tensor,param).tolist()
-        imagenes = {"nombre_clustering" : datos['name'],"imagen_clustering" : gi.colorMap(matriz)}
-        matrices = {"nombre_clustering" : datos['name'],"matriz_clustering" : matriz}
+        nombre = datos['id']
+        rutina = rutinas_clustering.get(nombre)
+        params = datos['params']
+        parametros = []
+        if (nombre == 'kmeans' or nombre == 'miniBatchKmeans' or nombre == 'bisectingKmeans'):
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'nroClusters'), None))
+        elif (nombre == 'hdbscan'):
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'minClusterSize'), None))
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'epsilon'), None))                
+        else:
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'ra'), None))
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'rb'), None))
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'eUp'), None))
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'eDown'), None))
+        print (nombre , *parametros)
+        m, clusters = rutina(tensor,*parametros)
+        matriz = m.tolist()
+        imagenes = {"nombre_clustering" : nombre,"imagen_clustering" : gi.colorMap(matriz),"nro_clusters":clusters}
+        matrices = {"nombre_clustering" : nombre,"matriz_clustering" : matriz, "nro_clusters":clusters}
         respuesta_imagenes.append(imagenes)
         respuesta_matrices.append(matrices)
 
@@ -142,30 +165,42 @@ async def neuronal(background_tasks: BackgroundTasks,x_api_key: str = Header(Non
     
     entrada = tensor.reshape(-1,total)
     resultados = np.array(matriz_clus['matriz_clustering']).reshape(-1)
+    nro_clusters = matriz_clus['nro_clusters']
 
     print (entrada.shape)
     print (resultados.shape)
 
-    parametros_entrenamiento = np.zeros((len(train_params),3))
+    layers = train_params['neuralNetworkLayers']
 
-    for t,datos in enumerate(train_params):      
-        parametros_entrenamiento[t,0]=float(datos['Neuronas'])
-        parametros_entrenamiento[t,1]=int(datos['BatchNormalization'])
-        parametros_entrenamiento[t,2]=float(datos['Dropout'])
+    parametros_entrenamiento = np.zeros((len(layers),3))
+
+    for t,datos in enumerate(layers):      
+        parametros_entrenamiento[t,0]=float(datos['neurons'])
+        parametros_entrenamiento[t,1]=int(datos['batchNorm'])
+        parametros_entrenamiento[t,2]=float(datos['dropout'])
     
+    params = train_params['neuralNetworkParams']
+    epocas = int(params['epocs'])
+    b_size = int(params['batchsize'])
+    estop = int (params['earlystopping']) 
+
     print(parametros_entrenamiento)
     
-    model = train.entrenamientoRed(entrada,resultados,parametros_entrenamiento)
+    model, conf_matrix = train.entrenamientoRed(entrada,resultados,nro_clusters,parametros_entrenamiento,epocas,b_size,estop)
 
     model_path = "modelo_entrenado.keras"
     model.save(model_path)
+    '''
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w") as zf:
+        zf.write(model_path, arcname="modelo_entrenado.keras")
+        zf.writestr("imagen_base64.png", conf_matrix)
 
-    respuesta = FileResponse(model_path, filename="modelo_entrenado.keras", media_type='application/octet-stream')
-
+    zip_buffer.seek(0)
+    '''
     background_tasks.add_task(eliminar_archivo, model_path) 
     
-    return respuesta
-
+    return FileResponse(model_path, filename="modelo_entrenado.keras", media_type="application/octet-stream")
 
 async def eliminar_archivo(model_path: str):
     os.remove(model_path)
@@ -200,7 +235,9 @@ async def prediccion(background_tasks: BackgroundTasks,x_api_key: str = Header(N
 
     resultado = modelo.predict(entrada)
 
-    resultado = normalizar(resultado.reshape(alto,ancho))
+    #resultado = np.argmax(resultado, axis=-1)
+
+    resultado = resultado.reshape(alto,ancho)
 
     background_tasks.add_task(eliminar_archivo, model_path)
 

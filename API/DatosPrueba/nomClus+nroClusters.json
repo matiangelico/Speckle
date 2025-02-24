@@ -1,40 +1,114 @@
 [
     {
       "name": "Kmeans",
+      "id": "kmeans",
       "params": [
         {
-          "paramName": "nro_clusters",
+          "paramName": "Cantidad de clusters",
+          "paramId": "nroClusters",
+          "type": "number",
+          "min": "1",
+          "max": "20",
+          "step": "1",
           "value": "3"
         }
       ]
     },
     {
       "name": "MiniBatch Kmeans",
+      "id": "miniBatchKmeans",
       "params": [
         {
-          "paramName": "nro_clusters",
+          "paramName": "Cantidad de clusters",
+          "paramId": "nroClusters",
+          "type": "number",
+          "min": "1",
+          "max": "20",
+          "step": "1",
           "value": "5"
         }
       ]
     },
     {
-      "name": "Spectral Clustering",
+      "name": "Bisecting Kmeans",
+      "id": "bisectingKmeans",
       "params": [
         {
-          "paramName": "nro_clusters",
+          "paramName": "Cantidad de clusters",
+          "paramId": "nroClusters",
+          "type": "number",
+          "min": "1",
+          "max": "20",
+          "step": "1",
           "value": "3"
         }
       ]
     },
     {
-      "name": "Promedio Gaussiano",
+      "name": "HDBSCAN",
+      "id": "hdbscan",
       "params": [
         {
-          "paramName": "radius",
-          "value": "5"
+          "paramName": "Min Cluster Size",
+          "paramId": "minClusterSize",
+          "type": "number",
+          "min": "0",
+          "max": "100",
+          "step": "0.05",
+          "value": "3"
+        },
+        {
+          "paramName": "Épsilon",
+          "paramId": "epsilon",
+          "type": "number",
+          "min": "0",
+          "max": "100",
+          "step": "0.05",
+          "value": "0.05"
+        }
+      ]
+    },
+    {
+      "name": "Subtractive Clustering",
+      "id": "subtractiveClustering",
+      "params": [
+        {
+          "paramName": "ra",
+          "paramId": "ra",
+          "type": "number",
+          "min": "0",
+          "max": "100",
+          "step": "0.05",
+          "value": "0.5"
+        },
+        {
+          "paramName": "rb",
+          "paramId": "rb",
+          "type": "number",
+          "min": "0",
+          "max": "100",
+          "step": "0.05",
+          "value": "1."
+        },
+        {
+          "paramName": "eUp",
+          "paramId": "eUp",
+          "type": "number",
+          "min": "0",
+          "max": "100",
+          "step": "0.05",
+          "value": "0.6"
+        },
+        {
+          "paramName": "eDown",
+          "paramId": "eDown",
+          "type": "number",
+          "min": "0",
+          "max": "100",
+          "step": "0.05",
+          "value": "0.6"
         }
       ]
     }
-  ]
-
+]
 

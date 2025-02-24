@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 
-def colorMap(tensor): 
+def colorMap(matriz): 
     
-    imagen = plt.imshow(tensor, cmap='jet')
+    imagen = plt.imshow(matriz, cmap='jet')
     plt.colorbar(imagen) 
     #plt.show()
     buf = BytesIO()

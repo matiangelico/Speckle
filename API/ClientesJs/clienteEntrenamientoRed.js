@@ -29,11 +29,19 @@ axios.post('https://127.0.0.1:8000/entrenamientoRed', form, {
     responseType: "arraybuffer",
 })
     .then(response => {
-        fs.writeFileSync("../output/modelo_recibido.keras", response.data);
+        // Convertir el buffer a cadena y luego a JSON
+        const responseText = Buffer.from(response.data).toString('utf-8');
+        const respuesta = JSON.parse(responseText);
+
+        // Guardar el modelo recibido
+        fs.writeFileSync("../output/modelo_recibido.keras", respuesta.model_file);
         console.log("Modelo recibido y guardado como modelo_recibido.keras");
 
-        fs.unlinkSync("descriptores_temp.json");
-        fs.unlinkSync("clustering_temp.json");
+        // Guardar la matriz de confusión como imagen
+        const imagenBase64 = respuesta.confusion_matrix_image;
+        const imagenBuffer = Buffer.from(imagenBase64, 'base64');
+        fs.writeFileSync("../output/matrizConfusion.png", imagenBuffer); 
+        console.log("Matriz de confusión guardada como matrizConfusion.png");
     })
     .catch(error => {
       console.error('Error:');

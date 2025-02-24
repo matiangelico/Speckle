@@ -1,7 +1,25 @@
-[
-    {
-        "Neuronas" : "64",
-        "BatchNormalization" :"1",
-        "Dropout" : "0.1" 
-    }
-]
+{
+    "neuralNetworkLayers":
+        [
+            {
+                "neurons" : "32",
+                "batchNorm" :"1",
+                "dropout" : "0.1" 
+            },
+            {
+                "neurons" : "64",
+                "batchNorm" :"1",
+                "dropout" : "0.1" 
+            },
+            {
+                "neurons" : "32",
+                "batchNorm" :"1",
+                "dropout" : "0.1" 
+            }
+        ],
+    "neuralNetworkParams":{    
+        "epocs" : "4",
+        "batchsize": 64,
+        "earlystopping":"1"
+    }    
+}

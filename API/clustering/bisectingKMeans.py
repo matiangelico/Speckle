@@ -1,4 +1,4 @@
-import numpy as np
+'''import numpy as np
 from scipy.ndimage import gaussian_filter,sobel
 
 def bc(tensor, radius,nro_clusters=15):
@@ -16,7 +16,7 @@ def bc(tensor, radius,nro_clusters=15):
     
     num_clusters = np.sum(transition_points)
     
-    max_clusters =20
+    max_clusters =10
     
     num_clusters = max(0, min(max_clusters, num_clusters+1))
     
@@ -28,9 +28,39 @@ def bc(tensor, radius,nro_clusters=15):
     
     labels = np.clip(labels, 0, num_clusters - 1)
     
-    return labels
+    return labels, nro_clusters
 
     #clustered_image = np.digitize(density, bins=thresholds, right=True) - 1
     #return combined_image * density
 
     #return np.digitize(density, bins=thresholds, right=True) - 1
+'''
+
+from sklearn.cluster import BisectingKMeans
+
+def bKm(tensor, nro_clusters):
+
+    n = int(nro_clusters)
+
+    a,b,c = tensor.shape
+
+    features = tensor.reshape(-1,c)
+
+    bi = BisectingKMeans(n_clusters=n,
+                         init='random', 
+                         n_init=1, 
+                         random_state=None, 
+                         max_iter=300, 
+                         verbose=0, 
+                         tol=0.0001, 
+                         copy_x=True, 
+                         algorithm='lloyd', 
+                         bisecting_strategy='biggest_inertia').fit(features)
+    labels = bi.labels_ 
+
+    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+    
+ 
+    
+    
+    return labels.reshape(a,b), n_clusters_

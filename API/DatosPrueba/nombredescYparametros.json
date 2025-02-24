@@ -1,23 +1,14 @@
 [ 
   {
-    "_id": {
-      "$oid": "671fa3de0cdae93206840dbe"
-    },
-    "name": "Fuzzy",
+    "id": "Fuzzy Granularity (FG)",
     "params": []
   },
   {
-    "_id": {
-      "$oid": "671fa3de0cdae93206840db1"
-    },
-    "name": "Fujii",
+    "id": "High to Low Ratio (HLR)",
     "params": []
   },
   {
-    "_id": {
-      "$oid": "671fa3de0cdae93206840db4"
-    },
-    "name": "Adri",
+    "id": "Averaged Diferences (AD)",
     "params": []
   }
 ]

@@ -1,24 +1,37 @@
-from sklearn.cluster import SpectralClustering
-from skimage.transform import resize
 import numpy as np
+from scipy.linalg import eigh
+from sklearn.cluster import KMeans
+
+def rbf_kernel(X, gamma=1.0):
+    pairwise_sq_dists = np.sum((X[:, np.newaxis] - X[np.newaxis, :]) ** 2, axis=2)
+    return np.exp(-gamma * pairwise_sq_dists)
 
 def sc (tensor, nro_clusters):
 
     a,b,c = tensor.shape
+    flattened_tensor = tensor.reshape(a*b,c)
 
-    tensor_reducido = np.array([resize(img, (a//2, b//2)) for img in tensor.transpose(2, 0, 1)])
-    tensor_reducido = tensor_reducido.transpose(1, 2, 0)  # Forma: (150, 150, N)
+    print('similarity_matrix')
+    similarity_matrix = rbf_kernel(flattened_tensor, gamma=15.0)
+
+    print('degree_matrix')
+    degree_matrix = np.diag(similarity_matrix.sum(axis=1))
+
+    print('Laplacian matrix') 
+    laplacian_matrix = degree_matrix - similarity_matrix
+
+    print('Compute the eigenvalues and eigenvectors')
+    eigenvalues, eigenvectors = eigh(laplacian_matrix)
+
+    print('Select the eigenvectors corresponding to the smallest k eigenvalues')
+    selected_eigenvectors = eigenvectors[:, :nro_clusters]
+
+    print('k-means')
+
+    kmeans = KMeans(n_clusters=nro_clusters)
+    kmeans.fit(selected_eigenvectors)
     
-    features = tensor_reducido.reshape(-1,c)
+    labels = kmeans.labels_.reshape(a,b)
+    print('labels shape',labels.shape)
 
-    spectral = SpectralClustering(
-        n_clusters=nro_clusters,
-        affinity='nearest_neighbors',
-        n_neighbors=10,
-        assign_labels='kmeans',
-    )
-    labels = spectral.fit_predict(features)
-
-    labels_reducidos = labels.reshape(a//2,b//2)
-
-    return resize(labels_reducidos, (a,b), order=0, preserve_range=True).astype(int)
+    return labels, labels

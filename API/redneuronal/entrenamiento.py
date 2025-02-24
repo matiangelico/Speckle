@@ -1,20 +1,29 @@
+import numpy as np
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from tensorflow import keras
+from keras.utils import to_categorical
 from keras.layers import BatchNormalization, Dropout, Dense
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
 from keras.callbacks import EarlyStopping
+from generaImagenMatrizConf import cmcm
 
-def entrenamientoRed (X_train, Y_train, params):
+def entrenamientoRed (X, Y, nro_clusters, params, epochs, batch_size, estopping):
 
-    early_stopping = EarlyStopping(monitor='loss', patience=3, restore_best_weights=True)
+    #Y = to_categorical(Y, nro_clusters)
+
+    X_train, X_temp, Y_train, Y_temp = train_test_split(X, Y, test_size=0.30, random_state=42)  
+    X_val, X_test, Y_val, Y_test = train_test_split(X_temp, Y_temp, test_size=0.50, random_state=42)
+
+    early_stopping = EarlyStopping(monitor='loss', patience=5, restore_best_weights=True)
 
     model = keras.Sequential([
-        keras.layers.Input(shape=(X_train.shape[1],)), 
-        keras.layers.Flatten(),  
+        keras.layers.Input(shape = (X.shape[1],)), 
+        keras.layers.Dense(X.shape[1], activation='relu')
     ])
 
-    print(len(params))
     for datos in params:
         model.add(Dense(int(datos[0]), activation='relu'))
         if int(datos[1]):
@@ -22,18 +31,30 @@ def entrenamientoRed (X_train, Y_train, params):
         if datos[2]!=0.:
             model.add(Dropout(datos[2]))
 
-    model.add(Dense(1, activation='linear')) #model.add(Dense(nro_clases, activation ='softmax'))
+    model.add(Dense(nro_clusters, activation='softmax'))
 
-    model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+    model.compile(optimizer='adam', loss='SparseCategoricalCrossentropy', metrics=['accuracy'])
 
     model.summary()
+    
+    callbacks = [early_stopping] if (estopping==1) else []
+    
+    model.fit(X_train, Y_train, validation_data=(X_val, Y_val), epochs=epochs, batch_size=batch_size, verbose=1, callbacks=callbacks)
+        
+    #loss, accuracy = model.evaluate(X_test, Y_test)
+    #print(f"Precisión en conjunto de prueba: {accuracy * 100:.2f}%")
 
-    # Entrenar el modelo
-    model.fit(X_train, Y_train, epochs=40, batch_size=64, verbose=1, callbacks=[early_stopping])
+    Y_pred = model.predict(X_test)
+    Y_pred_classes = np.argmax(Y_pred, axis=1)  
+    Y_true_classes = Y_test  #np.argmax(Y_test, axis=1) Si usamos categoricalcrossentropy 
 
-    # Guardar el modelo entrenado
-    #model.save("modelo_entrenado.h5")
+    conf_matrix = confusion_matrix(Y_true_classes, Y_pred_classes)
 
-    return model
+    imagen_conf_matrix = cmcm(conf_matrix, Y_true_classes, Y_pred_classes)
+
+    print("Matriz de Confusión:")
+    print(conf_matrix)
+
+    return model, imagen_conf_matrix
 
 
