@@ -1,7 +1,9 @@
 import { styled } from "styled-components";
 
+//Assets
 import HexagonBackground from "../../assets/webp/hexagon_background.webp";
 
+//Components
 import LoginForm from "./LoginForm";
 
 const BackgroundContainer = styled.div`
@@ -35,7 +37,6 @@ const LoginContainer = styled.div`
 `;
 
 const Login = () => {
-
   return (
     <BackgroundContainer>
       <LoginContainer>

@@ -1,10 +1,11 @@
-// import "../../../styles/LoginForm.css";
 import { styled } from "styled-components";
 
+import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+
+//Commons
 import Input from "../common/Input";
 import SecondaryButton from "../common/SecondaryButton";
-import { useState } from "react";
 
 const LoginFormContainer = styled.div`
   width: 526px;
@@ -145,7 +146,6 @@ const LoginForm = () => {
     setErrors({ email: emailError, password: passwordError });
 
     if (!emailError && !passwordError) {
-      // Simulación de inicio de sesión exitoso
       loginWithRedirect();
     }
   };
@@ -192,7 +192,7 @@ const LoginForm = () => {
           </a>
         </OptionsContainer>
 
-        <SecondaryButton text={"Iniciar sesión"} handleClick={handleSubmit} />
+        <SecondaryButton text={"Iniciar sesión"} type={"submit"} />
 
         <SingUp>
           ¿No tienes una cuenta?{" "}

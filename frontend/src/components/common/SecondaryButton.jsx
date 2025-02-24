@@ -80,11 +80,12 @@ const StyledText = styled.span`
   letter-spacing: -0.16px;
 `;
 
-const SecondaryButton = ({ SVG, text, handleClick, disabled, ariaLabel }) => {
+const SecondaryButton = ({ SVG, text, handleClick, disabled, type, ariaLabel }) => {
   return (
     <StyledSecondaryButton
       onClick={handleClick}
       disabled={disabled}
+      type={type || "button"}
       aria-label={ariaLabel || text}
     >
       {SVG && <SVG />}

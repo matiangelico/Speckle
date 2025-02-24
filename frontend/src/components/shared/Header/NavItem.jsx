@@ -1,6 +1,9 @@
 import styled from "styled-components";
 
-const StyledNavItem = styled.a`
+//Router
+import { Link } from 'react-router-dom'
+
+const StyledNavItem = styled(Link)`
   display: flex;
   align-items: center;
   gap: 6px;
@@ -24,7 +27,7 @@ const StyledNavItem = styled.a`
 
 const NavItem = ({ href, icon: Icon, text, isActive, onClick }) => {
   return (
-    <StyledNavItem href={href} data-is-active={isActive}  onClick={onClick}>
+    <StyledNavItem to={href} data-is-active={isActive}  onClick={onClick}>
       {Icon && <Icon />}
       {text}
     </StyledNavItem>

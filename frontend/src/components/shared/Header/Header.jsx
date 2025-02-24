@@ -1,4 +1,5 @@
 import { styled } from "styled-components";
+
 import { useState } from "react";
 
 //Components
@@ -104,14 +105,14 @@ const Header = ({ userName, userEmail }) => {
       </LogoContainer>
       <NavigationContainer>
         <NavItem
-          href={"#"}
+          href={"/training"}
           icon={IconDumbbel}
           text={"Entrenamiento"}
           isActive={activeItem === "Entrenamiento"}
           onClick={() => handleNavItemClick("Entrenamiento")}
         />
         <NavItem
-          href={"#"}
+          href={"/request"}
           icon={IconBrain}
           text={"Consulta"}
           isActive={activeItem === "Consulta"}

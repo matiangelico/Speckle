@@ -33,8 +33,8 @@ import NeuralNetworkResult from "./States/10_NeuralNetworkResult";
 // Commons
 import SecondaryButton from "../common/SecondaryButton";
 import EditableTitle from "../common/EditableTitle";
-import Notification from "../common/Notification";
-import ConfirmationAlert from "../common/ConfirmationAlert";
+// import Notification from "../common/Notification";
+// import ConfirmationAlert from "../common/ConfirmationAlert";
 
 // Icons
 import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
@@ -184,7 +184,7 @@ const ExperienceContent = styled.div`
   }
 `;
 
-const ExperienceContainer = () => {
+const TrainingContainer = () => {
   const dispatch = useDispatch();
   const [state, send] = useMachine(TrainingMachine);
   //0.
@@ -306,10 +306,9 @@ const ExperienceContainer = () => {
         />
       </ExperienceHeader>
       <ExperienceContent>{renderState()}</ExperienceContent>
-      <Notification />
-      <ConfirmationAlert />
+
     </StyledExperienceContainer>
   );
 };
 
-export default ExperienceContainer;
+export default TrainingContainer;
