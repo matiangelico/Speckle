@@ -11,6 +11,7 @@ const uploadVideoRoutes = require("./api/routes/uploadVideoRoutes");
 const clusteringRoutes = require("./api/routes/clusteringRoutes");
 const trainingRoutes = require("./api/routes/trainingRoutes");
 const experienceRoutes = require("./api/routes/experienceRoutes");
+const predictionRoutes = require("./api/routes/predictionRoutes");
 const downloadRoutes = require("./api/routes/downloadRoutes");
 
 app.use(cors());
@@ -35,6 +36,7 @@ app.use("/uploadVideo", uploadVideoRoutes);
 app.use("/clustering", clusteringRoutes);
 app.use("/training", trainingRoutes);
 app.use("/experience", experienceRoutes);
+app.use("/prediction", predictionRoutes);
 app.use("/download", downloadRoutes);
 
 
