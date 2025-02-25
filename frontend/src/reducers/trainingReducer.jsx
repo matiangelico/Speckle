@@ -360,8 +360,8 @@ export const initializeDescriptorsResult = () => {
     const results = await trainingService.getDescriptorsResults();
 
     const descriptorResults = results.map((result) => ({
-      name: result.name,
-      image: result.resultImage,
+      name: result.id,
+      image: result.image,
       checked: false,
     }));
 
@@ -400,9 +400,9 @@ export const initializeClusteringResult = () => {
     const results = await trainingService.getClusteringResults();
 
     const clusteringResults = results.map((result) => ({
-      name: result.name,
+      name: result.id,
       clusterCenters: result.clusterCenters || 99,
-      image: result.resultImage,
+      image: result.image,
       checked: false,
     }));
 

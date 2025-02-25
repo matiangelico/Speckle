@@ -30,20 +30,10 @@ const StyledResultContainer = styled.div.withConfig({
   }
 
   span,
+  p,
   svg {
     color: ${({ isChecked }) =>
       isChecked ? "var(--white)" : "var(--dark-800)"};
-  }
-
-  p {
-    color: var(--dark-400);
-    font-feature-settings: "calt" off;
-
-    font-size: 0.8rem;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 150%;
-    letter-spacing: -0.01rem;
   }
 
   &:hover {
@@ -72,7 +62,9 @@ const StyledResultContainer = styled.div.withConfig({
   }
 `;
 
-const ResultHeader = styled.div`
+const ResultHeader = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "childCount",
+})`
   display: grid;
   padding-left: 10px;
   align-items: center;
@@ -82,10 +74,9 @@ const ResultHeader = styled.div`
   border-radius: 8px 8px 0px 0px;
   border-bottom: 2px solid var(--dark-800, #2d3648);
 
-  grid-template-columns: ${({ childCount }) =>
-    childCount === 2 ? "1fr auto" : 
-    childCount === 3 ? "auto 1fr auto" :
-    "1fr" // un valor por defecto si no son 2 o 3
+  grid-template-columns: ${
+    ({ childCount }) =>
+      childCount === 2 ? "1fr auto" : childCount === 3 ? "auto 1fr auto" : "1fr" // un valor por defecto si no son 2 o 3
   };
 
   span {
@@ -95,6 +86,17 @@ const ResultHeader = styled.div`
     font-weight: 700;
     line-height: 170%;
     letter-spacing: -0.14px;
+  }
+
+  p {
+    color: var(--dark-400);
+    font-feature-settings: "calt" off;
+
+    font-size: 0.8rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: -0.01rem;
   }
 `;
 

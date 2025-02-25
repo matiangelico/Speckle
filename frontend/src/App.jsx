@@ -33,10 +33,6 @@ const AppContainer = styled.div`
 const ProtectedLayout = () => {
   const { user, isAuthenticated, isLoading } = useAuth0();
 
-  console.log(user);
-  console.log(isAuthenticated);
-  console.log(isLoading);
-
   if (isLoading) return <div>Cargando...</div>;
 
   if (!isAuthenticated) {
@@ -64,17 +60,16 @@ const App = () => {
   return (
     <>
       <GlobalStyles />
+
       <Routes>
-        {/* Ruta pública para el login */}
         <Route path='/login' element={<Login />} />
-        {/* Rutas protegidas */}
         <Route element={<ProtectedLayout />}>
           <Route path='/' element={<TrainingMainContent />} />
           <Route path='/request' element={<RequestMainContainer />} />
         </Route>
-        {/* Ruta por defecto */}
         <Route path='*' element={<Navigate to='/' replace />} />
       </Routes>
+
       <Notification />
       <ConfirmationAlert />
     </>

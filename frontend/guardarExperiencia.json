@@ -1,0 +1,31 @@
+{
+  "name": "Experiencia 777",
+  "video": {
+    "name": "video_experimento1.avi",
+    "width": "300",
+    "height": "300"
+  },
+  "selectedDescriptors": [
+    {
+      "id": "dr",
+      "params": []
+    },
+    {
+      "id": "sa",
+      "params": []
+    },
+    {
+      "id": "ad",
+      "params": []
+    },
+    {
+      "id": "wgd",
+      "params": [
+        {
+          "paramId": "weight",
+          "value": "5"
+        }
+      ]
+    }
+  ]
+}
