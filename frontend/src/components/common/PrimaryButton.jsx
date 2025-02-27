@@ -17,7 +17,8 @@ const StyledPrimaryButton = styled.button`
   border: 2px solid var(--dark-800);
   cursor: pointer;
   overflow: hidden;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     background: var(--dark-500); /* Fondo más claro al pasar el mouse */
@@ -75,14 +76,22 @@ const StyledText = styled.span`
   text-transform: none;
 `;
 
-const PrimaryButton = ({ handleClick, LeftSVG = null, RightSVG = null, text, disabled, type, ariaLabel }) => {
+const PrimaryButton = ({
+  handleClick,
+  LeftSVG = null,
+  RightSVG = null,
+  text,
+  disabled,
+  type,
+  ariaLabel,
+}) => {
   return (
     <StyledPrimaryButton
       onClick={handleClick}
       disabled={disabled}
       type={type || "button"}
       aria-label={ariaLabel || text}
-      >
+    >
       {LeftSVG && <LeftSVG />}
       <StyledText>{text}</StyledText>
       {RightSVG && <RightSVG />}
@@ -92,10 +101,12 @@ const PrimaryButton = ({ handleClick, LeftSVG = null, RightSVG = null, text, dis
 
 export default PrimaryButton;
 
-{/* <PrimaryButton
+{
+  /* <PrimaryButton
   text="Iniciar sesión"
   handleClick={() => console.log("Clic en el botón")}
   SVG={MyIcon} // Opcional: ícono SVG
   disabled={false}
   ariaLabel="Iniciar sesión en el sistema"
-/> */}
+/> */
+}
