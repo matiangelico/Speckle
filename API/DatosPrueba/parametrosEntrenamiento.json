@@ -18,7 +18,7 @@
             }
         ],
     "neuralNetworkParams":{    
-        "epocs" : "4",
+        "epocs" : "1",
         "batchsize": 64,
         "earlystopping":"1"
     }    

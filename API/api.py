@@ -1,7 +1,7 @@
 #python -m uvicorn api:app --reload --ssl-keyfile key.pem --ssl-certfile cert.pem
 
 from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks, Header, HTTPException
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import StreamingResponse
 import descriptores as ds
 import numpy as np
 import json
@@ -18,6 +18,7 @@ import uvicorn
 import zipfile
 import io
 
+
 app = FastAPI() 
 
 load_dotenv()
@@ -32,23 +33,23 @@ rutinas_clustering = {
 }
 
 rutinas_descriptores = {
-    "Dynamic Range (DR)" : ds.rangoDinamico,
-    "Weighted Generalized Diferences (WGD)" : ds.diferenciasPesadas,
-    "Subtraction Average of consecutive pixel intensities (SA)": ds.diferenciasPromediadas,
-    "Averaged Diferences (AD)": ds.fujii,
-    "Standard Deviation (SD)": ds.desviacionEstandar,
-    "Temporal contrast (TC)" : ds.contrasteTemporal,
-    "Autocorrelation (AC)": ds.autoCorrelacion,
-    "Fuzzy Granularity (FG)": ds.fuzzy,
+    "dr" : ds.rangoDinamico,
+    "wgd" : ds.diferenciasPesadas,
+    "sa": ds.diferenciasPromediadas,
+    "ad": ds.fujii,
+    "sd": ds.desviacionEstandar,
+    "tc" : ds.contrasteTemporal,
+    "ac": ds.autoCorrelacion,
+    "fg": ds.fuzzy,
     "Medium Frequency (MF)": ds.frecuenciaMedia,
-    "Shannon Wavelet Entropy (SWE)": ds.entropiaShannon,
-    "Cut off Frequency (CF)": ds.frecuenciaCorte,
-    "Wavelet Entropy (WE)": ds.waveletEntropy,
-    "High to Low Ratio (HLR)": ds.highLowRatio,
-    "Low Frequency Energy Band (LFEB)": ds.filtro,
-    "Medium Frequency Energy Band (MFEB)": ds.filtro,
-    "High Frequency Energy Band (HFEB)": ds.filtro,
-    "Significant Changes Count (SCC)": ds.adri,
+    "swe": ds.entropiaShannon,
+    "cf": ds.frecuenciaCorte,
+    "we": ds.waveletEntropy,
+    "hlr": ds.highLowRatio,
+    "lfeb": ds.filtro,
+    "mfeb": ds.filtro,
+    "hfeb": ds.filtro,
+    "scc": ds.adri,
 }
 
 async def validaApiKey(x_api_key):
@@ -67,25 +68,25 @@ async def descriptores(x_api_key: str = Header(None),video_experiencia: UploadFi
     respuesta_imagenes = []
     respuesta_matrices =[]
     for datos in  desc_params:
-        nombre = datos['id']
-        rutina = rutinas_descriptores.get(nombre)
-        print(f"Nombre del descriptor: {nombre}")
+        id = datos['id']
+        rutina = rutinas_descriptores.get(id)
+        print(f"Nombre del descriptor: {id}")
         params = datos['params']
         parametros = []
-        if (nombre == 'Low Frequency Energy Band (LFEB)' or nombre == 'Medium Frequency Energy Band (MFEB)' or nombre == 'High Frequency Energy Band (HFEB)'):    
+        if (id == 'lfeb' or id == 'mfeb' or id == 'hfeb'):    
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'fmin'), None))
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'fmax'), None))
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'atPaso'), None))
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'atRechazo'), None))
-        elif (nombre == 'Weighted Generalized Diferences (WGD)'): 
+        elif (id == 'wgd'): 
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'weight'), None))
-        elif (nombre == 'Wavelet Entropy (WE)'):
+        elif (id == 'we'):
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'wavelet'), None))
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'level'), None))                
 
         matriz = rutina(tensor,*parametros).tolist()
-        imagenes = {"nombre_descriptor" : nombre,"imagen_descriptor" : gi.colorMap(matriz)}
-        matrices = {"nombre_descriptor" : nombre,"matriz_descriptor" : matriz}
+        imagenes = {"id_descriptor" : id,"imagen_descriptor" : gi.colorMap(matriz)}
+        matrices = {"id_descriptor" : id,"matriz_descriptor" : matriz}
         respuesta_imagenes.append(imagenes)
         respuesta_matrices.append(matrices)    
         
@@ -117,13 +118,13 @@ async def clustering(x_api_key: str = Header(None),matrices_descriptores: Upload
     respuesta_matrices =[] 
 
     for datos in clust_params:
-        nombre = datos['id']
-        rutina = rutinas_clustering.get(nombre)
+        id = datos['id']
+        rutina = rutinas_clustering.get(id)
         params = datos['params']
         parametros = []
-        if (nombre == 'kmeans' or nombre == 'miniBatchKmeans' or nombre == 'bisectingKmeans'):
+        if (id == 'kmeans' or id == 'miniBatchKmeans' or id == 'bisectingKmeans'):
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'nroClusters'), None))
-        elif (nombre == 'hdbscan'):
+        elif (id == 'hdbscan'):
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'minClusterSize'), None))
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'epsilon'), None))                
         else:
@@ -131,11 +132,11 @@ async def clustering(x_api_key: str = Header(None),matrices_descriptores: Upload
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'rb'), None))
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'eUp'), None))
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'eDown'), None))
-        print (nombre , *parametros)
+        print (id , *parametros)
         m, clusters = rutina(tensor,*parametros)
         matriz = m.tolist()
-        imagenes = {"nombre_clustering" : nombre,"imagen_clustering" : gi.colorMap(matriz),"nro_clusters":clusters}
-        matrices = {"nombre_clustering" : nombre,"matriz_clustering" : matriz, "nro_clusters":clusters}
+        imagenes = {"id_clustering" : id,"imagen_clustering" : gi.colorMap(matriz),"nro_clusters":clusters}
+        matrices = {"id_clustering" : id,"matriz_clustering" : matriz, "nro_clusters":clusters}
         respuesta_imagenes.append(imagenes)
         respuesta_matrices.append(matrices)
 
@@ -190,20 +191,21 @@ async def neuronal(background_tasks: BackgroundTasks,x_api_key: str = Header(Non
 
     model_path = "modelo_entrenado.keras"
     model.save(model_path)
-    '''
+
     zip_buffer = io.BytesIO()
-    with zipfile.ZipFile(zip_buffer, "w") as zf:
-        zf.write(model_path, arcname="modelo_entrenado.keras")
-        zf.writestr("imagen_base64.png", conf_matrix)
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        zip_file.write(model_path, arcname="modelo_entrenado.keras")
+        zip_file.writestr("matriz_confusion.png", conf_matrix.getvalue())
 
     zip_buffer.seek(0)
-    '''
-    background_tasks.add_task(eliminar_archivo, model_path) 
-    
-    return FileResponse(model_path, filename="modelo_entrenado.keras", media_type="application/octet-stream")
 
-async def eliminar_archivo(model_path: str):
-    os.remove(model_path)
+    background_tasks.add_task(eliminar_archivo, model_path) 
+
+    return StreamingResponse(zip_buffer, media_type="application/zip", headers={"Content-Disposition": "attachment; filename=archivos.zip"})
+
+async def eliminar_archivo(path: str):
+    if os.path.exists(path):
+        os.remove(path)
 
 @app.post("/prediccionRed")
 async def prediccion(background_tasks: BackgroundTasks,x_api_key: str = Header(None),modelo_entrenado: UploadFile = File(...), matrices_descriptores: UploadFile = File()):
@@ -233,18 +235,19 @@ async def prediccion(background_tasks: BackgroundTasks,x_api_key: str = Header(N
 
     print (entrada.shape)
 
-    resultado = modelo.predict(entrada)
+    resultado = modelo.predict(entrada).astype(np.float16)
 
-    #resultado = np.argmax(resultado, axis=-1)
+    resultado_matriz = np.argmax(resultado, axis=-1)
 
-    resultado = resultado.reshape(alto,ancho)
+    resultado_matriz = resultado_matriz.reshape(alto,ancho)
 
     background_tasks.add_task(eliminar_archivo, model_path)
 
-    respuesta_matriz = {"prediccion": resultado.tolist()}
-    respuesta_imagen = {"prediccion": gi.colorMap(resultado.tolist())}
+    respuesta_matriz = {"matriz": resultado_matriz.tolist()}
+    respuesta_tensor = {"tensor":resultado.tolist()}
+    respuesta_imagen = {"imagen": gi.colorMap(resultado_matriz.tolist())}
 
-    return {"matriz_prediccion":respuesta_matriz,"imagen_prediccion":respuesta_imagen}
+    return {"matriz_prediccion":respuesta_matriz,"imagen_prediccion":respuesta_imagen, "tensor_prediccion":respuesta_tensor}
 
 if __name__ == "__main__":
     uvicorn.run(
