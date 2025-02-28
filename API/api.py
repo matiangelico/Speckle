@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 import uvicorn
 import zipfile
 import io
+import base64
 
 
 app = FastAPI() 
@@ -192,10 +193,13 @@ async def neuronal(background_tasks: BackgroundTasks,x_api_key: str = Header(Non
     model_path = "modelo_entrenado.keras"
     model.save(model_path)
 
+    imagen_json = {"matriz_confusion":base64.b64encode(conf_matrix.getvalue()).decode('utf-8')}
+    imagen_json_str = json.dumps(imagen_json)
+
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         zip_file.write(model_path, arcname="modelo_entrenado.keras")
-        zip_file.writestr("matriz_confusion.png", conf_matrix.getvalue())
+        zip_file.writestr("matriz_confusion.json", imagen_json_str.encode('utf-8'))
 
     zip_buffer.seek(0)
 
