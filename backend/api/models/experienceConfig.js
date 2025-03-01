@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const { descriptorSchema } = require("./descriptorConfig"); 
+const { descriptorSchema } = require("./defaultValuesConfig"); 
 
 const experienceSchema = new Schema({
   userId: { type: String, required: true },

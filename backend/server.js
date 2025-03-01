@@ -6,7 +6,7 @@ const app = express();
 const mongoose = require("mongoose");
 //const { auth } = require("express-openid-connect");
 
-const descriptorRoutes = require("./api/routes/descriptorRoutes");
+const defaultValuesRoutes = require("./api/routes/defaultValuesRoutes");
 const uploadVideoRoutes = require("./api/routes/uploadVideoRoutes");
 const clusteringRoutes = require("./api/routes/clusteringRoutes");
 const trainingRoutes = require("./api/routes/trainingRoutes");
@@ -31,7 +31,7 @@ mongoose
     console.error("Error al conectar a MongoDB", error);
   });
 
-app.use("/descriptor", descriptorRoutes);
+app.use("/defaultValues", defaultValuesRoutes);
 app.use("/uploadVideo", uploadVideoRoutes);
 app.use("/clustering", clusteringRoutes);
 app.use("/training", trainingRoutes);
