@@ -1,186 +1,235 @@
 [
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840daf"
+  {
+    "name": "Medium Frequency Energy Band (MFEB)",
+    "id": "mfeb",
+    "params":[
+      {
+        "paramName": "Fmin",
+        "paramId": "fmin",
+        "type": "number",
+        "value": "0.05",
+        "min": "0",
+        "step": "0.01",
+        "unit": "Hz"
+      },
+      {
+        "paramName": "Fmax",
+        "paramId": "fmax",
+        "type": "number",
+        "value": "0.25",
+        "min": "0",
+        "step": "0.01",
+        "unit": "Hz"
+      },
+      {
+        "paramName": "At paso",
+        "paramId": "atPaso",
+        "type": "number",
+        "value": "1",
+        "min": "0",
+        "step": "1",
+        "unit": "dB"
+      },
+      {
+        "paramName": "At rechazo",
+        "paramId": "atRechazo",
+        "type": "number",
+        "value": "40",
+        "min": "0",
+        "step": "1",
+        "unit": "dB"
+      }
+    ]
   },
-  "name": "Rango Dinamico",
-  "params": []
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840daf"
+  {
+    "name": "Low Frequency Energy Band (LFEB)",
+    "id": "lfeb",
+    "params": [
+      {
+        "paramName": "Fmin",
+        "paramId": "fmin",
+        "type": "number",
+        "value": "0.015",
+        "min": "0",
+        "step": "0.01",
+        "unit": "Hz"
+      },
+      {
+        "paramName": "Fmax",
+        "paramId": "fmax",
+        "type": "number",
+        "value": "0.05",
+        "min": "0",
+        "step": "0.01",
+        "unit": "Hz"
+      },
+      {
+        "paramName": "At paso",
+        "paramId": "atPaso",
+        "type": "number",
+        "value": "1",
+        "min": "0",
+        "step": "1",
+        "unit": "dB"
+      },
+      {
+        "paramName": "At rechazo",
+        "paramId": "atRechazo",
+        "type": "number",
+        "value": "40",
+        "min": "0",
+        "step": "1",
+        "unit": "dB"
+      }
+    ]
   },
-  "name": "Diferencias Pesadas",
-  "params": [
-    {
-      "paramName": "peso",
-      "value": "5"
-    }
-  ]
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840db0"
+  {
+    "name": "High Frequency Energy Band (HFEB)",
+    "id": "hfeb",
+    "params": [
+      {
+        "paramName": "Fmin",
+        "paramId": "fmin",
+        "type": "number",
+        "value": "0.25",
+        "min": "0",
+        "step": "0.01",
+        "unit": "Hz"
+      },
+      {
+        "paramName": "Fmax",
+        "paramId": "fmax",
+        "type": "number",
+        "value": "0.4",
+        "min": "0",
+        "step": "0.01",
+        "unit": "Hz"
+      },
+      {
+        "paramName": "At paso",
+        "paramId": "atPaso",
+        "type": "number",
+        "value": "1",
+        "min": "0",
+        "step": "1",
+        "unit": "dB"
+      },
+      {
+        "paramName": "At rechazo",
+        "paramId": "atRechazo",
+        "type": "number",
+        "value": "40",
+        "min": "0",
+        "step": "1",
+        "unit": "dB"
+      }
+    ]
   },
-  "name": "Diferencias Promediadas",
-  "params": []
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840db1"
+  {
+    "name": "Dynamic Range (DR)",
+    "id": "dr",
+    "params": []
   },
-  "name": "Fujii",
-  "params": []
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840db2"
+  {
+    "name": "Subtraction Average of consecutive pixel intensities (SA)",
+    "id": "sa",
+    "params": []
   },
-  "name": "Desviacion Estandar",
-  "params": []
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840db3"
+  {
+    "name": "Averaged Diferences (AD)",
+    "id": "ad",
+    "params": []
   },
-  "name": "Contraste Temporal",
-  "params": []
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840db4"
+  {
+    "name": "Weighted Generalized Diferences (WGD)",
+    "id": "wgd",
+    "params": [
+      {
+        "paramName": "Weight",
+        "paramId": "weight",
+        "type": "number",
+        "min": "1",
+        "step": "1",
+        "value": "5"
+      }
+    ]
   },
-  "name": "Adri",
-  "params": []
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840db5"
+  {
+    "name": "Standard Deviation (SD)",
+    "id": "sd",
+    "params": []
   },
-  "name": "Autocorrelacion",
-  "params": []
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840db6"
+  {
+    "name": "Temporal contrast (TC)",
+    "id": "tc",
+    "params": []
   },
-  "name": "Frecuencia Media",
-  "params": []
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840db7"
+  {
+    "name": "Significant Changes Count (SCC)",
+    "id": "scc",
+    "params": []
   },
-  "name": "Entropia Shannon",
-  "params": []
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840db8"
+  {
+    "name": "Autocorrelation (AC)",
+    "id": "ac",
+    "params": []
   },
-  "name": "Frecuencia Corte",
-  "params": []
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840db9"
+  {
+    "name": "Medium Frequency (MF)",
+    "id": "mf",
+    "params": []
   },
-  "name": "Wavelet Entropy",
-  "params": [
-    {
-      "paramName": "wavelet",
-      "value": "db2"
-    },
-    {
-      "paramName": "level",
-      "value": "5"
-    }
-  ]
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840dba"
+  {
+    "name": "Shannon Wavelet Entropy (SWE)",
+    "id": "swe",
+    "params": []
   },
-  "name": "High Low Ratio",
-  "params": []
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840dbb"
+  {
+    "name": "Cut off Frequency (CF)",
+    "id": "cf",
+    "params": []
   },
-  "name": "Filtro Bajo",
-  "params": [
-    {
-      "paramName": "fmin",
-      "value": "0.015"
-    },
-    {
-      "paramName": "fmax",
-      "value": "0.05"
-    },
-    {
-      "paramName": "at_paso",
-      "value": "1"
-    },
-    {
-      "paramName": "at_rechazo",
-      "value": "40"
-    }
-  ]
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840dbc"
+  {
+    "name": "Wavelet Entropy (WE)",
+    "id": "we",
+    "params": [
+      {
+        "paramName": "Wavelet",
+        "paramId": "wavelet",
+        "value": "db2",
+        "type": "select",
+        "options": [
+          { "value": "db1", "label": "db1" },
+          { "value": "db2", "label": "db2" },
+          { "value": "db3", "label": "db3" },
+          { "value": "db4", "label": "db4" },
+          { "value": "db5", "label": "db5" },
+          { "value": "db6", "label": "db6" },
+          { "value": "db7", "label": "db7" },
+          { "value": "db8", "label": "db8" },
+          { "value": "db9", "label": "db9" },
+          { "value": "db10", "label": "db10" }
+        ]
+      },
+      {
+        "paramName": "Level",
+        "paramId": "level",
+        "type": "number",
+        "min": "1",
+        "max": "100",
+        "step": "1",
+        "value": "5"
+      }
+    ]
   },
-  "name": "Filtro Medio",
-  "params": [
-    {
-      "paramName": "fmin",
-      "value": "0.05"
-    },
-    {
-      "paramName": "fmax",
-      "value": "0.25"
-    },
-    {
-      "paramName": "at_paso",
-      "value": "1"
-    },
-    {
-      "paramName": "at_rechazo",
-      "value": "40"
-    }
-  ]
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840dbd"
+  {
+    "name": "High to Low Ratio (HLR)",
+    "id": "hlr",
+    "params": []
   },
-  "name": "Filtro Alto",
-  "params": [
-    {
-      "paramName": "fmin",
-      "value": "0.025"
-    },
-    {
-      "paramName": "fmax",
-      "value": "0.4"
-    },
-    {
-      "paramName": "at_paso",
-      "value": "1"
-    },
-    {
-      "paramName": "at_rechazo",
-      "value": "40"
-    }
-  ]
-},
-{
-  "_id": {
-    "$oid": "671fa3de0cdae93206840dbe"
-  },
-  "name": "Fuzzy",
-  "params": []
-}
+  {
+    "name": "Fuzzy Granularity (FG)",
+    "id": "fg",
+    "params": []
+  }
 ]

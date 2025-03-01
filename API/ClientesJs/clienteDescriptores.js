@@ -8,7 +8,7 @@ const agent = new https.Agent({ rejectUnauthorized: false });
 
 const API_KEY = process.env.API_KEY
 
-const datos_descriptores = require('../DatosPrueba/nombredescYparametros.json');
+const datos_descriptores = require('../DatosPrueba/todosDescyParams.json');
 
 const form = new FormData();
 form.append('video_experiencia', fs.createReadStream('../matrizyvideo/moneda10.avi',));
@@ -32,7 +32,7 @@ axios.post('https://127.0.0.1:8000/descriptores', form, {
           respuesta.matrices_descriptores.forEach(descriptor => {
               console.log(descriptor.nombre_descriptor); 
           });
-        }     
+        }
     })
     .catch(error => {
       if (error.response){

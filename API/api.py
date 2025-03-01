@@ -7,8 +7,8 @@ import numpy as np
 import json
 import aviamat
 import generaImagen as gi
-from clustering import kmeans,minibatchKmeans,sustractivo,bisectingKMeans,hdbscan,spectralClustering
-import redneuronal.entrenamiento as train
+from clustering import kmeans,minibatchKmeans,sustractivo,bisectingKMeans,hdbscan
+import entrenamiento as train
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from tensorflow import keras
@@ -42,7 +42,7 @@ rutinas_descriptores = {
     "tc" : ds.contrasteTemporal,
     "ac": ds.autoCorrelacion,
     "fg": ds.fuzzy,
-    "Medium Frequency (MF)": ds.frecuenciaMedia,
+    "mf": ds.frecuenciaMedia,
     "swe": ds.entropiaShannon,
     "cf": ds.frecuenciaCorte,
     "we": ds.waveletEntropy,
@@ -50,7 +50,7 @@ rutinas_descriptores = {
     "lfeb": ds.filtro,
     "mfeb": ds.filtro,
     "hfeb": ds.filtro,
-    "scc": ds.adri,
+    "scc": ds.adri, 
 }
 
 async def validaApiKey(x_api_key):
@@ -158,7 +158,7 @@ async def neuronal(background_tasks: BackgroundTasks,x_api_key: str = Header(Non
     total = len(matrices_desc)
 
     print(f"Nro de matrices de descriptores recibidas: {total}")
-    print(f"Clustering seleccionado: {matriz_clus['nombre_clustering']}")
+    print(f"Clustering seleccionado: {matriz_clus['id_clustering']}")
 
     tensor = np.zeros((len(matrices_desc[0]['matriz_descriptor'][0]),len(matrices_desc[0]['matriz_descriptor'][1]),total))
     
@@ -252,6 +252,10 @@ async def prediccion(background_tasks: BackgroundTasks,x_api_key: str = Header(N
     respuesta_imagen = {"imagen": gi.colorMap(resultado_matriz.tolist())}
 
     return {"matriz_prediccion":respuesta_matriz,"imagen_prediccion":respuesta_imagen, "tensor_prediccion":respuesta_tensor}
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 if __name__ == "__main__":
     uvicorn.run(

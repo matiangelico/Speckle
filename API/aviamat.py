@@ -22,8 +22,7 @@ def videoamat(video):
         ret, frame = cap.read()
         if not ret:
             break
-        # Guardar el frame en la matriz (sin conversión)
-        video_data[frame_idx] = frame[:, :, 0]  # Seleccionamos un solo canal, ya que el video está en escal{cca de grises
+        video_data[frame_idx] = frame[:, :, 0]
         frame_idx += 1
     
     cap.release()

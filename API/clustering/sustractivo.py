@@ -64,6 +64,5 @@ def sub(tensor, ra,rb,Eup,Edown):
     a,b,c = tensor.shape
     data = tensor.reshape(-1, c)
     cluster_centers = subtractive_clustering(data,ra,rb,Eup,Edown)
-    print ('number of clusters',len(cluster_centers))
     return classify_points(data, a, b, cluster_centers), len(cluster_centers)
 

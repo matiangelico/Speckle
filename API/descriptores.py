@@ -155,6 +155,7 @@ def filtro(tensor, fmin, fmax, at_paso,at_rechazo):
     fmax = float(fmax)
     at_paso = int(at_paso)
     at_rechazo = int(at_rechazo)
+    print( fmin,' ', fmax,' ',at_paso,' ',at_rechazo)
     return normalizar(np.apply_along_axis(energiaFiltrada, 2, tensor, disenioFiltro(fmin,fmax,at_paso,at_rechazo)))
 
 def adri(tensor):
