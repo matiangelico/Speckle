@@ -4,14 +4,12 @@ const axios = require("axios");
 const path = require("path");
 const https = require('https');
 
-
 require('dotenv').config({path:'../../.env'});
 
 const agent = new https.Agent({ rejectUnauthorized: false });
-const API_KEY = process.env.API_KEY
+const API_KEY = process.env.API_KEY;
 
 exports.uploadVideo = async (req, res) => {
-  console.log("Auth payload:", req.auth?.payload); 
   console.log("Cuerpo de la solicitud (body):", req.body);
   console.log("Archivos recibidos:", req.files); 
 
@@ -24,25 +22,29 @@ exports.uploadVideo = async (req, res) => {
     console.log(`Carpeta temporal creada en: ${userTempDir}`);
   } 
 
-  if (!req.files || !req.files.video || !req.files.descriptors) {
-    return res.status(400).json({ error: "Faltan archivos: video o descriptors" });
+  // Validación actualizada con el nombre correcto
+  if (!req.files?.video || !req.files?.selectedDescriptors) {
+    return res.status(400).json({ error: "Faltan archivos: video o selectedDescriptors" });
   }
 
-  const videoPath = req.files.video[0].path;  
-  const descriptorsPath = req.files.descriptors[0].path;  
-
-  const descriptors = JSON.parse(fs.readFileSync(descriptorsPath, 'utf8'));
-
-  console.log ("Enviando a endpoint python");
+  const videoPath = req.files.video[0].path;
+  const descriptorsPath = req.files.selectedDescriptors[0].path;  // Nombre actualizado
 
   try {
+    const descriptors = JSON.parse(fs.readFileSync(descriptorsPath, 'utf8'));
+    
+    // Validación adicional del formato JSON
+    if (!descriptors.selectedDescriptors || !Array.isArray(descriptors.selectedDescriptors)) {
+      return res.status(400).json({ error: "Formato inválido en selectedDescriptors" });
+    }
+
+    console.log("Enviando a endpoint python");
+
     const formData = new FormData();
     const videoStream = fs.createReadStream(videoPath);
 
-    formData.append("video_experiencia", videoStream, req.files.video[0].originalname);  
-    formData.append("datos_descriptores", JSON.stringify(descriptors)); 
-
-    console.log ("Le mando a endpoint python");
+    formData.append("video_experiencia", videoStream, req.files.video[0].originalname);
+    formData.append("datos_descriptores", JSON.stringify(descriptors.selectedDescriptors)); // Envía solo el array
 
     const response = await axios.post("https://localhost:8000/descriptores", formData, {
       headers: {
@@ -52,18 +54,25 @@ exports.uploadVideo = async (req, res) => {
       httpsAgent: agent
     });
 
-    console.log("Terminando");
+    console.log("Proceso completado");
 
-    const imagenes_descriptores = response.data.imagenes_descriptores;
-    const matrices_descriptores = response.data.matrices_descriptores;
-
+    const { imagenes_descriptores, matrices_descriptores } = response.data;
     const matricesFilePath = path.join(userTempDir, "matrices_descriptores.json");
+    
     fs.writeFileSync(matricesFilePath, JSON.stringify(matrices_descriptores, null, 2));
-    console.log(`Archivo JSON creado en: ${matricesFilePath}`);
+    console.log(`Archivo de matrices creado en: ${matricesFilePath}`);
 
-    res.status(200).json({imagenes_descriptores});
+    res.status(200).json({ imagenes_descriptores });
   } catch (error) {
     console.error("Error al procesar la solicitud:", error.message);
-    res.status(500).json({ error: error.message });
+    
+    // Manejo específico de errores de JSON
+    if (error instanceof SyntaxError) {
+      return res.status(400).json({ error: "Archivo selectedDescriptors con formato JSON inválido" });
+    }
+    
+    res.status(500).json({ 
+      error: error.response?.data?.message || error.message 
+    });
   }
 };
