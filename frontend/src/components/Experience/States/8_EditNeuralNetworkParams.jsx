@@ -42,7 +42,6 @@ const NeuralNetworkParamsContainer = styled.div`
 
 const EditNeuralNetworkParams = ({ send, networkParams }) => {
   const dispatch = useDispatch();
-  console.log("networkParams", networkParams);
 
   const handleBack = () => {
     send({ type: "BACK" });

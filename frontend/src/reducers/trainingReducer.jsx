@@ -256,6 +256,7 @@ const traininingSlice = createSlice({
         clusteringResults: changedResults,
       };
     },
+    // 8
     setNeuralNetworkParams(state, action) {
       const neuralNetworkParams = action.payload;
       return {
@@ -276,7 +277,6 @@ const traininingSlice = createSlice({
 
       return { ...state, neuralNetworkParams: updatedParams };
     },
-
     // 9
     setNeuralNetworkLayers(state, action) {
       const neuralNetwork = action.payload;
@@ -336,6 +336,7 @@ export const initializeDescriptors = () => {
     const defaultValuesDescriptors = getState().defaultValues.descriptors;
 
     const descriptors = defaultValuesDescriptors.map((descriptor) => ({
+      id: descriptor.id,
       name: descriptor.name,
       checked: false,
       hyperparameters: descriptor.params,
@@ -360,8 +361,8 @@ export const initializeDescriptorsResult = () => {
     const results = await trainingService.getDescriptorsResults();
 
     const descriptorResults = results.map((result) => ({
-      name: result.name,
-      image: result.resultImage,
+      name: result.id,
+      image: result.image,
       checked: false,
     }));
 
@@ -400,9 +401,9 @@ export const initializeClusteringResult = () => {
     const results = await trainingService.getClusteringResults();
 
     const clusteringResults = results.map((result) => ({
-      name: result.name,
+      name: result.id,
       clusterCenters: result.clusterCenters || 99,
-      image: result.resultImage,
+      image: result.image,
       checked: false,
     }));
 

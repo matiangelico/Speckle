@@ -40,13 +40,10 @@ def entrenamientoRed (X, Y, nro_clusters, params, epochs, batch_size, estopping)
     callbacks = [early_stopping] if (estopping==1) else []
     
     model.fit(X_train, Y_train, validation_data=(X_val, Y_val), epochs=epochs, batch_size=batch_size, verbose=1, callbacks=callbacks)
-        
-    #loss, accuracy = model.evaluate(X_test, Y_test)
-    #print(f"Precisión en conjunto de prueba: {accuracy * 100:.2f}%")
 
     Y_pred = model.predict(X_test)
     Y_pred_classes = np.argmax(Y_pred, axis=1)  
-    Y_true_classes = Y_test  #np.argmax(Y_test, axis=1) Si usamos categoricalcrossentropy 
+    Y_true_classes = Y_test  
 
     conf_matrix = confusion_matrix(Y_true_classes, Y_pred_classes)
 

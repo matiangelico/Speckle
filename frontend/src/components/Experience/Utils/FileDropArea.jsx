@@ -76,6 +76,7 @@ const FileDropArea = ({ onFileDrop, fileName, fileSize }) => {
     onDrop: (acceptedFiles) => {
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
+
         onFileDrop(file);
       } else {
         dispatch(

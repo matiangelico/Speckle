@@ -2,6 +2,8 @@ const axios = require('axios');
 const https = require('https');
 const fs = require('fs');
 const FormData = require('form-data');
+const AdmZip = require('adm-zip');
+
 require('dotenv').config({path:'../.env'});
 
 const agent = new https.Agent({ rejectUnauthorized: false });
@@ -29,20 +31,34 @@ axios.post('https://127.0.0.1:8000/entrenamientoRed', form, {
     responseType: "arraybuffer",
 })
     .then(response => {
-        // Convertir el buffer a cadena y luego a JSON
-        const responseText = Buffer.from(response.data).toString('utf-8');
-        const respuesta = JSON.parse(responseText);
+        console.log('📌 Respuesta recibida correctamente.');
+        console.log('📌 Headers:', response.headers);
 
-        // Guardar el modelo recibido
-        fs.writeFileSync("../output/modelo_recibido.keras", respuesta.model_file);
-        console.log("Modelo recibido y guardado como modelo_recibido.keras");
+        const zipPath = '../output/archivos.zip';
 
-        // Guardar la matriz de confusión como imagen
-        const imagenBase64 = respuesta.confusion_matrix_image;
-        const imagenBuffer = Buffer.from(imagenBase64, 'base64');
-        fs.writeFileSync("../output/matrizConfusion.png", imagenBuffer); 
-        console.log("Matriz de confusión guardada como matrizConfusion.png");
+        // Guardar el archivo ZIP en disco
+        try {
+            fs.writeFileSync(zipPath, response.data);
+            console.log("✅ ZIP guardado en:", zipPath);
+        } catch (error) {
+            console.error("❌ Error al guardar el ZIP:", error);
+            return;
+        }
+
+        // Intentar extraer el ZIP
+        try {
+            const zip = new AdmZip(zipPath);
+            zip.extractAllTo("../output", true);
+            console.log("✅ Archivos extraídos en ./output");
+            fs.unlinkSync(zipPath);
+        } catch (error) {
+            console.error("❌ Error al extraer el ZIP:", error);
+        }
     })
     .catch(error => {
-      console.error('Error:');
+        console.error('❌ Error en la petición:', error.message);
+        if (error.response) {
+            console.error('📌 Código de estado:', error.response.status);
+            console.error('📌 Respuesta del servidor:', error.response.data.toString('utf-8'));
+        }
     });

@@ -1,0 +1,17 @@
+{
+  "selectDescriptors": [
+    {
+      "name": "Diferencias Pesadas",
+      "params": [
+        {
+          "paramName": "peso",
+          "value": "5"
+        }
+      ]
+    },
+    {
+      "name": "Fujii",
+      "params": []
+    }
+  ]
+}

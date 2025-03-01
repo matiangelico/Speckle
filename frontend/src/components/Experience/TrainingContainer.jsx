@@ -33,14 +33,12 @@ import NeuralNetworkResult from "./States/10_NeuralNetworkResult";
 // Commons
 import SecondaryButton from "../common/SecondaryButton";
 import EditableTitle from "../common/EditableTitle";
-// import Notification from "../common/Notification";
-// import ConfirmationAlert from "../common/ConfirmationAlert";
 
 // Icons
 import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
 
 //Utils
-import { convertToReadableDate } from "../../utils/dateUtils";
+import { convertToReadableDateAndHour } from "../../utils/dateUtils";
 
 const StyledExperienceContainer = styled.main`
   height: 89vh;
@@ -204,6 +202,12 @@ const TrainingContainer = () => {
   const neuralNetworkParams = useSelector(
     (state) => state.training.neuralNetworkParams
   );
+  // 9
+  const layerTemplate = useSelector((state) => state.training.layersTemplate);
+  const layers = useSelector((state) => state.training.neuralNetworkLayers);
+  // 10
+  // const trainingResult = useSelector((state) => state.training.trainingResult);
+  const training = useSelector((state) => state.training);
 
   useEffect(() => {
     //Descritors
@@ -262,16 +266,27 @@ const TrainingContainer = () => {
           />
         );
       case "EDIT_NEURAL_NETWORK_LAYERS": //9
-        return <EditNeuralNetworkLayers send={send} />;
+        return (
+          <EditNeuralNetworkLayers
+            send={send}
+            layerTemplate={layerTemplate}
+            layers={layers}
+          />
+        );
       case "NEURAL_NETWORK_RESULTS": //10
-        return <NeuralNetworkResult send={send} />;
+        return (
+          <NeuralNetworkResult
+            send={send}
+            training={training}
+            chekedDescriptors={chekedDescriptors}
+          />
+        );
       default:
         return null;
     }
   };
 
   const handleSaveTitle = (newTitle) => {
-    console.log("Nuevo título guardado:", newTitle);
     dispatch(setName(newTitle));
   };
 
@@ -283,22 +298,25 @@ const TrainingContainer = () => {
           '¿Deseas comenzar un nuevo entrenamiento?\nAl hacerlo, se perderá todo el progreso actual. Si prefieres conservarlo, tendrás la opción de guardarlo al final del proceso para consultarlo en la sección "Consulta".',
       })
     );
-    if (answer) {
-      //Training Reducer
-      dispatch(resetTraining());
-      dispatch(initializeDescriptors());
-      dispatch(initializeClustering());
-      dispatch(initializeNeuralNetworkLayers());
-      //State Machine
-      send({ type: "RESET" });
+
+    if (!answer) {
+      return;
     }
+
+    //Training Reducer
+    dispatch(resetTraining());
+    dispatch(initializeDescriptors());
+    dispatch(initializeClustering());
+    dispatch(initializeNeuralNetworkLayers());
+    //State Machine
+    send({ type: "RESET" });
   };
 
   return (
     <StyledExperienceContainer>
       <ExperienceHeader>
         <EditableTitle initialTitle={trainingName} onSave={handleSaveTitle} />
-        <p>{convertToReadableDate(createdAt)}</p>
+        <p>{convertToReadableDateAndHour(createdAt)}</p>
         <SecondaryButton
           SVG={NewExperienceIcon}
           text={"Nuevo entrenamiento"}
@@ -306,7 +324,6 @@ const TrainingContainer = () => {
         />
       </ExperienceHeader>
       <ExperienceContent>{renderState()}</ExperienceContent>
-
     </StyledExperienceContainer>
   );
 };

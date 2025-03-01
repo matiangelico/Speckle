@@ -3,59 +3,75 @@
     "descriptors": [
       {
         "name": "Dynamic Range (DR)",
+        "id": "dr",
         "params": []
       },
       {
         "name": "Subtraction Average of consecutive pixel intensities (SA)",
+        "id": "sa",
         "params": []
       },
       {
         "name": "Averaged Diferences (AD)",
+        "id": "ad",
         "params": []
       },
       {
         "name": "Weighted Generalized Diferences (WGD)",
+        "id": "wgd",
         "params": [
           {
             "paramName": "Weight",
+            "paramId": "weight",
             "type": "number",
+            "min": "1",
+            "step": "1",
             "value": "5"
           }
         ]
       },
       {
         "name": "Standard Deviation (SD)",
+        "id": "sd",
         "params": []
       },
       {
         "name": "Temporal contrast (TC)",
+        "id": "tc",
         "params": []
       },
       {
         "name": "Significant Changes Count (SCC)",
+        "id": "scc",
         "params": []
       },
       {
         "name": "Autocorrelation (AC)",
+        "id": "ac",
         "params": []
       },
       {
         "name": "Medium Frequency (MF)",
+        "id": "mf",
         "params": []
       },
       {
         "name": "Shannon Wavelet Entropy (SWE)",
+        "id": "swe",
         "params": []
       },
       {
         "name": "Cut off Frequency (CF)",
+        "id": "cf",
         "params": []
       },
       {
         "name": "Wavelet Entropy (WE)",
+        "id": "we",
         "params": [
           {
             "paramName": "Wavelet",
+            "paramId": "weight",
             "value": "db2",
             "type": "select",
             "options": [
@@ -73,144 +89,185 @@
           },
           {
             "paramName": "Level",
+            "paramId": "level",
+            "type": "number",
+            "min": "1",
+            "max": "100",
+            "step": "1",
             "value": "5"
           }
         ]
       },
       {
         "name": "High to Low Ratio (HLR)",
+        "id": "hlr",
         "params": []
       },
       {
         "name": "Low Frequency Energy Band (LFEB)",
+        "id": "lfeb",
         "params": [
           {
             "paramName": "Fmin",
+            "paramId": "fmin",
             "type": "number",
-            "value": "0.015",
+            "value": "0.03",
             "min": "0",
+            "step": "0.01",
             "unit": "Hz"
           },
           {
             "paramName": "Fmax",
+            "paramId": "fmax",
             "type": "number",
-            "value": "0.05",
+            "value": "0.1",
             "min": "0",
+            "step": "0.01",
             "unit": "Hz"
           },
           {
             "paramName": "At paso",
+            "paramId": "atPaso",
             "type": "number",
             "value": "1",
             "min": "0",
+            "step": "1",
             "unit": "dB"
           },
           {
             "paramName": "At rechazo",
+            "paramId": "atRechazo",
             "type": "number",
             "value": "40",
             "min": "0",
+            "step": "1",
             "unit": "dB"
           }
         ]
       },
       {
         "name": "Medium Frequency Energy Band (MFEB)",
+        "id": "mfeb",
         "params": [
           {
             "paramName": "Fmin",
+            "paramId": "fmin",
             "type": "number",
-            "value": "0.015",
+            "value": "0.1",
             "min": "0",
+            "step": "0.01",
             "unit": "Hz"
           },
           {
             "paramName": "Fmax",
+            "paramId": "fmax",
             "type": "number",
-            "value": "0.05",
+            "value": "0.5",
             "min": "0",
+            "step": "0.01",
             "unit": "Hz"
           },
           {
             "paramName": "At paso",
+            "paramId": "atPaso",
             "type": "number",
             "value": "1",
             "min": "0",
+            "step": "1",
             "unit": "dB"
           },
           {
             "paramName": "At rechazo",
+            "paramId": "atRechazo",
             "type": "number",
             "value": "40",
             "min": "0",
+            "step": "1",
             "unit": "dB"
           }
         ]
       },
       {
         "name": "High Frequency Energy Band (HFEB)",
+        "id": "hfeb",
         "params": [
           {
             "paramName": "Fmin",
+            "paramId": "fmin",
             "type": "number",
-            "value": "0.015",
+            "value": "0.5",
             "min": "0",
+            "step": "0.01",
             "unit": "Hz"
           },
           {
             "paramName": "Fmax",
+            "paramId": "fmax",
             "type": "number",
-            "value": "0.05",
+            "value": "0.8",
             "min": "0",
+            "step": "0.01",
             "unit": "Hz"
           },
           {
             "paramName": "At paso",
+            "paramId": "atPaso",
             "type": "number",
             "value": "1",
             "min": "0",
+            "step": "1",
             "unit": "dB"
           },
           {
             "paramName": "At rechazo",
+            "paramId": "atRechazo",
             "type": "number",
             "value": "40",
             "min": "0",
+            "step": "1",
             "unit": "dB"
           }
         ]
       },
       {
         "name": "Fuzzy Granularity (FG)",
+        "id": "fg",
         "params": []
       }
     ],
     "experiencias": [
       {
+        "id": "67a02a003198ffd6e93d0a6a",
         "name": "Experiencia 1",
-        "date": 1736154929755
+        "date": 1740533778837
       },
       {
+        "id": "67a02a003198ffd6e93d0a7a",
         "name": "Experiencia 2",
-        "date": 1735970127755
+        "date": 1740447378837
       },
       {
+        "id": "67a02a003198ffd6e93d0a8a",
         "name": "Experiencia 3",
-        "date": 1736470575755
+        "date": 1739928978837
       },
       {
+        "id": "67a02a003198ffd6e93d0a9a",
         "name": "Experiencia 4",
-        "date": 1736535349755
+        "date": 1739928978437
       },
       {
+        "id": "67a02a003198ffd6e9d0a10a",
         "name": "Experiencia 5",
-        "date": 1736158134755
+        "date": 1736050674755
       },
       {
+        "id": "67a02a003198ffd6e3d0a11a",
         "name": "Experiencia 6",
         "date": 1736050674755
       },
       {
+        "id": "67a02a003198ffd6e930a12a",
         "name": "Experiencia 7",
         "date": 1736154801755
       }
@@ -225,7 +282,7 @@
             "paramId": "nroClusters",
             "type": "number",
             "min": "1",
-            "max": "20",
+            "max": "50",
             "step": "1",
             "value": "3"
           }
@@ -240,9 +297,9 @@
             "paramId": "nroClusters",
             "type": "number",
             "min": "1",
-            "max": "20",
+            "max": "50",
             "step": "1",
-            "value": "5"
+            "value": "3"
           }
         ]
       },
@@ -255,7 +312,7 @@
             "paramId": "nroClusters",
             "type": "number",
             "min": "1",
-            "max": "20",
+            "max": "50",
             "step": "1",
             "value": "3"
           }
@@ -269,10 +326,10 @@
             "paramName": "min_cluster_size",
             "paramId": "minClusterSize",
             "type": "number",
-            "min": "0",
+            "min": "1",
             "max": "100",
-            "step": "0.05",
-            "value": "3"
+            "step": "1",
+            "value": "5"
           },
           {
             "paramName": "Épsilon",
@@ -280,8 +337,8 @@
             "type": "number",
             "min": "0",
             "max": "100",
-            "step": "0.05",
-            "value": "0.05"
+            "step": "0.01",
+            "value": "0"
           }
         ]
       },
@@ -293,10 +350,10 @@
             "paramName": "Radio de clustering (ra)",
             "paramId": "ra",
             "type": "number",
-            "min": "0",
+            "min": "1",
             "max": "100",
-            "step": "0.05",
-            "value": "0.5"
+            "step": "0.01",
+            "value": "0.3"
           },
           {
             "paramName": "Factor de reducción (rb)",
@@ -304,8 +361,8 @@
             "type": "number",
             "min": "0",
             "max": "100",
-            "step": "0.05",
-            "value": "1.0"
+            "step": "0.01",
+            "value": "0.6"
           },
           {
             "paramName": "Umbral de aceptación (eUp)",
@@ -313,7 +370,7 @@
             "type": "number",
             "min": "0",
             "max": "100",
-            "step": "0.05",
+            "step": "0.01",
             "value": "0.6"
           },
           {
@@ -322,7 +379,7 @@
             "type": "number",
             "min": "0",
             "max": "100",
-            "step": "0.05",
+            "step": "0.01",
             "value": "0.6"
           }
         ]
@@ -331,16 +388,19 @@
     "neuralNetworkParams": [
       {
         "name": "Epochs",
-        "value": "8",
+        "id": "epochs",
+        "value": "40",
         "type": "number"
       },
       {
         "name": "Batch Size",
-        "value": "1",
+        "id": "batchSize",
+        "value": "64",
         "type": "number"
       },
       {
         "name": "Early Stopping",
+        "id": "earlyStopping",
         "value": "1",
         "type": "checkbox"
       }

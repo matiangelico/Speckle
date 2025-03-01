@@ -1,7 +1,5 @@
-// import styled from "styled-components";
-
 //Redux
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   setNeuralNetworkLayers,
   initializeTrainingResult,
@@ -19,11 +17,8 @@ import NeuralNetworkEditor from "../Utils/NeuralNetworkEditor";
 import AddLayerIcon from "../../../assets/svg/icon-lus-circle.svg?react";
 import RemoveLayerIcon from "../../../assets/svg/icon-divide-circle.svg?react";
 
-const EditNeuralNetworkLayers = ({ send }) => {
+const EditNeuralNetworkLayers = ({ send, layerTemplate, layers }) => {
   const dispatch = useDispatch();
-  const layerTemplate = useSelector((state) => state.training.layersTemplate);
-  // const layerTemplate = useSelector({neurons: 128, batchNorm: false, dropout: 0});
-  const layers = useSelector((state) => state.training.neuralNetworkLayers);
 
   const handleBack = () => {
     send({ type: "BACK" });

@@ -3,7 +3,10 @@ import styled from "styled-components";
 import { useState } from "react";
 
 //Redux
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { createNotification } from "../../../reducers/notificationReducer";
+import { saveExperience } from "../../../reducers/savedExperienceReducer";
+import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 
 //Components
 import ResultContainer from "../../common/ResultContainer";
@@ -12,6 +15,7 @@ import SecondaryButton from "../../common/SecondaryButton";
 
 //Utils
 import ResultModal from "../Utils/ResultModal";
+import { convertToTimestamp } from '../../../utils/dateUtils';
 
 //Icons
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
@@ -29,16 +33,51 @@ const CenterContainer = styled.div`
   }
 `;
 
-const NeuralNetworkResult = ({ send }) => {
-  const trainingName = useSelector((state) => state.training.name);
-  const result = useSelector((state) => state.training.trainingResult);
+const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
+  const dispatch = useDispatch();
   const [modalInfo, setModalInfo] = useState(null);
+  const result = training.trainingResult;
+  const trainingName = training.name;
 
   const handleBack = () => {
     send({ type: "BACK" });
   };
 
-  const handleSaveTraining = () => {};
+  const handleSaveTraining = async () => {
+    const answer = await dispatch(
+      showConfirmationAlertAsync({
+        title: `Guardar entrenamiento`,
+        message:
+          "¿Estás seguro de que deseas guardar este entrenamiento? Al hacerlo, el proceso se reiniciará y comenzaras un nuevo entrenamiento.",
+      })
+    );
+
+    if (!answer) {
+      return;
+    }
+
+    const toSave = {
+      name: trainingName,
+      date: convertToTimestamp(training.createdAt),
+      video: {
+        name: training.video.name,
+      },
+      selectedDescriptors: chekedDescriptors.map((d) => {
+        return {
+          id: d.id,
+          params: d.hyperparameters,
+        };
+      }),
+    };
+
+    //Training Reducer
+    dispatch(saveExperience(toSave));
+    dispatch(
+      createNotification(`Experiencia eliminada correctamente.`, "success")
+    );
+    //State Machine
+    send({ type: "RESET" });
+  };
 
   const openModal = (image, title) => {
     setModalInfo({ image, title });
