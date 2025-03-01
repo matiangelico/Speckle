@@ -1,0 +1,30 @@
+{
+    "selectedDescriptors": [
+      {
+        "id": "dr",
+        "params": []
+      },
+      {
+        "id": "wgd",
+        "params": [
+          {
+            "paramId": "weight",
+            "value": "5"
+          }
+        ]
+      },
+      {
+        "id": "we",
+        "params": [
+          {
+            "paramId": "wavelet",
+            "value": "db2"
+          },
+          {
+            "paramId": "level",
+            "value": "5"
+          }
+        ]
+      }
+    ]
+  }
