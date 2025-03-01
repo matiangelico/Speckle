@@ -22,7 +22,7 @@ const entrenamientoRed = async (req, res, next) => {
     const userTempDir = path.join(uploadsBasePath, sanitizedUserId);
 
     try {
-        const { parametros, clusteringSeleccionado } = req.body;
+        const { neuralNetworkLayers, selectedClustering } = req.body;
 
         const [matricesDescData, matricesClusData] = await Promise.all([
             fs.readFile(path.join(userTempDir, 'filteredMatrices.json'), 'utf-8'),
@@ -30,21 +30,21 @@ const entrenamientoRed = async (req, res, next) => {
         ]);
 
         const matricesClus = JSON.parse(matricesClusData);
-        const selectedClustering = matricesClus.find(c => c.nombre_clustering === clusteringSeleccionado);
+        const selectedClusteringObj = matricesClus.find(c => c.nombre_clustering === selectedClustering);
         
-        if (!selectedClustering) {
+        if (!selectedClusteringObj) {
             return res.status(404).json({ error: 'Clustering no encontrado' });
         }
 
         await fs.writeFile(
             path.join(userTempDir, 'filteredClustering.json'),
-            JSON.stringify(selectedClustering)
+            JSON.stringify(selectedClusteringObj)
         );
 
         const trainingForm = new FormData();
         trainingForm.append('matrices_descriptores', matricesDescData, 'descriptores.json');
-        trainingForm.append('matriz_clustering', JSON.stringify(selectedClustering), 'clustering.json');
-        trainingForm.append('parametros_entrenamiento', JSON.stringify(parametros));
+        trainingForm.append('matriz_clustering', JSON.stringify(selectedClusteringObj), 'clustering.json');
+        trainingForm.append('neural_network_layers', JSON.stringify(neuralNetworkLayers));
 
         const { data } = await axios.post('https://localhost:8000/entrenamientoRed', trainingForm, {
             headers: {
@@ -63,52 +63,6 @@ const entrenamientoRed = async (req, res, next) => {
     }
 };
 
-const PrediccionRed = async (req, res) => {
-    try {
-
-        if (!req.auth || !req.auth.payload || !req.auth.payload.sub) {
-            return res.status(401).json({ error: 'Usuario no autenticado' });
-        }
-
-        const userId = req.auth.payload.sub;
-        const sanitizedUserId = userId.replace(/[|:<>"?*]/g, "_");
-        const userTempDir = path.join(uploadsBasePath, sanitizedUserId);
-
-        const [modelo, filteredClustering] = await Promise.all([
-            fs.readFile(path.join(userTempDir, 'modeloEntrenado.keras')),
-            fs.readFile(path.join(userTempDir, 'filteredMatrices.json'), 'utf-8')
-        ]);
-
-        if (!filteredClustering) {
-            return res.status(400).json({ error: 'No se encontró clustering filtrado' });
-        }
-
-        const predictionForm = new FormData();
-        predictionForm.append('modelo_entrenado', modelo, 'modelo.keras');
-        predictionForm.append('matrices_descriptores', filteredClustering, 'clustering.json');
-
-        const { data } = await axios.post('https://localhost:8000/prediccionRed', predictionForm, {
-            headers: {
-                'x-api-key': API_KEY,
-                ...predictionForm.getHeaders()
-              },
-            httpsAgent: agent,
-        });
-
-        res.json({
-            success: true,
-            imagen_prediccion: data.imagen_prediccion
-        });
-
-    } catch (error) {
-        res.status(500).json({ 
-            error: `Error en predicción: ${error.message}`,
-            sugerencia: 'Verifique que primero se haya realizado el entrenamiento'
-        });
-    }
-};
-
 module.exports = {
-    entrenamientoRed,
-    PrediccionRed
+    entrenamientoRed
 };
