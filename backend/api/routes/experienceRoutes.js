@@ -6,5 +6,6 @@ const experienceController = require('../controllers/experienceController');
 router.get("/:id", authMiddleware, experienceController.getExperience);
 router.post("/", authMiddleware, experienceController.saveExperience);
 router.get("/user/all", authMiddleware, experienceController.getUserExperiences);
+router.delete("/:id", authMiddleware, experienceController.deleteExperience);
 
 module.exports = router;

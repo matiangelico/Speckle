@@ -2,11 +2,11 @@ const express = require("express");
 const multer = require("multer");
 const router = express.Router();
 const authMiddleware = require("../middlewares/auth");
-const experiencePrediction = require("../controllers/experiencePredictionController");
+const prediction = require("../controllers/predictionController");
 
 const upload = multer({ dest: "uploads/" });
 
-router.post("/", authMiddleware, upload.single("video"), experiencePrediction.experiencePrediction);
+router.post("/", authMiddleware, upload.single("video"), prediction.experiencePrediction);
 
 module.exports = router;
 
