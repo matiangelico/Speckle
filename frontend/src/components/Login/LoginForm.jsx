@@ -1,4 +1,6 @@
 import { styled } from "styled-components";
+import { FcGoogle } from "react-icons/fc";
+import axios from "axios";
 
 import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -96,6 +98,50 @@ const OptionsContainer = styled.div`
   flex-shrink: 0;]
 `;
 
+const Separator = styled.div`
+  margin: 0;
+  text-align: center;
+  position: relative;
+  color: #666;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background: #ddd;
+  }
+
+  &::before {
+    left: 0;
+  }
+
+  &::after {
+    right: 0;
+  }
+`;
+
+const GoogleButton = styled.button`
+  width: 75%;
+  margin:  0; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover {
+    background: #f8f9fa;
+  }
+`;
+
 const CheckboxContainer = styled.div`
   width: 108px;
   height: 22px;
@@ -136,18 +182,43 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ email: false, password: false });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validación
-    const emailError = email.trim() === "";
-    const passwordError = password.trim() === "";
-
+  
+    const emailError = !email.trim();
+    const passwordError = !password.trim();
     setErrors({ email: emailError, password: passwordError });
-
+  
     if (!emailError && !passwordError) {
-      loginWithRedirect();
+      try {
+        const response = await axios.post(
+          `https://${import.meta.env.VITE_AUTH0_DOMAIN}/oauth/token`,
+          {
+            client_id: import.meta.env.VITE_AUTH0_CLIENT_ID,
+            username: email,
+            password: password,
+            audience: "speckle-descriptor-api",
+            grant_type: "password",
+            scope: "openid profile email"
+          }
+        );
+  
+        localStorage.setItem("access_token", response.data.access_token);
+        window.location.href = "/";
+  
+      } catch (error) {
+        console.error("Error:", error.response?.data || error.message);
+        alert("Credenciales incorrectas");
+      }
     }
+  };
+
+  const handleGoogleLogin = () => {
+    loginWithRedirect({
+      authorizationParams: {
+        connection: "google-oauth2" // Conexión social de Google
+      }
+    });
   };
 
   return (
@@ -201,6 +272,13 @@ const LoginForm = () => {
           </a>
         </SingUp>
       </form>
+
+      <Separator>o</Separator>
+
+      <GoogleButton onClick={handleGoogleLogin}>
+        <FcGoogle size={20} />
+        Continuar con Google
+      </GoogleButton>
     </LoginFormContainer>
   );
 };
