@@ -1,114 +1,44 @@
 [
-    {
-      "name": "Kmeans",
-      "id": "kmeans",
-      "params": [
-        {
-          "paramName": "Cantidad de clusters",
-          "paramId": "nroClusters",
-          "type": "number",
-          "min": "1",
-          "max": "20",
-          "step": "1",
-          "value": "3"
-        }
-      ]
-    },
-    {
-      "name": "MiniBatch Kmeans",
-      "id": "miniBatchKmeans",
-      "params": [
-        {
-          "paramName": "Cantidad de clusters",
-          "paramId": "nroClusters",
-          "type": "number",
-          "min": "1",
-          "max": "20",
-          "step": "1",
-          "value": "5"
-        }
-      ]
-    },
-    {
-      "name": "Bisecting Kmeans",
-      "id": "bisectingKmeans",
-      "params": [
-        {
-          "paramName": "Cantidad de clusters",
-          "paramId": "nroClusters",
-          "type": "number",
-          "min": "1",
-          "max": "20",
-          "step": "1",
-          "value": "3"
-        }
-      ]
-    },
-    {
-      "name": "HDBSCAN",
-      "id": "hdbscan",
-      "params": [
-        {
-          "paramName": "Min Cluster Size",
-          "paramId": "minClusterSize",
-          "type": "number",
-          "min": "0",
-          "max": "100",
-          "step": "0.05",
-          "value": "3"
-        },
-        {
-          "paramName": "Épsilon",
-          "paramId": "epsilon",
-          "type": "number",
-          "min": "0",
-          "max": "100",
-          "step": "0.05",
-          "value": "0.05"
-        }
-      ]
-    },
-    {
-      "name": "Subtractive Clustering",
-      "id": "subtractiveClustering",
-      "params": [
-        {
-          "paramName": "ra",
-          "paramId": "ra",
-          "type": "number",
-          "min": "0",
-          "max": "100",
-          "step": "0.05",
-          "value": "0.5"
-        },
-        {
-          "paramName": "rb",
-          "paramId": "rb",
-          "type": "number",
-          "min": "0",
-          "max": "100",
-          "step": "0.05",
-          "value": "1."
-        },
-        {
-          "paramName": "eUp",
-          "paramId": "eUp",
-          "type": "number",
-          "min": "0",
-          "max": "100",
-          "step": "0.05",
-          "value": "0.6"
-        },
-        {
-          "paramName": "eDown",
-          "paramId": "eDown",
-          "type": "number",
-          "min": "0",
-          "max": "100",
-          "step": "0.05",
-          "value": "0.6"
-        }
-      ]
-    }
+  {
+    "name": "Subtractive Clustering",
+    "id": "subtractiveClustering",
+    "params": [
+      {
+        "paramName": "Radio de clustering (ra)",
+        "paramId": "ra",
+        "type": "number",
+        "min": "1",
+        "max": "100",
+        "step": "0.01",
+        "value": "0.95"
+      },
+      {
+        "paramName": "Factor de reducción (rb)",
+        "paramId": "rb",
+        "type": "number",
+        "min": "0",
+        "max": "100",
+        "step": "0.01",
+        "value": "1.7"
+      },
+      {
+        "paramName": "Umbral de aceptación (eUp)",
+        "paramId": "eUp",
+        "type": "number",
+        "min": "0",
+        "max": "100",
+        "step": "0.01",
+        "value": "0.8"
+      },
+      {
+        "paramName": "Umbral de rechazo (eDown)",
+        "paramId": "eDown",
+        "type": "number",
+        "min": "0",
+        "max": "100",
+        "step": "0.01",
+        "value": "0.9"
+      }
+    ]
+  }
 ]
-

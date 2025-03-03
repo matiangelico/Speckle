@@ -1,4 +1,5 @@
 #python -m uvicorn api:app --reload --ssl-keyfile key.pem --ssl-certfile cert.pem
+#python -m uvicorn api:app --ssl-keyfile key.pem --ssl-certfile cert.pem --workers 4
 
 from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks, Header, HTTPException
 from fastapi.responses import StreamingResponse
@@ -7,7 +8,7 @@ import numpy as np
 import json
 import aviamat
 import generaImagen as gi
-from clustering import kmeans,minibatchKmeans,sustractivo,bisectingKMeans,hdbscan
+from clustering import kmeans,minibatchKmeans,sustractivo,bisectingKMeans,gaussianMixture
 import entrenamiento as train
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
@@ -29,7 +30,7 @@ rutinas_clustering = {
     "kmeans" : kmeans.km,
     "miniBatchKmeans" : minibatchKmeans.mbkm,
     "bisectingKmeans" : bisectingKMeans.bKm,
-    "hdbscan" : hdbscan.hd,
+    "gaussianMixture" : gaussianMixture.gm,
     "subtractiveClustering": sustractivo.sub,
 }
 
@@ -125,9 +126,8 @@ async def clustering(x_api_key: str = Header(None),matrices_descriptores: Upload
         parametros = []
         if (id == 'kmeans' or id == 'miniBatchKmeans' or id == 'bisectingKmeans'):
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'nroClusters'), None))
-        elif (id == 'hdbscan'):
-            parametros.append(next((param['value'] for param in params if param['paramId'] == 'minClusterSize'), None))
-            parametros.append(next((param['value'] for param in params if param['paramId'] == 'epsilon'), None))                
+        elif (id == 'gaussianMixture'):
+            parametros.append(next((param['value'] for param in params if param['paramId'] == 'nroComponents'), None))
         else:
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'ra'), None))
             parametros.append(next((param['value'] for param in params if param['paramId'] == 'rb'), None))

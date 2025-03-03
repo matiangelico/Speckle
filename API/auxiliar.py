@@ -22,7 +22,7 @@ fig, axes = plt.subplots(1, 5, figsize=(15, 12))  # Ajusta 4x5 para 17 imágenes
 axes = axes.ravel()
 
 for i, imagen in enumerate(imagenes_json):
-    nombre = imagen["nombre_clustering"] + str(imagen["nro_clusters"])
+    nombre = imagen["id_clustering"] + str(imagen["nro_clusters"])
     imagen_base64 = imagen["imagen_clustering"]  # Aquí puedes decodificar la imagen base64 si es necesario
     imagen_array = decode_base64_image(imagen_base64)  # Decodificar la imagen base64
     
