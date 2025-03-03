@@ -15,10 +15,11 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 
 // Components
 import GlobalStyles from "./GlobalStyles.jsx";
-import Login from "./components/Login/Login.jsx";
+import Login from "./components/LoginRegister/Login.jsx";
 import TrainingMainContent from "./components/Experience/TrainingMainContent.jsx";
 import RequestMainContainer from "./components/Experience/RequestMainContainer.jsx";
 import Header from "./components/shared/Header/Header.jsx";
+import Register from './components/LoginRegister/Register.jsx';
 
 // Commons
 import Notification from "./components/common/Notification";
@@ -58,6 +59,10 @@ const App = () => {
   const trainingStatus = useSelector((state) => state.training.status);
   const trainingError = useSelector((state) => state.training.error);
 
+  useEffect(() => {
+    ReactModal.setAppElement("#root");
+  }, []);
+
   // Inicializar defaultValues
   useEffect(() => {
     if (!tokenLoading && token) {
@@ -79,6 +84,7 @@ const App = () => {
       <GlobalStyles />
 
       <Routes>
+        <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
         <Route element={<ProtectedLayout />}>
           <Route path='/' element={<TrainingMainContent />} />
@@ -92,7 +98,5 @@ const App = () => {
     </>
   );
 };
-
-ReactModal.setAppElement("#root");
 
 export default App;

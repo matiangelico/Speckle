@@ -4,6 +4,9 @@ import axios from "axios";
 import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
+// Router
+import { Link } from "react-router-dom";
+
 //Commons
 import Input from "../common/Input";
 import SecondaryButton from "../common/SecondaryButton";
@@ -29,6 +32,10 @@ const LoginFormContainer = styled.div`
 
     input {
       margin-bottom: 1rem;
+    }
+
+    #remember {
+      margin-bottom: 0;
     }
   }
 
@@ -257,7 +264,8 @@ const LoginForm = () => {
         <SecondaryButton text={"Iniciar sesión"} type={"submit"} />
 
         <SingUp>
-          ¿No tienes una cuenta? <a href='#'>Crea una cuenta gratis</a>
+          ¿No tienes una cuenta?{" "}
+          <Link to='/register'>Crea una cuenta gratis</Link>
         </SingUp>
       </form>
 

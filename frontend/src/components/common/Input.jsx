@@ -73,7 +73,7 @@ const StyledInput = styled.input`
 const ErrorText = styled.span`
   color: var(--red-error, #e63946);
   font-size: 12px;
-  margin-top: 0.3rem;
+  margin: 0.3rem 0;
 `;
 
 const Input = ({
