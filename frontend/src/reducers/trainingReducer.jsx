@@ -1,11 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-//Utils
 import { convertToTimestamp } from "../utils/dateUtils";
 
-//Services
 import trainingService from "../services/trainingExperience";
 
+import { initializeDefaultValues } from "./defaultValuesReducer";
+
+// Estado inicial de training
 export const initialTrainingState = {
   name: "Nuevo entrenamiento",
   createdAt: convertToTimestamp(Date.now()),
@@ -18,333 +19,282 @@ export const initialTrainingState = {
   neuralNetworkLayers: [],
   layersTemplate: null,
   trainingResult: null,
+  status: "idle", // Para el estado de carga
+  error: null,
 };
 
-const traininingSlice = createSlice({
+// Thunk que inicializa el training basado en los defaultValues
+export const initializeTrainingAsync = createAsyncThunk(
+  "training/initializeTrainingAsync",
+  async (token, { dispatch, rejectWithValue }) => {
+    try {
+      // Primero, carga los default values usando el token
+      const defaultValues = await dispatch(initializeDefaultValues(token));      
+
+      // Inicializar descriptors a partir de defaultValues.descriptors
+      if (defaultValues?.descriptors) {
+        const descriptors = defaultValues.descriptors.map((descriptor) => ({
+          id: descriptor.id,
+          name: descriptor.name,
+          checked: false,
+          hyperparameters: descriptor.params,
+        }));
+        dispatch(setDescriptors(descriptors));
+      }
+
+      // Inicializar clustering a partir de defaultValues.clustering
+      if (defaultValues?.clustering) {
+        const clusteringParams = defaultValues.clustering.map((cluster) => ({
+          name: cluster.name,
+          checked: false,
+          parameters: cluster.params,
+        }));
+        dispatch(setClustering(clusteringParams));
+      }
+
+      // Inicializar Neural Network Params
+      if (defaultValues?.neuralNetworkParams) {
+        dispatch(setNeuralNetworkParams(defaultValues.neuralNetworkParams));
+      }
+
+      // Inicializar Neural Network Layers
+      if (defaultValues?.neuralNetworkLayers) {
+        const layersArray = defaultValues.neuralNetworkLayers;
+        const neuralNetworkLayerTemplate = layersArray.at(-1);
+        dispatch(setNeuralNetworkLayers(layersArray));
+        dispatch(setTemplateLayers(neuralNetworkLayerTemplate));
+      }
+      
+      return { success: true };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+const trainingSlice = createSlice({
   name: "training",
   initialState: initialTrainingState,
   reducers: {
-    // 0
     resetTraining: () => initialTrainingState,
     setName(state, action) {
       return { ...state, name: action.payload };
     },
-    // 1
     setVideo(state, action) {
       return { ...state, video: action.payload };
     },
-    // 2
     setDescriptors(state, action) {
-      const descriptorsParams = action.payload;
-      return {
-        ...state,
-        descriptors: descriptorsParams,
-      };
+      return { ...state, descriptors: action.payload };
     },
     selectDescriptor(state, action) {
       const name = action.payload;
-
-      const changedDescriptors = state.descriptors.map(
-        (descriptor) =>
-          descriptor.name === name
-            ? { ...descriptor, checked: !descriptor.checked } // Cambia el valor de "checked"
-            : descriptor // Si no coincide, no hace cambios
+      state.descriptors = state.descriptors.map((descriptor) =>
+        descriptor.name === name
+          ? { ...descriptor, checked: !descriptor.checked }
+          : descriptor
       );
-
-      return {
-        ...state,
-        descriptors: changedDescriptors,
-      };
     },
     selectAllDescriptors(state) {
-      const updatedDescriptors = state.descriptors.map((descriptor) => ({
+      state.descriptors = state.descriptors.map((descriptor) => ({
         ...descriptor,
-        checked: true, // Selecciona el descriptor
+        checked: true,
       }));
-
-      return {
-        ...state,
-        descriptors: updatedDescriptors,
-      };
     },
     deselectAllDescriptors(state) {
-      const updatedDescriptors = state.descriptors.map((descriptor) => ({
+      state.descriptors = state.descriptors.map((descriptor) => ({
         ...descriptor,
-        checked: false, // Deselecciona el descriptor
+        checked: false,
       }));
-
-      return {
-        ...state,
-        descriptors: updatedDescriptors,
-      };
     },
-    // 3
     setHyperparameters(state, action) {
       const defaultValues = action.payload;
-
-      const updatedDescriptors = state.descriptors.map((descriptor) => {
+      state.descriptors = state.descriptors.map((descriptor) => {
         const defaultDescriptor = defaultValues.find(
           (defaultDesc) => defaultDesc.name === descriptor.name
         );
-
         if (!defaultDescriptor) return descriptor;
-
         const updatedHyperparameters = descriptor.hyperparameters.map(
           (param) => {
             const defaultParam = defaultDescriptor.params.find(
               (defaultParam) => defaultParam.paramName === param.paramName
             );
-
-            if (defaultParam && param.value !== defaultParam.value) {
-              return { ...param, value: defaultParam.value };
-            }
-            return param;
+            return defaultParam && param.value !== defaultParam.value
+              ? { ...param, value: defaultParam.value }
+              : param;
           }
         );
-
         return { ...descriptor, hyperparameters: updatedHyperparameters };
       });
-
-      return { ...state, descriptors: updatedDescriptors };
     },
     updateHyperparameter(state, action) {
       const { descriptorName, hyperparameterName, newValue } = action.payload;
-
-      const updatedDescriptors = state.descriptors.map((descriptor) => {
+      state.descriptors = state.descriptors.map((descriptor) => {
         if (descriptor.name === descriptorName) {
-          const updatedHyperparameters = descriptor.hyperparameters?.map(
-            (param) => {
-              if (param.paramName === hyperparameterName) {
-                return { ...param, value: newValue };
-              }
-              return param;
-            }
+          const updatedHyperparameters = descriptor.hyperparameters.map(
+            (param) =>
+              param.paramName === hyperparameterName
+                ? { ...param, value: newValue }
+                : param
           );
-
           return { ...descriptor, hyperparameters: updatedHyperparameters };
         }
         return descriptor;
       });
-
-      return { ...state, descriptors: updatedDescriptors };
     },
-    // 4
     setDescriptorsResults(state, action) {
-      return { ...state, descriptorsResults: action.payload };
+      state.descriptorsResults = action.payload;
     },
     selectDescriptorResult(state, action) {
       const name = action.payload;
-
-      const changedResults = state.descriptorsResults.map(
-        (result) =>
-          result.name === name
-            ? { ...result, checked: !result.checked } // Cambia el valor de "checked"
-            : result // Si no coincide, no hace cambios
+      state.descriptorsResults = state.descriptorsResults.map((result) =>
+        result.name === name ? { ...result, checked: !result.checked } : result
       );
-
-      return {
-        ...state,
-        descriptorsResults: changedResults,
-      };
     },
-    // 5
     setClustering(state, action) {
-      const clusteringParams = action.payload;
-      return {
-        ...state,
-        clustering: clusteringParams,
-      };
+      state.clustering = action.payload;
     },
     selectClustering(state, action) {
       const name = action.payload;
-
-      const changedClustering = state.clustering.map(
-        (cluster) =>
-          cluster.name === name
-            ? { ...cluster, checked: !cluster.checked } // Cambia el valor de "checked"
-            : cluster // Si no coincide, no hace cambios
+      state.clustering = state.clustering.map((cluster) =>
+        cluster.name === name
+          ? { ...cluster, checked: !cluster.checked }
+          : cluster
       );
-
-      return {
-        ...state,
-        clustering: changedClustering,
-      };
     },
     selectAllClustering(state) {
-      const updatedClusterings = state.clustering.map((cluster) => ({
+      state.clustering = state.clustering.map((cluster) => ({
         ...cluster,
         checked: true,
       }));
-
-      return {
-        ...state,
-        clustering: updatedClusterings,
-      };
     },
     deselectAllClustering(state) {
-      const updatedClusterings = state.clustering.map((cluster) => ({
+      state.clustering = state.clustering.map((cluster) => ({
         ...cluster,
         checked: false,
       }));
-
-      return {
-        ...state,
-        clustering: updatedClusterings,
-      };
     },
-    // 6
     setClusteringParams(state, action) {
       const defaultValues = action.payload;
-
-      const updatedClustering = state.clustering.map((cluster) => {
+      state.clustering = state.clustering.map((cluster) => {
         const defaultCluster = defaultValues.find(
           (defaultCl) => defaultCl.name === cluster.name
         );
-
         if (!defaultCluster) return cluster;
-
         const updatedParameters = cluster.parameters.map((param) => {
           const defaultParam = defaultCluster.params.find(
             (defParam) => defParam.paramName === param.paramName
           );
-
-          if (defaultParam && param.value !== defaultParam.value) {
-            return { ...param, value: defaultParam.value };
-          }
-          return param;
+          return defaultParam && param.value !== defaultParam.value
+            ? { ...param, value: defaultParam.value }
+            : param;
         });
-
         return { ...cluster, parameters: updatedParameters };
       });
-
-      return { ...state, clustering: updatedClustering };
     },
     updateClusteringParam(state, action) {
       const { clusteringName, parameterName, newValue } = action.payload;
-
-      const updatedClustering = state.clustering.map((cluster) => {
+      state.clustering = state.clustering.map((cluster) => {
         if (cluster.name === clusteringName) {
-          const updatedParameter = cluster.parameters?.map((param) => {
-            if (param.paramName === parameterName) {
-              return { ...param, value: newValue };
-            }
-
-            return param;
-          });
-
+          const updatedParameter = cluster.parameters.map((param) =>
+            param.paramName === parameterName
+              ? { ...param, value: newValue }
+              : param
+          );
           return { ...cluster, parameters: updatedParameter };
         }
         return cluster;
       });
-
-      return { ...state, clustering: updatedClustering };
     },
-    // 7
     setClusteringResults(state, action) {
-      return { ...state, clusteringResults: action.payload };
+      state.clusteringResults = action.payload;
     },
     selectClusteringResult(state, action) {
       const name = action.payload;
-
-      const changedResults = state.clusteringResults.map((result) => ({
+      state.clusteringResults = state.clusteringResults.map((result) => ({
         ...result,
         checked: result.name === name,
       }));
-
-      return {
-        ...state,
-        clusteringResults: changedResults,
-      };
     },
-    // 8
     setNeuralNetworkParams(state, action) {
-      const neuralNetworkParams = action.payload;
-      return {
-        ...state,
-        neuralNetworkParams: neuralNetworkParams,
-      };
+      state.neuralNetworkParams = action.payload;
     },
     updateNeuralNetworkParams(state, action) {
       const { parameterName, newValue } = action.payload;
-
-      const updatedParams = state.neuralNetworkParams.map((param) => {
-        if (param.name === parameterName) {
-          return { ...param, value: newValue };
-        } else {
-          return param;
-        }
-      });
-
-      return { ...state, neuralNetworkParams: updatedParams };
+      state.neuralNetworkParams = state.neuralNetworkParams.map((param) =>
+        param.name === parameterName ? { ...param, value: newValue } : param
+      );
     },
-    // 9
     setNeuralNetworkLayers(state, action) {
-      const neuralNetwork = action.payload;
-      return {
-        ...state,
-        neuralNetworkLayers: neuralNetwork,
-      };
+      state.neuralNetworkLayers = action.payload;
     },
     setTemplateLayers(state, action) {
-      const neuralNetworkLayer = action.payload;
-      return {
-        ...state,
-        layersTemplate: neuralNetworkLayer,
-      };
+      state.layersTemplate = action.payload;
     },
-    // 10
     setTrainingResult(state, action) {
-      const result = action.payload;
-      return {
-        ...state,
-        trainingResult: result,
-      };
+      state.trainingResult = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(initializeTrainingAsync.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(initializeTrainingAsync.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(initializeTrainingAsync.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      });
   },
 });
 
 export const {
-  resetTraining, //0
+  resetTraining,
   setName,
-  setVideo, //1
-  setDescriptors, //2
+  setVideo,
+  setDescriptors,
   selectDescriptor,
   selectAllDescriptors,
   deselectAllDescriptors,
-  setHyperparameters, //3
+  setHyperparameters,
   updateHyperparameter,
-  setDescriptorsResults, //4
+  setDescriptorsResults,
   selectDescriptorResult,
-  setClustering, //5
+  setClustering,
   selectClustering,
   selectAllClustering,
   deselectAllClustering,
-  setClusteringParams, //6
+  setClusteringParams,
   updateClusteringParam,
-  setClusteringResults, //7
+  setClusteringResults,
   selectClusteringResult,
-  setNeuralNetworkParams, //8
+  setNeuralNetworkParams,
   updateNeuralNetworkParams,
-  setNeuralNetworkLayers, //9
+  setNeuralNetworkLayers,
   setTemplateLayers,
-  setTrainingResult, //10
-} = traininingSlice.actions;
+  setTrainingResult,
+} = trainingSlice.actions;
 
 // 2.
-export const initializeDescriptors = () => {
-  return (dispatch, getState) => {
-    const defaultValuesDescriptors = getState().defaultValues.descriptors;
+// export const initializeDescriptors = () => {
+//   return (dispatch, getState) => {
+//     const defaultValuesDescriptors = getState().defaultValues?.descriptors;
+//     console.log("defaultValuesDescriptors", defaultValuesDescriptors);
 
-    const descriptors = defaultValuesDescriptors.map((descriptor) => ({
-      id: descriptor.id,
-      name: descriptor.name,
-      checked: false,
-      hyperparameters: descriptor.params,
-    }));
+//     if (!defaultValuesDescriptors) return;
 
-    dispatch(setDescriptors(descriptors));
-  };
-};
+//     const descriptors = defaultValuesDescriptors.map((descriptor) => ({
+//       id: descriptor.id,
+//       name: descriptor.name,
+//       checked: false,
+//       hyperparameters: descriptor.params,
+//     }));
+
+//     dispatch(setDescriptors(descriptors));
+//   };
+// };
 
 // 3.
 export const resetHyperparameters = () => {
@@ -372,19 +322,21 @@ export const initializeDescriptorsResult = () => {
 //
 
 // 5.
-export const initializeClustering = () => {
-  return (dispatch, getState) => {
-    const defaultValuesClustering = getState().defaultValues.clustering;
+// export const initializeClustering = () => {
+//   return (dispatch, getState) => {
+//     const defaultValuesClustering = getState().defaultValues?.clustering;
 
-    const clusteringParams = defaultValuesClustering.map((cluster) => ({
-      name: cluster.name,
-      checked: false,
-      parameters: cluster.params,
-    }));
+//     if (!defaultValuesClustering) return;
 
-    dispatch(setClustering(clusteringParams));
-  };
-};
+//     const clusteringParams = defaultValuesClustering.map((cluster) => ({
+//       name: cluster.name,
+//       checked: false,
+//       parameters: cluster.params,
+//     }));
+
+//     dispatch(setClustering(clusteringParams));
+//   };
+// };
 
 // 6.
 export const resetClusteringParams = () => {
@@ -413,26 +365,31 @@ export const initializeClusteringResult = () => {
 //
 
 // 8.
-export const initializeNeuralNetworkParams = () => {
-  return (dispatch, getState) => {
-    const defaultValuesNeuralNetworkParams =
-      getState().defaultValues.neuralNetworkParams;
+// export const initializeNeuralNetworkParams = () => {
+//   return (dispatch, getState) => {
+//     const defaultValuesNeuralNetworkParams =
+//       getState().defaultValues?.neuralNetworkParams;
 
-    dispatch(setNeuralNetworkParams(defaultValuesNeuralNetworkParams));
-  };
-};
+//     if (!defaultValuesNeuralNetworkParams) return;
+
+//     dispatch(setNeuralNetworkParams(defaultValuesNeuralNetworkParams));
+//   };
+// };
 
 // 9.
-export const initializeNeuralNetworkLayers = () => {
-  return (dispatch, getState) => {
-    const arrayNeuralNetworkLayers =
-      getState().defaultValues.neuralNetworkLayers;
-    const neuralNetworkLayerTemplate = arrayNeuralNetworkLayers.at(-1);
+// export const initializeNeuralNetworkLayers = () => {
+//   return (dispatch, getState) => {
+//     const arrayNeuralNetworkLayers =
+//       getState().defaultValues?.neuralNetworkLayers;
 
-    dispatch(setNeuralNetworkLayers(arrayNeuralNetworkLayers));
-    dispatch(setTemplateLayers(neuralNetworkLayerTemplate));
-  };
-};
+//     if (!arrayNeuralNetworkLayers) return;
+
+//     const neuralNetworkLayerTemplate = arrayNeuralNetworkLayers.at(-1);
+
+//     dispatch(setNeuralNetworkLayers(arrayNeuralNetworkLayers));
+//     dispatch(setTemplateLayers(neuralNetworkLayerTemplate));
+//   };
+// };
 
 // 10. deprecated en el futuro
 export const initializeTrainingResult = () => {
@@ -448,4 +405,4 @@ export const initializeTrainingResult = () => {
 };
 //
 
-export default traininingSlice.reducer;
+export default trainingSlice.reducer;

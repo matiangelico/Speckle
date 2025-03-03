@@ -1,23 +1,29 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:3001/defaultValues";
+const baseUrl = "http://localhost:5000/defaultValues";
 
-const getAll = async () => {
-  const response = await axios.get(baseUrl);
-  return response.data;
+const getAll = async (token) => {  
+  try {
+    const { data } = await axios.get(baseUrl, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error; // O manejar el error según corresponda
+  }
 };
 
-// TERMINAR ====
-const update = async (id, defaultValue) => {
-  const defaultValueChanged = {
-    ...defaultValue,
-    votes: defaultValue.votes + 1,
-  };
-  const response = await axios.put(`${baseUrl}/${id}`, defaultValueChanged);
-  return response.data;
-};
-// ====
+// const baseUrl = "http://localhost:3001/defaultValues";
 
-const defaultValuesServices = { getAll, update };
+// const getAll = async (token) => {
+//   console.log(token);
+  
+//   const response = await axios.get(baseUrl);
+//   return response.data;
+// };
+
+const defaultValuesServices = { getAll };
 
 export default defaultValuesServices;

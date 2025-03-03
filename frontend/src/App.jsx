@@ -1,16 +1,17 @@
 import styled from "styled-components";
 
 import { useEffect } from "react";
+
 import { useAuth0 } from "@auth0/auth0-react";
 import ReactModal from "react-modal";
 
 // Redux
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { initializeDefaultValues } from "./reducers/defaultValuesReducer.jsx";
+// import { initializeTrainingAsync } from "./reducers/trainingReducer.jsx"; // Importa el thunk
 
 // Router
-import { Routes, Route, Navigate } from "react-router-dom";
-import { Outlet } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 
 // Components
 import GlobalStyles from "./GlobalStyles.jsx";
@@ -22,6 +23,9 @@ import Header from "./components/shared/Header/Header.jsx";
 // Commons
 import Notification from "./components/common/Notification";
 import ConfirmationAlert from "./components/common/ConfirmationAlert";
+
+// Hooks
+import useToken from "./components/Hooks/useToken.jsx";
 
 const AppContainer = styled.div`
   height: 100vh;
@@ -41,7 +45,7 @@ const ProtectedLayout = () => {
 
   return (
     <AppContainer>
-      <Header userName={user.name} userEmail={user.email}/>
+      <Header userName={user.name} userEmail={user.email} />
       <Outlet />
     </AppContainer>
   );
@@ -49,13 +53,26 @@ const ProtectedLayout = () => {
 
 const App = () => {
   const dispatch = useDispatch();
+  const { token, loading: tokenLoading } = useToken();
 
-  // Inicializar valores por defecto
+  const trainingStatus = useSelector((state) => state.training.status);
+  const trainingError = useSelector((state) => state.training.error);
+
+  // Inicializar defaultValues
   useEffect(() => {
-    dispatch(initializeDefaultValues());
-  }, [dispatch]);
+    if (!tokenLoading && token) {
+      dispatch(initializeDefaultValues(token));
+    }
+  }, [dispatch, token, tokenLoading]);
 
-  ReactModal.setAppElement("#root");
+  // Renderizado condicional según el estado de carga o error en training
+  if (tokenLoading || trainingStatus === "loading") {
+    return <div>Cargando...</div>;
+  }
+
+  if (trainingStatus === "failed") {
+    return <div>Error al inicializar training: {trainingError}</div>;
+  }
 
   return (
     <>
@@ -75,5 +92,7 @@ const App = () => {
     </>
   );
 };
+
+ReactModal.setAppElement("#root");
 
 export default App;

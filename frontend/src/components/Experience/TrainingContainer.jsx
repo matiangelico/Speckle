@@ -8,13 +8,14 @@ import TrainingMachine from "../../machines/trainingMachine";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
+import { initializeTrainingAsync } from "../../reducers/trainingReducer.jsx";
 import {
   resetTraining,
   setName,
-  initializeClustering,
-  initializeDescriptors,
-  initializeNeuralNetworkParams,
-  initializeNeuralNetworkLayers,
+  // initializeClustering,
+  // initializeDescriptors,
+  // initializeNeuralNetworkParams,
+  // initializeNeuralNetworkLayers,
 } from "../../reducers/trainingReducer";
 import { showConfirmationAlertAsync } from "../../reducers/alertReducer";
 
@@ -39,6 +40,9 @@ import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
 
 //Utils
 import { convertToReadableDateAndHour } from "../../utils/dateUtils";
+
+// Hooks
+import useToken from "../Hooks/useToken";
 
 const StyledExperienceContainer = styled.main`
   height: 89vh;
@@ -185,7 +189,10 @@ const ExperienceContent = styled.div`
 const TrainingContainer = () => {
   const dispatch = useDispatch();
   const [state, send] = useMachine(TrainingMachine);
+  const { token, loading: tokenLoading } = useToken();
+
   //0.
+  const trainingStatus = useSelector((state) => state.training.status);
   const trainingName = useSelector((state) => state.training.name);
   const createdAt = useSelector((state) => state.training.createdAt);
   //2.
@@ -210,24 +217,10 @@ const TrainingContainer = () => {
   const training = useSelector((state) => state.training);
 
   useEffect(() => {
-    //Descritors
-    dispatch(initializeDescriptors());
-  }, [dispatch]);
-
-  useEffect(() => {
-    //Clustering
-    dispatch(initializeClustering());
-  }, [dispatch]);
-
-  useEffect(() => {
-    //Neural Network Params
-    dispatch(initializeNeuralNetworkParams());
-  }, [dispatch]);
-
-  useEffect(() => {
-    //Neural Network Layers
-    dispatch(initializeNeuralNetworkLayers());
-  }, [dispatch]);
+    if (!tokenLoading && token && trainingStatus === "idle") {
+      dispatch(initializeTrainingAsync(token));
+    }
+  }, [tokenLoading, token, trainingStatus, dispatch]);
 
   // Renderiza el estado actual
   const renderState = () => {
@@ -305,9 +298,9 @@ const TrainingContainer = () => {
 
     //Training Reducer
     dispatch(resetTraining());
-    dispatch(initializeDescriptors());
-    dispatch(initializeClustering());
-    dispatch(initializeNeuralNetworkLayers());
+    if (!tokenLoading && token) {
+      dispatch(initializeTrainingAsync(token));
+    }
     //State Machine
     send({ type: "RESET" });
   };

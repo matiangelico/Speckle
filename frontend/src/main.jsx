@@ -20,8 +20,13 @@ createRoot(document.getElementById("root")).render(
     <Auth0Provider
       domain={auth0Domain}
       clientId={auth0ClientId}
-      authorizationParams={{ redirect_uri: window.location.origin }}
-      cacheLocation='localstorage' // Importante para que no se pierda la sesión
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+        audience: "speckle-descriptor-api",
+        scope: "openid profile email",
+        response_type: "code", // Fuerza PKCE (JWS)
+      }}
+      cacheLocation='localstorage'
     >
       <Provider store={store}>
         <Router>

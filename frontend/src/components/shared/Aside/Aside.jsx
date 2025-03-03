@@ -28,29 +28,6 @@ import {
   isThisWeek,
 } from "../../../utils/dateUtils";
 
-const groupByDateRange = (experiences) => {
-  return experiences.reduce((acc, exp) => {
-    const experienceDate = new Date(exp.date);
-
-    let group = "";
-    if (isToday(experienceDate)) {
-      group = "Hoy";
-    } else if (isYesterday(experienceDate)) {
-      group = "Ayer";
-    } else if (isThisWeek(experienceDate)) {
-      group = "Semana Pasada";
-    } else {
-      group = convertToReadableDate(experienceDate.getTime());
-    }
-
-    if (!acc[group]) {
-      acc[group] = [];
-    }
-    acc[group].push(exp);
-    return acc;
-  }, {});
-};
-
 const AsideContainer = styled.aside`
   position: sticky;
   top: 0;
@@ -62,6 +39,10 @@ const AsideContainer = styled.aside`
   border-bottom: 1px solid var(--dark-500);
   display: grid;
   grid-template-rows: 1fr auto;
+
+  @media (min-height: 900px) {
+    height: 100%;
+  }
 `;
 
 const TopContainer = styled.div`
@@ -124,6 +105,29 @@ const EmptyState = styled.div`
   width: 100%;
   text-align: center;
 `;
+
+const groupByDateRange = (experiences) => {
+  return experiences.reduce((acc, exp) => {
+    const experienceDate = new Date(exp.date);
+
+    let group = "";
+    if (isToday(experienceDate)) {
+      group = "Hoy";
+    } else if (isYesterday(experienceDate)) {
+      group = "Ayer";
+    } else if (isThisWeek(experienceDate)) {
+      group = "Semana Pasada";
+    } else {
+      group = convertToReadableDate(experienceDate.getTime());
+    }
+
+    if (!acc[group]) {
+      acc[group] = [];
+    }
+    acc[group].push(exp);
+    return acc;
+  }, {});
+};
 
 const Aside = () => {
   const { logout } = useAuth0();

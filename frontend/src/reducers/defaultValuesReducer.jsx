@@ -23,24 +23,17 @@ export const { setDefaultValues, updateDefaultValue } =
 
 export const selectDefaultValues = (state) => state.defaultValues || [];
 
-export const initializeDefaultValues = () => {
-  return async (dispatch) => {
-    const defaultValues = await defaultValuesServices.getAll();
-    dispatch(setDefaultValues(defaultValues));
-  };
-};
+export const initializeDefaultValues =
+  (token) => async (dispatch, getState) => {
+    const currentState = getState().defaultValues;
 
-// TERMINAR ======
-export const updatedDefaultValue = (defaultValue) => {
-  return async (dispatch) => {
-    const updatedValue = await defaultValuesSlice.update(
-      defaultValue.id,
-      defaultValue
-    );
-    dispatch(updateDefaultValue(updatedValue));
-    // dispatch(setNotification(`you voted '${anecdote.content}'`, 5));
+    if (currentState !== null) {
+      return currentState;
+    }
+
+    const defaultValues = await defaultValuesServices.getAll(token);
+    dispatch(setDefaultValues(defaultValues));
+    return defaultValues;
   };
-};
-// ==========
 
 export default defaultValuesSlice.reducer;
