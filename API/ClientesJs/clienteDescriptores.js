@@ -11,7 +11,7 @@ const API_KEY = process.env.API_KEY
 const datos_descriptores = require('../DatosPrueba/todosDescyParams.json');
 
 const form = new FormData();
-form.append('video_experiencia', fs.createReadStream('../matrizyvideo/moneda10.avi',));
+form.append('video_experiencia', fs.createReadStream('../matrizyvideo/Mon5.avi',));
 form.append('datos_descriptores', JSON.stringify(datos_descriptores))
 
 axios.post('https://127.0.0.1:8000/descriptores', form, {
@@ -30,7 +30,7 @@ axios.post('https://127.0.0.1:8000/descriptores', form, {
         console.log('Descriptores calculados')
         if (Array.isArray(respuesta.matrices_descriptores)) {
           respuesta.matrices_descriptores.forEach(descriptor => {
-              console.log(descriptor.nombre_descriptor); 
+              console.log(descriptor.id_descriptor); 
           });
         }
     })

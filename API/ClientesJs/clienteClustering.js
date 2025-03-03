@@ -33,7 +33,7 @@ axios.post('https://127.0.0.1:8000/clustering', form, {
         console.log('Clusterings calculados')
         if (Array.isArray(respuesta.matrices_clustering)) {
           respuesta.matrices_clustering.forEach(clustering => {
-              console.log(clustering.nombre_clustering); 
+              console.log(clustering.id_clustering); 
           });
         }
          fs.unlinkSync("descriptores_temp.json");
@@ -41,7 +41,7 @@ axios.post('https://127.0.0.1:8000/clustering', form, {
     .catch(error => {
       if (error.response){
         console.error('Error:');
-        console.log('API Key cargada:', process.env.API_KEY);
+        console.log(error.response);
       }
 
     });
