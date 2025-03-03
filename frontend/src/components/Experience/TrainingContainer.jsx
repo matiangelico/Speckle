@@ -9,14 +9,7 @@ import TrainingMachine from "../../machines/trainingMachine";
 //Redux
 import { useDispatch, useSelector } from "react-redux";
 import { initializeTrainingAsync } from "../../reducers/trainingReducer.jsx";
-import {
-  resetTraining,
-  setName,
-  // initializeClustering,
-  // initializeDescriptors,
-  // initializeNeuralNetworkParams,
-  // initializeNeuralNetworkLayers,
-} from "../../reducers/trainingReducer";
+import { resetTraining, setName } from "../../reducers/trainingReducer";
 import { showConfirmationAlertAsync } from "../../reducers/alertReducer";
 
 // Componentes de estado

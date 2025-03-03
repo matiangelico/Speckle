@@ -29,11 +29,7 @@ const LoginContainer = styled.div`
   align-items: center;
   flex-shrink: 0;
 
-  background: linear-gradient(
-    270deg,
-    rgba(255, 255, 255, 0.25) 0%,
-    #fff 20%
-  );
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.25) 0%, #fff 20%);
 `;
 
 const Login = () => {

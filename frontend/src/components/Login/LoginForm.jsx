@@ -1,5 +1,4 @@
 import { styled } from "styled-components";
-import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 
 import { useState } from "react";
@@ -9,13 +8,21 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Input from "../common/Input";
 import SecondaryButton from "../common/SecondaryButton";
 
+//Icons
+import GoogleIcon from "../../assets/svg/icon-google.svg?react";
+
 const LoginFormContainer = styled.div`
   width: 526px;
-  height: 610px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 8px;
+
+  > :last-child {
+    width: 80%;
+    align-self: center;
+  }
 
   form {
     width: 75%;
@@ -40,7 +47,7 @@ const LoginFormContainer = styled.div`
     transition: color 0.3s ease, text-decoration-color 0.3s ease;
 
     &:hover {
-      color: var(--primary, #007bff); /* Color azul en hover */
+      color: #007bff; /* Color azul en hover */
       text-decoration-color: var(
         --primary,
         #007bff
@@ -58,6 +65,11 @@ const LoginFormContainer = styled.div`
         #555555
       ); /* Color diferente para enlaces visitados */
     }
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
   }
 `;
 
@@ -95,14 +107,14 @@ const OptionsContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  flex-shrink: 0;]
+  flex-shrink: 0;
 `;
 
 const Separator = styled.div`
-  margin: 0;
-  text-align: center;
+  margin: 0.5rem 0;
   position: relative;
-  color: #666;
+  text-align: center;
+  color: var(--dark-800, #080a11);
 
   &::before,
   &::after {
@@ -110,8 +122,8 @@ const Separator = styled.div`
     position: absolute;
     top: 50%;
     width: 45%;
-    height: 1px;
-    background: #ddd;
+    height: 2px;
+    background: var(--dark-400, #080a11);
   }
 
   &::before {
@@ -120,25 +132,6 @@ const Separator = styled.div`
 
   &::after {
     right: 0;
-  }
-`;
-
-const GoogleButton = styled.button`
-  width: 75%;
-  margin:  0; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.3s;
-
-  &:hover {
-    background: #f8f9fa;
   }
 `;
 
@@ -163,6 +156,7 @@ const CheckboxContainer = styled.div`
     width: 14px;
     height: 14px;
     flex-shrink: 0;
+    margin-bottom: 0;
   }
 `;
 
@@ -184,11 +178,11 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const emailError = !email.trim();
     const passwordError = !password.trim();
     setErrors({ email: emailError, password: passwordError });
-  
+
     if (!emailError && !passwordError) {
       try {
         const response = await axios.post(
@@ -199,13 +193,12 @@ const LoginForm = () => {
             password: password,
             audience: "speckle-descriptor-api",
             grant_type: "password",
-            scope: "openid profile email"
+            scope: "openid profile email",
           }
         );
-  
+
         localStorage.setItem("access_token", response.data.access_token);
         window.location.href = "/";
-  
       } catch (error) {
         console.error("Error:", error.response?.data || error.message);
         alert("Credenciales incorrectas");
@@ -216,8 +209,8 @@ const LoginForm = () => {
   const handleGoogleLogin = () => {
     loginWithRedirect({
       authorizationParams: {
-        connection: "google-oauth2" // Conexión social de Google
-      }
+        connection: "google-oauth2", // Conexión social de Google
+      },
     });
   };
 
@@ -258,27 +251,23 @@ const LoginForm = () => {
             <input type='checkbox' id='remember' className='custom-checkbox' />
             <label htmlFor='remember'>Recuérdame</label>
           </CheckboxContainer>
-          <a href='#' style={{ color: "var(--primary)" }}>
-            ¿Olvidaste tu contraseña?
-          </a>
+          <a href='#'>¿Olvidaste tu contraseña?</a>
         </OptionsContainer>
 
         <SecondaryButton text={"Iniciar sesión"} type={"submit"} />
 
         <SingUp>
-          ¿No tienes una cuenta?{" "}
-          <a href='#' style={{ color: "var(--primary)" }}>
-            Crea una cuenta gratis
-          </a>
+          ¿No tienes una cuenta? <a href='#'>Crea una cuenta gratis</a>
         </SingUp>
       </form>
 
       <Separator>o</Separator>
 
-      <GoogleButton onClick={handleGoogleLogin}>
-        <FcGoogle size={20} />
-        Continuar con Google
-      </GoogleButton>
+      <SecondaryButton
+        handleClick={handleGoogleLogin}
+        SVG={GoogleIcon}
+        text={"Continuar con Google"}
+      />
     </LoginFormContainer>
   );
 };

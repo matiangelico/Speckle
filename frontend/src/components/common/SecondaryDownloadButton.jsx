@@ -1,5 +1,7 @@
 import styled from "styled-components"
+
 import { useState, useRef, useEffect } from "react"
+
 //Icons
 import ChevronUpIcon from "../../assets/svg/icon-chevron-up.svg?react";
 
