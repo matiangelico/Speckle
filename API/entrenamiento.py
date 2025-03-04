@@ -49,8 +49,8 @@ def entrenamientoRed (X, Y, nro_clusters, params, epochs, batch_size, estopping)
 
     imagen_conf_matrix = cmcm(conf_matrix, Y_true_classes, Y_pred_classes)
 
-    print("Matriz de Confusión:")
-    print(conf_matrix)
+    #print("Matriz de Confusión:")
+    #print(conf_matrix)
 
     return model, imagen_conf_matrix
 

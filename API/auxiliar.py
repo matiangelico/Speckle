@@ -5,7 +5,7 @@ import base64
 from io import BytesIO
 from PIL import Image
 
-# Decodificar base64 y convertir a imagen
+'''# Decodificar base64 y convertir a imagen
 def decode_base64_image(base64_string):
     image_data = base64.b64decode(base64_string)
     image = Image.open(BytesIO(image_data))
@@ -49,11 +49,11 @@ from io import BytesIO
 
 
 # Leer el archivo JSON
-with open('./output/imagenes_clustering.json', 'r') as f:
+with open('./output/matriz_confusion.json', 'r') as f:
     data = json.load(f)
 
 # Extraer la cadena base64 de la clave 'prediccion'
-imagen_base64 = data['imagen_clustering']
+imagen_base64 = data['matriz_confusion']
 
 # Decodificar la cadena base64
 imagen_bytes = base64.b64decode(imagen_base64)
@@ -69,4 +69,3 @@ plt.imshow(imagen_array)
 plt.axis('off')  # Opcional: quitar los ejes
 plt.show()
 
-'''
