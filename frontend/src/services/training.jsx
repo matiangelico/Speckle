@@ -24,7 +24,7 @@ const getClusteringResults = async () => {
 };
 
 const getTrainingResults = async () => {
-  const response = await axios.get(`${baseUrl}/trainingResult`);
+  const response = await axios.get(`${baseUrl}/matrizConfusion`);
 
   return response.data;
 };
