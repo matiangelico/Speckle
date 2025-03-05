@@ -8,21 +8,24 @@ import TrainingMachine from "../../machines/trainingMachine";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { initializeTrainingAsync } from "../../reducers/trainingReducer.jsx";
-import { resetTraining, setName } from "../../reducers/trainingReducer";
+import {
+  resetTraining,
+  setName,
+  initializeTrainingAsync,
+} from "../../reducers/trainingReducer";
 import { showConfirmationAlertAsync } from "../../reducers/alertReducer";
 
 // Componentes de estado
-import UploadVideo from "./States/1_UploadVideo";
-import SelectDescriptors from "./States/2_SelectDescriptors";
-import EditHyperparameters from "./States/3_EditHyperparameters";
-import SelectDescriptorsResults from "./States/4_SelectDescriptorsResults";
-import SelectClustering from "./States/5_SelectClustering";
-import EditClusteringParams from "./States/6_EditClusteringParams";
-import SelectClusteringResults from "./States/7_SelectClusteringResults";
-import EditNeuralNetworkParams from "./States/8_EditNeuralNetworkParams";
-import EditNeuralNetworkLayers from "./States/9_EditNeuralNetworkLayers";
-import NeuralNetworkResult from "./States/10_NeuralNetworkResult";
+import UploadVideo from "./TrainingStates/1_UploadVideo.jsx";
+import SelectDescriptors from "./TrainingStates/2_SelectDescriptors.jsx";
+import EditHyperparameters from "./TrainingStates/3_EditHyperparameters.jsx";
+import SelectDescriptorsResults from "./TrainingStates/4_SelectDescriptorsResults.jsx";
+import SelectClustering from "./TrainingStates/5_SelectClustering.jsx";
+import EditClusteringParams from "./TrainingStates/6_EditClusteringParams.jsx";
+import SelectClusteringResults from "./TrainingStates/7_SelectClusteringResults.jsx";
+import EditNeuralNetworkParams from "./TrainingStates/8_EditNeuralNetworkParams.jsx";
+import EditNeuralNetworkLayers from "./TrainingStates/9_EditNeuralNetworkLayers.jsx";
+import NeuralNetworkResult from "./TrainingStates/10_NeuralNetworkResult.jsx";
 
 // Commons
 import SecondaryButton from "../common/SecondaryButton";
@@ -35,7 +38,7 @@ import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
 import { convertToReadableDateAndHour } from "../../utils/dateUtils";
 
 // Hooks
-import useToken from "../Hooks/useToken";
+import useToken from "../../Hooks/useToken.jsx";
 
 const StyledExperienceContainer = styled.main`
   height: 89vh;

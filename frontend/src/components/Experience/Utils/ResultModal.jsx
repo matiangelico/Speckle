@@ -31,7 +31,7 @@ import CrossIcon from "../../../assets/svg/icon-x.svg?react";
 import FileTextIcon from "../../../assets/svg/icon-file-text.svg?react";
 
 //Services
-import trainingService from "../../../services/trainingExperience";
+import trainingService from "../../../services/training";
 
 // Modal & Overlay styles in GlobalStyles
 

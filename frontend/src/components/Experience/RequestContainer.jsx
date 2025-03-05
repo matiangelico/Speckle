@@ -4,43 +4,36 @@ import { useEffect } from "react";
 
 // Maquina de estados
 import { useMachine } from "@xstate/react";
-import TrainingMachine from "../../machines/trainingMachine";
+import RequestMachine from "../../machines/RequestMachine.jsx";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
 import {
-  resetTraining,
+  // resetRequest,
   setName,
-  initializeClustering,
-  initializeDescriptors,
-  initializeNeuralNetworkParams,
-  initializeNeuralNetworkLayers,
+  initializeTrainingAsync,
 } from "../../reducers/trainingReducer";
-import { showConfirmationAlertAsync } from "../../reducers/alertReducer";
+// import { showConfirmationAlertAsync } from "../../reducers/alertReducer";
 
 // Componentes de estado
-import UploadVideo from "./States/1_UploadVideo";
-import SelectDescriptors from "./States/2_SelectDescriptors";
-import EditHyperparameters from "./States/3_EditHyperparameters";
-import SelectDescriptorsResults from "./States/4_SelectDescriptorsResults";
-import SelectClustering from "./States/5_SelectClustering";
-import EditClusteringParams from "./States/6_EditClusteringParams";
-import SelectClusteringResults from "./States/7_SelectClusteringResults";
-import EditNeuralNetworkParams from "./States/8_EditNeuralNetworkParams";
-import EditNeuralNetworkLayers from "./States/9_EditNeuralNetworkLayers";
-import NeuralNetworkResult from "./States/10_NeuralNetworkResult";
+import TrainingSelected from "./RequestStates/0_TrainingSelected.jsx";
+import UploadVideo from "./RequestStates/1_UploadVideo.jsx";
+import SelectDescriptors from "./RequestStates/2_SelectDescriptors.jsx";
+import EditHyperparameters from "./RequestStates/3_EditHyperparameters.jsx";
+import NeuralNetworkResult from "./RequestStates/10_NeuralNetworkResult.jsx";
 
 // Commons
-import SecondaryButton from "../common/SecondaryButton";
+// import SecondaryButton from "../common/SecondaryButton";
 import EditableTitle from "../common/EditableTitle";
-// import Notification from "../common/Notification";
-// import ConfirmationAlert from "../common/ConfirmationAlert";
 
 // Icons
-import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
+// import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
 
 //Utils
-import { convertToReadableDate } from "../../utils/dateUtils";
+import { convertToReadableDateAndHour } from "../../utils/dateUtils";
+
+// Hooks
+import useToken from "../../Hooks/useToken.jsx";
 
 const StyledExperienceContainer = styled.main`
   height: 89vh;
@@ -67,20 +60,8 @@ const ExperienceHeader = styled.div`
     grid-template-columns: auto 1fr auto;
   }
 
-  &:has(:nth-child(4)) {
-    grid-template-columns: auto auto 1fr auto;
-
-    & > :nth-child(1) {
-      margin-left: -20px;
-      margin-right: -20px;
-    }
-
-    & > :nth-child(2) {
-      max-width: 40vw; /* Ajusta el ancho máximo */
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
+  &:has(:nth-child(2)) {
+    grid-template-columns: auto 1fr;
   }
 
   p {
@@ -186,8 +167,11 @@ const ExperienceContent = styled.div`
 
 const TrainingContainer = () => {
   const dispatch = useDispatch();
-  const [state, send] = useMachine(TrainingMachine);
+  const [state, send] = useMachine(RequestMachine);
+  const { token, loading: tokenLoading } = useToken();
+
   //0.
+  const trainingStatus = useSelector((state) => state.training.status);
   const trainingName = useSelector((state) => state.training.name);
   const createdAt = useSelector((state) => state.training.createdAt);
   //2.
@@ -196,38 +180,20 @@ const TrainingContainer = () => {
   const chekedDescriptors = descriptors.filter(
     (descriptor) => descriptor.checked
   );
-  //5.
-  const clustering = useSelector((state) => state.training.clustering);
-  //6.
-  const chekedClustering = clustering.filter((algorithm) => algorithm.checked);
-  //8.
-  const neuralNetworkParams = useSelector(
-    (state) => state.training.neuralNetworkParams
-  );
+  // 10
+  const training = useSelector((state) => state.training);
 
   useEffect(() => {
-    //Descritors
-    dispatch(initializeDescriptors());
-  }, [dispatch]);
-
-  useEffect(() => {
-    //Clustering
-    dispatch(initializeClustering());
-  }, [dispatch]);
-
-  useEffect(() => {
-    //Neural Network Params
-    dispatch(initializeNeuralNetworkParams());
-  }, [dispatch]);
-
-  useEffect(() => {
-    //Neural Network Layers
-    dispatch(initializeNeuralNetworkLayers());
-  }, [dispatch]);
+    if (!tokenLoading && token && trainingStatus === "idle") {
+      dispatch(initializeTrainingAsync(token));
+    }
+  }, [tokenLoading, token, trainingStatus, dispatch]);
 
   // Renderiza el estado actual
   const renderState = () => {
     switch (state.value) {
+      case "TRAINING_SELECTED": //0
+        return <TrainingSelected send={send} />;
       case "UPLOAD_VIDEO": //1
         return <UploadVideo send={send} />;
       case "SELECT_DESCRIPTORS": //2
@@ -239,74 +205,61 @@ const TrainingContainer = () => {
             chekedDescriptors={chekedDescriptors}
           />
         );
-      case "SELECT_DESCRIPTOR_RESULTS": //4
-        return <SelectDescriptorsResults send={send} />;
-      case "SELECT_CLUSTERING": //5
-        return (
-          <SelectClustering send={send} clusteringAlgorithms={clustering} />
-        );
-      case "EDIT_CLUSTER_PARAMS": //6
-        return (
-          <EditClusteringParams
-            send={send}
-            chekedClustering={chekedClustering}
-          />
-        );
-      case "SELECT_CLUSTERING_RESULTS": //7
-        return <SelectClusteringResults send={send} />;
-      case "EDIT_NEURAL_NETWORK_PARAMS": //8
-        return (
-          <EditNeuralNetworkParams
-            send={send}
-            networkParams={neuralNetworkParams}
-          />
-        );
-      case "EDIT_NEURAL_NETWORK_LAYERS": //9
-        return <EditNeuralNetworkLayers send={send} />;
       case "NEURAL_NETWORK_RESULTS": //10
-        return <NeuralNetworkResult send={send} />;
+        return (
+          <NeuralNetworkResult
+            send={send}
+            training={training}
+            chekedDescriptors={chekedDescriptors}
+          />
+        );
       default:
         return null;
     }
   };
 
   const handleSaveTitle = (newTitle) => {
-    console.log("Nuevo título guardado:", newTitle);
     dispatch(setName(newTitle));
   };
 
-  const handleReset = async () => {
-    const answer = await dispatch(
-      showConfirmationAlertAsync({
-        title: "Nuevo entrenamiento",
-        message:
-          '¿Deseas comenzar un nuevo entrenamiento?\nAl hacerlo, se perderá todo el progreso actual. Si prefieres conservarlo, tendrás la opción de guardarlo al final del proceso para consultarlo en la sección "Consulta".',
-      })
-    );
-    if (answer) {
-      //Training Reducer
-      dispatch(resetTraining());
-      dispatch(initializeDescriptors());
-      dispatch(initializeClustering());
-      dispatch(initializeNeuralNetworkLayers());
-      //State Machine
-      send({ type: "RESET" });
-    }
-  };
+  // const handleReset = async () => {
+  //   const answer = await dispatch(
+  //     showConfirmationAlertAsync({
+  //       title: "Nuevo entrenamiento",
+  //       message:
+  //         '¿Deseas comenzar un nuevo entrenamiento?\nAl hacerlo, se perderá todo el progreso actual. Si prefieres conservarlo, tendrás la opción de guardarlo al final del proceso para consultarlo en la sección "Consulta".',
+  //     })
+  //   );
+
+  //   if (!answer) {
+  //     return;
+  //   }
+
+  //   //Training Reducer
+  //   dispatch(resetTraining());
+  //   if (!tokenLoading && token) {
+  //     dispatch(initializeTrainingAsync(token));
+  //   }
+  //   //State Machine
+  //   send({ type: "RESET" });
+  // };
 
   return (
     <StyledExperienceContainer>
       <ExperienceHeader>
-        <EditableTitle initialTitle={trainingName} onSave={handleSaveTitle} />
-        <p>{convertToReadableDate(createdAt)}</p>
-        <SecondaryButton
+        <EditableTitle
+          initialTitle={trainingName}
+          onSave={handleSaveTitle}
+          isEditable={false}
+        />
+        <p>{convertToReadableDateAndHour(createdAt)}</p>
+        {/* <SecondaryButton
           SVG={NewExperienceIcon}
           text={"Nuevo entrenamiento"}
           handleClick={handleReset}
-        />
+        /> */}
       </ExperienceHeader>
       <ExperienceContent>{renderState()}</ExperienceContent>
-
     </StyledExperienceContainer>
   );
 };

@@ -1,10 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { convertToTimestamp } from "../utils/dateUtils";
+// Services
+import trainingService from "../services/training";
 
-import trainingService from "../services/trainingExperience";
-
+// Redux
 import { initializeDefaultValues } from "./defaultValuesReducer";
+
+// Utils
+import { convertToTimestamp } from "../utils/dateUtils";
 
 // Estado inicial de training
 export const initialTrainingState = {
@@ -29,7 +32,7 @@ export const initializeTrainingAsync = createAsyncThunk(
   async (token, { dispatch, rejectWithValue }) => {
     try {
       // Primero, carga los default values usando el token
-      const defaultValues = await dispatch(initializeDefaultValues(token));      
+      const defaultValues = await dispatch(initializeDefaultValues(token));
 
       // Inicializar descriptors a partir de defaultValues.descriptors
       if (defaultValues?.descriptors) {
@@ -64,7 +67,7 @@ export const initializeTrainingAsync = createAsyncThunk(
         dispatch(setNeuralNetworkLayers(layersArray));
         dispatch(setTemplateLayers(neuralNetworkLayerTemplate));
       }
-      
+
       return { success: true };
     } catch (error) {
       return rejectWithValue(error.message);

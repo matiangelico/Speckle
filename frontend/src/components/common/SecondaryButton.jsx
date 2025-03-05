@@ -7,10 +7,10 @@ const StyledSecondaryButton = styled.button`
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  border: 2px solid var(--dark-800, #4741d7); /* Tamaño y color del borde */
+  border: 2px solid var(--dark-800, #080a11); /* Tamaño y color del borde */
   border-radius: 8px;
   background-color: var(--white, #ffffff); /* Fondo blanco inicial */
-  color: var(--dark-800, #4741d7); /* Color del texto inicial */
+  color: var(--dark-800, #080a11); /* Color del texto inicial */
   font-family: Inter, sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
@@ -32,7 +32,7 @@ const StyledSecondaryButton = styled.button`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--dark-800, #4741d7); /* Color del fondo en hover */
+    background-color: var(--dark-800, #080a11); /* Color del fondo en hover */
     z-index: -1; /* Coloca el fondo detrás del texto */
     transform: scale(0, 0); /* Escala inicial (oculto) */
     transition: transform 0.3s ease, background-color 0.3s ease;

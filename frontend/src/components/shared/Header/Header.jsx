@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 //Components
 import NavItem from "./NavItem";
@@ -89,10 +89,18 @@ const ProfileImage = styled.img`
   cursor: pointer;
 `;
 
-const Header = ({ userName, userEmail }) => {
-  const [activeItem, setActiveItem] = useState("Entrenamiento");
+const Header = ({ userName, userEmail, userImage }) => {
+  const location = useLocation();
+  const [activeItem, setActiveItem] = useState(null);
 
-  // Función para cambiar el enlace activo
+  useEffect(() => {
+    if (location.pathname.startsWith("/request")) {
+      setActiveItem("Consulta");
+    } else if (location.pathname.startsWith("/")) {
+      setActiveItem("Entrenamiento");
+    }
+  }, [location.pathname]);
+
   const handleNavItemClick = (item) => {
     setActiveItem(item);
   };
@@ -124,7 +132,7 @@ const Header = ({ userName, userEmail }) => {
           <UserName>{userName}</UserName>
           <UserEmail>{userEmail}</UserEmail>
         </UserDetails>
-        <ProfileImage src={profilePicture} alt={userName} />
+        <ProfileImage src={userImage ? userImage : profilePicture} alt={userName} />
       </UserInfo>
     </StyledHeader>
   );

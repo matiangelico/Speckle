@@ -8,7 +8,6 @@ import ReactModal from "react-modal";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import { initializeDefaultValues } from "./reducers/defaultValuesReducer.jsx";
-// import { initializeTrainingAsync } from "./reducers/trainingReducer.jsx"; // Importa el thunk
 
 // Router
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
@@ -16,17 +15,19 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 // Components
 import GlobalStyles from "./GlobalStyles.jsx";
 import Login from "./components/LoginRegister/Login.jsx";
-import TrainingMainContent from "./components/Experience/TrainingMainContent.jsx";
-import RequestMainContainer from "./components/Experience/RequestMainContainer.jsx";
+import Register from "./components/LoginRegister/Register.jsx";
 import Header from "./components/shared/Header/Header.jsx";
-import Register from './components/LoginRegister/Register.jsx';
+import Aside from "./components/shared/Aside/Aside.jsx";
+import TrainingContainer from "./components/Experience/TrainingContainer.jsx";
+import RequestContainer from "./components/Experience/RequestContainer.jsx";
 
 // Commons
 import Notification from "./components/common/Notification";
 import ConfirmationAlert from "./components/common/ConfirmationAlert";
+import MainLoader from "./components/common/MainLoader.jsx";
 
 // Hooks
-import useToken from "./components/Hooks/useToken.jsx";
+import useToken from "./Hooks/useToken.jsx";
 
 const AppContainer = styled.div`
   height: 100vh;
@@ -35,19 +36,30 @@ const AppContainer = styled.div`
   border: 4px solid var(--dark-500);
 `;
 
+const StyledMainContent = styled.div`
+  display: grid;
+  grid-template-columns: auto 1fr;
+`;
+
 const ProtectedLayout = () => {
   const { user, isAuthenticated, isLoading } = useAuth0();
 
-  if (isLoading) return <div>Cargando...</div>;
+  if (isLoading) return <MainLoader />;
 
   if (!isAuthenticated) {
     return <Navigate to='/login' replace />;
   }
 
+  console.log(user);
+  
   return (
     <AppContainer>
-      <Header userName={user.name} userEmail={user.email} />
-      <Outlet />
+      <Header userName={user.name} userEmail={user.email} userImage={user.picture}/>
+      <StyledMainContent>
+        <Aside />
+
+        <Outlet />
+      </StyledMainContent>
     </AppContainer>
   );
 };
@@ -72,11 +84,11 @@ const App = () => {
 
   // Renderizado condicional según el estado de carga o error en training
   if (tokenLoading || trainingStatus === "loading") {
-    return <div>Cargando...</div>;
+    return <MainLoader />;
   }
 
   if (trainingStatus === "failed") {
-    return <div>Error al inicializar training: {trainingError}</div>;
+    throw new Error(`Error al inicializar training: ${trainingError}`);
   }
 
   return (
@@ -87,8 +99,8 @@ const App = () => {
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
         <Route element={<ProtectedLayout />}>
-          <Route path='/' element={<TrainingMainContent />} />
-          <Route path='/request' element={<RequestMainContainer />} />
+          <Route path='/' element={<TrainingContainer />} />
+          <Route path='/request' element={<RequestContainer />} />
         </Route>
         <Route path='*' element={<Navigate to='/' replace />} />
       </Routes>
