@@ -15,15 +15,6 @@ const getAll = async (token) => {
   }
 };
 
-// const baseUrl = "http://localhost:3001/defaultValues";
-
-// const getAll = async (token) => {
-//   console.log(token);
-  
-//   const response = await axios.get(baseUrl);
-//   return response.data;
-// };
-
 const defaultValuesServices = { getAll };
 
 export default defaultValuesServices;

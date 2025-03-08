@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 //Redux
 import { useDispatch } from "react-redux";
 import {
@@ -9,6 +11,7 @@ import { createNotification } from "../../../reducers/notificationReducer";
 //Components
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
+import Loader from "../../common/Loader";
 
 //Icons
 import IconDumbbel from "../../../assets/svg/icon-dumbbel.svg?react";
@@ -17,17 +20,37 @@ import NeuralNetworkEditor from "../Utils/NeuralNetworkEditor";
 import AddLayerIcon from "../../../assets/svg/icon-lus-circle.svg?react";
 import RemoveLayerIcon from "../../../assets/svg/icon-divide-circle.svg?react";
 
+//Hooks
+import useToken from "../../../Hooks/useToken";
+
 const EditNeuralNetworkLayers = ({ send, layerTemplate, layers }) => {
   const dispatch = useDispatch();
+  const { token, loading: tokenLoading } = useToken();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleBack = () => {
     send({ type: "BACK" });
   };
 
-  const handleNext = () => {
-    dispatch(initializeTrainingResult());
-
-    send({ type: "NEXT" });
+  const handleNext = async () => {
+    if (!tokenLoading && token) {
+      try {
+        await dispatch(initializeTrainingResult(token));
+        // Aquí podrías agregar validaciones adicionales para los hiperparámetros
+        send({ type: "NEXT" });
+        dispatch(createNotification(`Red entrenada correctamente.`, "success"));
+      } catch (error) {
+        console.error("Error al procesar la petición:", error);
+        dispatch(
+          createNotification(
+            `Ha ocurrido un error vuelve a intentarlo.`,
+            "error"
+          )
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   const handleAddLayer = () => {
@@ -69,41 +92,52 @@ const EditNeuralNetworkLayers = ({ send, layerTemplate, layers }) => {
 
   return (
     <>
-      <div className='steps-container'>
-        <h2>9. Editar capas de la red neuronal</h2>
-        <h3>
-          Configure la arquitectura de la red neuronal ajustando la cantidad de
-          capas, el número de neuronas por capa y parámetros como batch
-          normalization y dropout.
-        </h3>
-      </div>
+      {isLoading ? (
+        <div className='steps-container'>
+          <Loader />
+        </div>
+      ) : (
+        <>
+          <div className='steps-container'>
+            <h2>9. Editar capas de la red neuronal</h2>
+            <h3>
+              Configure la arquitectura de la red neuronal ajustando la cantidad
+              de capas, el número de neuronas por capa y parámetros como batch
+              normalization y dropout.
+            </h3>
+          </div>
 
-      <NeuralNetworkEditor layers={layers} updateLayer={handleUpdateLayer} />
+          <NeuralNetworkEditor
+            layers={layers}
+            updateLayer={handleUpdateLayer}
+          />
 
-      <div className='two-buttons-container'>
-        <SecondaryButton
-          handleClick={handleBack}
-          SVG={ArrowLeftIcon}
-          text='Editar parámetros de la red neuronal'
-        />
+          <div className='two-buttons-container'>
+            <SecondaryButton
+              handleClick={handleBack}
+              SVG={ArrowLeftIcon}
+              text='Editar parámetros de la red neuronal'
+            />
 
-        <PrimaryButton
-          text='Agregar Capa'
-          LeftSVG={AddLayerIcon}
-          handleClick={handleAddLayer}
-        />
-        <PrimaryButton
-          text='Eliminar Capa'
-          LeftSVG={RemoveLayerIcon}
-          handleClick={handleRemoveLayer}
-        />
+            <PrimaryButton
+              text='Agregar Capa'
+              LeftSVG={AddLayerIcon}
+              handleClick={handleAddLayer}
+            />
+            <PrimaryButton
+              text='Eliminar Capa'
+              LeftSVG={RemoveLayerIcon}
+              handleClick={handleRemoveLayer}
+            />
 
-        <PrimaryButton
-          handleClick={handleNext}
-          RightSVG={IconDumbbel}
-          text='Entrenar red neuronal'
-        />
-      </div>
+            <PrimaryButton
+              handleClick={handleNext}
+              RightSVG={IconDumbbel}
+              text='Entrenar red neuronal'
+            />
+          </div>
+        </>
+      )}
     </>
   );
 };

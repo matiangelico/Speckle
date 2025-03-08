@@ -6,7 +6,11 @@ const prediction = require("../controllers/predictionController");
 
 const upload = multer({ dest: "uploads/" });
 
-router.post("/", authMiddleware, upload.single("video"), prediction.experiencePrediction);
+router.post(
+  "/",
+  authMiddleware,
+  upload.single("video"),
+  prediction.experiencePrediction
+);
 
 module.exports = router;
-

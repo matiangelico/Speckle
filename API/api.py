@@ -60,7 +60,6 @@ async def validaApiKey(x_api_key):
 
 @app.post("/descriptores")
 async def descriptores(x_api_key: str = Header(None),video_experiencia: UploadFile = File(...), datos_descriptores: str = Form(...)):
-    
     await validaApiKey(x_api_key)
     videoAvi = await video_experiencia.read()
     print(f"Archivo recibido: {video_experiencia.filename}, tamaño: {len(videoAvi)} bytes")

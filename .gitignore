@@ -3,6 +3,7 @@
 
 # Ignorar archivos .pack en node_modules
 frontend/node_modules/.cache*
+backend/node_modules/.cache*
 
 # Node modules
 node_modules/

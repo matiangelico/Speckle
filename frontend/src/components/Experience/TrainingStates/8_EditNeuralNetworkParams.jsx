@@ -52,27 +52,27 @@ const EditNeuralNetworkParams = ({ send, networkParams }) => {
     send({ type: "NEXT" });
   };
 
-  const handleChangeValue = (paramName, newValue) => {
-    switch (paramName) {
-      case "Épocas":
-      case "Batch Size":
+  const handleChangeValue = (paramId, newValue) => {
+    switch (paramId) {
+      case "epocs":
+      case "batchSize":
         dispatch(
           updateNeuralNetworkParams({
-            parameterName: paramName,
+            parameterId: paramId,
             newValue: newValue,
           })
         );
         break;
-      case "Early Stopping":
+      case "earlyStopping":
         {
           const actValue = networkParams.find(
             (param) =>
-              param.name === "Early Stopping" && param.type === "checkbox"
+              param.name === "earlyStopping" && param.type === "checkbox"
           );
 
           dispatch(
             updateNeuralNetworkParams({
-              parameterName: paramName,
+              parameterId: paramId,
               newValue: !actValue.value,
             })
           );
@@ -105,15 +105,15 @@ const EditNeuralNetworkParams = ({ send, networkParams }) => {
               <Input
                 key={index}
                 primaryLabel={parameter.name}
-                type="number"
-                id={index}
+                type='number'
+                id={parameter.id}
                 name={parameter.name}
                 min={0}
                 max={100}
                 step={1}
                 value={parameter.value}
                 setValue={(newValue) =>
-                  handleChangeValue(parameter.name, newValue)
+                  handleChangeValue(parameter.id, newValue)
                 }
               />
             ) : (

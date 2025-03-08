@@ -2,40 +2,52 @@ const FormData = require("form-data");
 const fs = require("fs");
 const axios = require("axios");
 const path = require("path");
-const https = require('https');
+const https = require("https");
 
-require('dotenv').config({path:'../../.env'});
+require("dotenv").config({ path: "../../.env" });
 
 const agent = new https.Agent({ rejectUnauthorized: false });
 const API_KEY = process.env.API_KEY;
+const API_URL = process.env.API_URL;
 
 exports.uploadVideo = async (req, res) => {
   console.log("Cuerpo de la solicitud (body):", req.body);
-  console.log("Archivos recibidos:", req.files); 
+  console.log("Archivos recibidos:", req.files);
 
-  const userId = req.auth.payload.sub; 
+  const userId = req.auth.payload.sub;
   const sanitizedUserId = userId.replace(/[|:<>"?*]/g, "_");
-  const userTempDir = path.join(__dirname, "../../uploads/temp", sanitizedUserId);
+  const userTempDir = path.join(
+    __dirname,
+    "../../uploads/temp",
+    sanitizedUserId
+  );
 
   if (!fs.existsSync(userTempDir)) {
     fs.mkdirSync(userTempDir, { recursive: true });
     console.log(`Carpeta temporal creada en: ${userTempDir}`);
-  } 
+  }
 
   // Validación actualizada con el nombre correcto
   if (!req.files?.video || !req.files?.selectedDescriptors) {
-    return res.status(400).json({ error: "Faltan archivos: video o selectedDescriptors" });
+    return res
+      .status(400)
+      .json({ error: "Faltan archivos: video o selectedDescriptors" });
   }
 
   const videoPath = req.files.video[0].path;
-  const descriptorsPath = req.files.selectedDescriptors[0].path;  // Nombre actualizado
+  const descriptorsPath = req.files.selectedDescriptors[0].path; // Nombre actualizado
 
   try {
-    const descriptors = JSON.parse(fs.readFileSync(descriptorsPath, 'utf8'));
-    
+    const descriptors = JSON.parse(fs.readFileSync(descriptorsPath, "utf8"));
+
     // Validación adicional del formato JSON
-    if (!descriptors.selectedDescriptors || !Array.isArray(descriptors.selectedDescriptors)) {
-      return res.status(400).json({ error: "Formato inválido en selectedDescriptors" });
+    if (
+      !descriptors.selectedDescriptors ||
+      !Array.isArray(descriptors.selectedDescriptors)
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Formato inválido en selectedDescriptors" });
     }
 
     console.log("Enviando a endpoint python");
@@ -43,36 +55,54 @@ exports.uploadVideo = async (req, res) => {
     const formData = new FormData();
     const videoStream = fs.createReadStream(videoPath);
 
-    formData.append("video_experiencia", videoStream, req.files.video[0].originalname);
-    formData.append("datos_descriptores", JSON.stringify(descriptors.selectedDescriptors)); // Envía solo el array
+    formData.append(
+      "video_experiencia",
+      videoStream,
+      req.files.video[0].originalname
+    );
+    formData.append(
+      "datos_descriptores",
+      JSON.stringify(descriptors.selectedDescriptors)
+    ); // Envía solo el array
 
-    const response = await axios.post("https://localhost:8000/descriptores", formData, {
+    // const response = await axios.post(`${API_URL}/descriptores`, formData, {
+    const response = await axios.post(`https://127.0.0.1:8000/descriptores`, formData, {
       headers: {
-        'x-api-key': API_KEY,
-        ...formData.getHeaders()
+        "x-api-key": API_KEY,
+        ...formData.getHeaders(),
       },
-      httpsAgent: agent
+      httpsAgent: agent,
     });
 
     console.log("Proceso completado");
 
     const { imagenes_descriptores, matrices_descriptores } = response.data;
-    const matricesFilePath = path.join(userTempDir, "matrices_descriptores.json");
-    
-    fs.writeFileSync(matricesFilePath, JSON.stringify(matrices_descriptores, null, 2));
+    const matricesFilePath = path.join(
+      userTempDir,
+      "matrices_descriptores.json"
+    );
+
+    fs.writeFileSync(
+      matricesFilePath,
+      JSON.stringify(matrices_descriptores, null, 2)
+    );
     console.log(`Archivo de matrices creado en: ${matricesFilePath}`);
 
     res.status(200).json({ imagenes_descriptores });
   } catch (error) {
     console.error("Error al procesar la solicitud:", error.message);
-    
+
     // Manejo específico de errores de JSON
     if (error instanceof SyntaxError) {
-      return res.status(400).json({ error: "Archivo selectedDescriptors con formato JSON inválido" });
+      return res
+        .status(400)
+        .json({
+          error: "Archivo selectedDescriptors con formato JSON inválido",
+        });
     }
-    
-    res.status(500).json({ 
-      error: error.response?.data?.message || error.message 
+
+    res.status(500).json({
+      error: error.response?.data?.message || error.message,
     });
   }
 };

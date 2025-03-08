@@ -48,6 +48,7 @@ export const initializeTrainingAsync = createAsyncThunk(
       // Inicializar clustering a partir de defaultValues.clustering
       if (defaultValues?.clustering) {
         const clusteringParams = defaultValues.clustering.map((cluster) => ({
+          id: cluster.id,
           name: cluster.name,
           checked: false,
           parameters: cluster.params,
@@ -222,9 +223,9 @@ const trainingSlice = createSlice({
       state.neuralNetworkParams = action.payload;
     },
     updateNeuralNetworkParams(state, action) {
-      const { parameterName, newValue } = action.payload;
+      const { parameterId, newValue } = action.payload;
       state.neuralNetworkParams = state.neuralNetworkParams.map((param) =>
-        param.name === parameterName ? { ...param, value: newValue } : param
+        param.id === parameterId ? { ...param, value: newValue } : param
       );
     },
     setNeuralNetworkLayers(state, action) {
@@ -280,25 +281,6 @@ export const {
   setTrainingResult,
 } = trainingSlice.actions;
 
-// 2.
-// export const initializeDescriptors = () => {
-//   return (dispatch, getState) => {
-//     const defaultValuesDescriptors = getState().defaultValues?.descriptors;
-//     console.log("defaultValuesDescriptors", defaultValuesDescriptors);
-
-//     if (!defaultValuesDescriptors) return;
-
-//     const descriptors = defaultValuesDescriptors.map((descriptor) => ({
-//       id: descriptor.id,
-//       name: descriptor.name,
-//       checked: false,
-//       hyperparameters: descriptor.params,
-//     }));
-
-//     dispatch(setDescriptors(descriptors));
-//   };
-// };
-
 // 3.
 export const resetHyperparameters = () => {
   return (dispatch, getState) => {
@@ -308,38 +290,45 @@ export const resetHyperparameters = () => {
   };
 };
 
-// 4. deprecated en el futuro
-export const initializeDescriptorsResult = () => {
-  return async (dispatch) => {
-    const results = await trainingService.getDescriptorsResults();
+// 4.
+export const initializeDescriptorsResult = (token) => {
+  return async (dispatch, getState) => {
+    const video = await getState().training.video;
+    const filtered = await getState().training.descriptors.filter(
+      (descriptor) => descriptor.checked
+    );
 
-    const descriptorResults = results.map((result) => ({
-      name: result.id,
-      image: result.image,
-      checked: false,
+    const selectedDescriptorsArray = filtered.map((descriptor) => ({
+      id: descriptor.id,
+      params: descriptor.hyperparameters || [],
     }));
+
+    const selectedDescriptors = {
+      selectedDescriptors: selectedDescriptorsArray,
+    };
+
+    const results = await trainingService.getDescriptorsResults(
+      token,
+      video,
+      selectedDescriptors
+    );
+
+    const descriptorResults = results.imagenes_descriptores.map((result) => {
+      const matchedDescriptor = filtered.find(
+        (descriptor) => descriptor.id === result.id_descriptor
+      );
+
+      return {
+        name: matchedDescriptor ? matchedDescriptor.name : result.id, // Fallback en caso de no encontrar coincidencia
+        id: result.id_descriptor,
+        image: result.imagen_descriptor,
+        checked: false,
+      };
+    });
 
     dispatch(setDescriptorsResults(descriptorResults));
   };
 };
-//
-
-// 5.
-// export const initializeClustering = () => {
-//   return (dispatch, getState) => {
-//     const defaultValuesClustering = getState().defaultValues?.clustering;
-
-//     if (!defaultValuesClustering) return;
-
-//     const clusteringParams = defaultValuesClustering.map((cluster) => ({
-//       name: cluster.name,
-//       checked: false,
-//       parameters: cluster.params,
-//     }));
-
-//     dispatch(setClustering(clusteringParams));
-//   };
-// };
 
 // 6.
 export const resetClusteringParams = () => {
@@ -350,54 +339,88 @@ export const resetClusteringParams = () => {
   };
 };
 
-// 7. deprecated en el futuro
-export const initializeClusteringResult = () => {
-  return async (dispatch) => {
-    const results = await trainingService.getClusteringResults();
+// 7.
+export const initializeClusteringResult = (token) => {
+  return async (dispatch, getState) => {
+    const filteredDescriptors = getState().training.descriptors.filter(
+      (descriptor) => descriptor.checked
+    );
+    const filteredClustering = getState().training.clustering.filter(
+      (cluster) => cluster.checked
+    );
 
-    const clusteringResults = results.map((result) => ({
-      name: result.id,
-      clusterCenters: result.clusterCenters || 99,
-      image: result.image,
-      checked: false,
+    const selectedDescriptors = filteredDescriptors.map(
+      (descriptor) => descriptor.id
+    );
+
+    const selectedClustering = filteredClustering.map((cluster) => ({
+      id: cluster.id,
+      params: cluster.parameters.map((param) => ({
+        paramId: param.paramId,
+        value: param.value.toString(),
+      })),
     }));
+
+    // Enviar ambos parámetros al servicio
+    const results = await trainingService.getClusteringResults(
+      token,
+      selectedDescriptors,
+      selectedClustering
+    );
+
+    console.log("results", results);
+
+    const clusteringResults = results.imagenes_clustering.map((result) => {
+      const matchedDescriptor = filteredClustering.find(
+        (descriptor) => descriptor.id === result.id_clustering
+      );
+
+      return {
+        name: matchedDescriptor ? matchedDescriptor.name : result.id_clustering,
+        id: result.id_clustering,
+        clusterCenters: result.nro_clusters || -1,
+        image: result.imagen_clustering,
+        checked: false,
+      };
+    });
 
     dispatch(setClusteringResults(clusteringResults));
   };
 };
-//
 
-// 8.
-// export const initializeNeuralNetworkParams = () => {
-//   return (dispatch, getState) => {
-//     const defaultValuesNeuralNetworkParams =
-//       getState().defaultValues?.neuralNetworkParams;
+// 10.
+export const initializeTrainingResult = (token) => {
+  return async (dispatch, getState) => {
+    const filteredClustering = getState().training.clusteringResults.filter(
+      (cluster) => cluster.checked
+    );
+    const neuralNetworkLayers = getState().training.neuralNetworkLayers;
+    const neuralNetworkParamsArray = getState().training.neuralNetworkParams;
 
-//     if (!defaultValuesNeuralNetworkParams) return;
+    const neuralNetworkParams = neuralNetworkParamsArray.reduce(
+      (acc, param) => {
+        const key =
+          param.id.toLowerCase() === "epochs"
+            ? "epocs"
+            : param.id.toLowerCase();
+        acc[key] =
+          param.type === "number"
+            ? Number(param.value)
+            : param.value.toString();
+        return acc;
+      },
+      {}
+    );
 
-//     dispatch(setNeuralNetworkParams(defaultValuesNeuralNetworkParams));
-//   };
-// };
+    const selectedClustering =
+      filteredClustering.length > 0 ? filteredClustering[0].id : "";
 
-// 9.
-// export const initializeNeuralNetworkLayers = () => {
-//   return (dispatch, getState) => {
-//     const arrayNeuralNetworkLayers =
-//       getState().defaultValues?.neuralNetworkLayers;
-
-//     if (!arrayNeuralNetworkLayers) return;
-
-//     const neuralNetworkLayerTemplate = arrayNeuralNetworkLayers.at(-1);
-
-//     dispatch(setNeuralNetworkLayers(arrayNeuralNetworkLayers));
-//     dispatch(setTemplateLayers(neuralNetworkLayerTemplate));
-//   };
-// };
-
-// 10. deprecated en el futuro
-export const initializeTrainingResult = () => {
-  return async (dispatch) => {
-    const result = await trainingService.getTrainingResults();
+    const result = await trainingService.getTrainingResults(
+      token,
+      neuralNetworkLayers,
+      neuralNetworkParams,
+      selectedClustering
+    );
 
     const trainingResult = {
       image: result,
@@ -406,6 +429,5 @@ export const initializeTrainingResult = () => {
     dispatch(setTrainingResult(trainingResult));
   };
 };
-//
 
 export default trainingSlice.reducer;

@@ -166,6 +166,8 @@ const ToolsContainer = ({ onSearch, onFilterChange }) => {
       ...dateFilters,
       [field]: value,
     };
+    console.log(newFilters);
+    
     setDateFilters(newFilters);
   };
 
@@ -232,12 +234,10 @@ const ToolsContainer = ({ onSearch, onFilterChange }) => {
         <ButtonsContainer>
           <SecondaryButton
             handleClick={clearDateFilters}
-            // RightSVG={ArrowRightIcon}
             text={"Limpiar"}
           />
           <PrimaryButton
             handleClick={applyDateFilters}
-            // RightSVG={ArrowRightIcon}
             text={"Aplicar"}
           />
         </ButtonsContainer>
