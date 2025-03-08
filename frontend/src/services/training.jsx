@@ -44,11 +44,37 @@ const getDescriptorsMatrix = async () => {
   return unaMatriz;
 };
 
-const getClusteringResults = async () => {
-  const response = await axios.get(`${baseUrlOrigin}/clusteringResults`);
-
-  return response.data;
+const getClusteringResults = async (token, selectedDescriptors, selectedClustering) => {
+  const formData = new FormData();
+  
+  // Agregar los descriptores seleccionados como JSON
+  formData.append(
+    "selectedDescriptors",
+    new Blob([JSON.stringify(selectedDescriptors)], { type: "application/json" })
+  );
+  
+  // Agregar los datos de clustering como JSON
+  formData.append(
+    "selectedClustering",
+    new Blob([JSON.stringify(selectedClustering)], { type: "application/json" })
+  );
+  
+  try {
+    const response = await axios.post(`${baseUrl}/calculateClustering`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error en el clustering:", error);
+    throw new Error(
+      error.response?.data?.error || "Error al procesar la solicitud de clustering."
+    );
+  }
 };
+
 
 const getTrainingResults = async () => {
   const response = await axios.get(`${baseUrlOrigin}/matrizConfusion`);

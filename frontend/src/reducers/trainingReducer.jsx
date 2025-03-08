@@ -280,25 +280,6 @@ export const {
   setTrainingResult,
 } = trainingSlice.actions;
 
-// 2.
-// export const initializeDescriptors = () => {
-//   return (dispatch, getState) => {
-//     const defaultValuesDescriptors = getState().defaultValues?.descriptors;
-//     console.log("defaultValuesDescriptors", defaultValuesDescriptors);
-
-//     if (!defaultValuesDescriptors) return;
-
-//     const descriptors = defaultValuesDescriptors.map((descriptor) => ({
-//       id: descriptor.id,
-//       name: descriptor.name,
-//       checked: false,
-//       hyperparameters: descriptor.params,
-//     }));
-
-//     dispatch(setDescriptors(descriptors));
-//   };
-// };
-
 // 3.
 export const resetHyperparameters = () => {
   return (dispatch, getState) => {
@@ -325,43 +306,28 @@ export const initializeDescriptorsResult = (token) => {
       selectedDescriptors: selectedDescriptorsArray,
     };
 
-    console.log(selectedDescriptors);
-
-    console.log("video", video);
-    console.log("token", token);
-
     const results = await trainingService.getDescriptorsResults(
       token,
       video,
       selectedDescriptors
     );
 
-    const descriptorResults = results.map((result) => ({
-      name: result.id,
-      image: result.image,
-      checked: false,
-    }));
+    const descriptorResults = results.imagenes_descriptores.map((result) => {
+      const matchedDescriptor = filtered.find(
+        (descriptor) => descriptor.id === result.id_descriptor
+      );
+
+      return {
+        name: matchedDescriptor ? matchedDescriptor.name : result.id, // Fallback en caso de no encontrar coincidencia
+        id: result.id_descriptor,
+        image: result.imagen_descriptor,
+        checked: false,
+      };
+    });
 
     dispatch(setDescriptorsResults(descriptorResults));
   };
 };
-
-// 5.
-// export const initializeClustering = () => {
-//   return (dispatch, getState) => {
-//     const defaultValuesClustering = getState().defaultValues?.clustering;
-
-//     if (!defaultValuesClustering) return;
-
-//     const clusteringParams = defaultValuesClustering.map((cluster) => ({
-//       name: cluster.name,
-//       checked: false,
-//       parameters: cluster.params,
-//     }));
-
-//     dispatch(setClustering(clusteringParams));
-//   };
-// };
 
 // 6.
 export const resetClusteringParams = () => {
@@ -372,7 +338,7 @@ export const resetClusteringParams = () => {
   };
 };
 
-// 7. deprecated en el futuro
+// 7.
 export const initializeClusteringResult = () => {
   return async (dispatch) => {
     const results = await trainingService.getClusteringResults();
@@ -387,34 +353,6 @@ export const initializeClusteringResult = () => {
     dispatch(setClusteringResults(clusteringResults));
   };
 };
-//
-
-// 8.
-// export const initializeNeuralNetworkParams = () => {
-//   return (dispatch, getState) => {
-//     const defaultValuesNeuralNetworkParams =
-//       getState().defaultValues?.neuralNetworkParams;
-
-//     if (!defaultValuesNeuralNetworkParams) return;
-
-//     dispatch(setNeuralNetworkParams(defaultValuesNeuralNetworkParams));
-//   };
-// };
-
-// 9.
-// export const initializeNeuralNetworkLayers = () => {
-//   return (dispatch, getState) => {
-//     const arrayNeuralNetworkLayers =
-//       getState().defaultValues?.neuralNetworkLayers;
-
-//     if (!arrayNeuralNetworkLayers) return;
-
-//     const neuralNetworkLayerTemplate = arrayNeuralNetworkLayers.at(-1);
-
-//     dispatch(setNeuralNetworkLayers(arrayNeuralNetworkLayers));
-//     dispatch(setTemplateLayers(neuralNetworkLayerTemplate));
-//   };
-// };
 
 // 10. deprecated en el futuro
 export const initializeTrainingResult = () => {
