@@ -58,7 +58,7 @@ const entrenamientoRed = async (req, res, next) => {
         });
         trainingForm.append('parametros_entrenamiento', parametrosEntrenamiento);
 
-        const { data } = await axios.post('https://localhost:8000/entrenamientoRed', trainingForm, {
+        const { data } = await axios.post(`${URL_KEY}/entrenamientoRed`, trainingForm, {
             headers: {
                 'x-api-key': API_KEY,
                 ...trainingForm.getHeaders()

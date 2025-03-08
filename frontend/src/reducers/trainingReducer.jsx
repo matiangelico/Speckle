@@ -308,10 +308,33 @@ export const resetHyperparameters = () => {
   };
 };
 
-// 4. deprecated en el futuro
-export const initializeDescriptorsResult = () => {
-  return async (dispatch) => {
-    const results = await trainingService.getDescriptorsResults();
+// 4.
+export const initializeDescriptorsResult = (token) => {
+  return async (dispatch, getState) => {
+    const video = await getState().training.video;
+    const filtered = await getState().training.descriptors.filter(
+      (descriptor) => descriptor.checked
+    );
+
+    const selectedDescriptorsArray = filtered.map((descriptor) => ({
+      id: descriptor.id,
+      params: descriptor.hyperparameters || [],
+    }));
+
+    const selectedDescriptors = {
+      selectedDescriptors: selectedDescriptorsArray,
+    };
+
+    console.log(selectedDescriptors);
+
+    console.log("video", video);
+    console.log("token", token);
+
+    const results = await trainingService.getDescriptorsResults(
+      token,
+      video,
+      selectedDescriptors
+    );
 
     const descriptorResults = results.map((result) => ({
       name: result.id,
@@ -322,7 +345,6 @@ export const initializeDescriptorsResult = () => {
     dispatch(setDescriptorsResults(descriptorResults));
   };
 };
-//
 
 // 5.
 // export const initializeClustering = () => {

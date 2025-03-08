@@ -1,4 +1,4 @@
-scipy
+scipy 
 scikit-learn
 scikit-image
 joblib
@@ -9,3 +9,7 @@ fastapi
 uvicorn
 numpy
 python-dotenv
+numba
+seaborn
+opencv-python
+matplotlib

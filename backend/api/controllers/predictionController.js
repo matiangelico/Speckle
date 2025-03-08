@@ -67,7 +67,7 @@ exports.experiencePrediction = async (req, res) => {
       contentType: "application/json"
     });
 
-    const response = await axios.post("https://localhost:8000/prediccionRed", predictionForm, {
+    const response = await axios.post(`${URL_KEY}/prediccionRed`, predictionForm, {
       headers: {
         "x-api-key": API_KEY,
         ...predictionForm.getHeaders()

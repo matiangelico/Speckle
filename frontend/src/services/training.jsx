@@ -1,16 +1,43 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:3002";
+const baseUrlOrigin = "http://localhost:3002";
+const baseUrl = "http://localhost:5000";
 
-// Deprecated en el futuro =============
-const getDescriptorsResults = async () => {
-  const response = await axios.get(`${baseUrl}/descriptorsResults`);
+const getDescriptorsResults = async (token, videoFile, selectedDescriptors) => {
+  const formData = new FormData();
+  formData.append("video", videoFile);
 
-  return response.data;
+  // Crear un archivo .json a partir del objeto selectedDescriptors
+  const descriptorsFile = new File(
+    [JSON.stringify(selectedDescriptors)],
+    "selectedDescriptors.json",
+    { type: "application/json" }
+  );
+  formData.append("selectedDescriptors", descriptorsFile);
+
+  try {
+    const response = await axios.post(`${baseUrl}/uploadVideo`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al subir archivos:", error);
+    throw new Error(
+      error.response?.data?.error ||
+        "Error al subir los archivos. Inténtalo de nuevo."
+    );
+  }
 };
 
+
+// Deprecated en el futuro =============
 const getDescriptorsMatrix = async () => {
-  const response = await axios.get(`${baseUrl}/ejemploMatrizDescriptores`);
+  const response = await axios.get(
+    `${baseUrlOrigin}/ejemploMatrizDescriptores`
+  );
 
   const unaMatriz = response.data[0].matriz_descriptor;
 
@@ -18,13 +45,13 @@ const getDescriptorsMatrix = async () => {
 };
 
 const getClusteringResults = async () => {
-  const response = await axios.get(`${baseUrl}/clusteringResults`);
+  const response = await axios.get(`${baseUrlOrigin}/clusteringResults`);
 
   return response.data;
 };
 
 const getTrainingResults = async () => {
-  const response = await axios.get(`${baseUrl}/matrizConfusion`);
+  const response = await axios.get(`${baseUrlOrigin}/matrizConfusion`);
 
   return response.data;
 };

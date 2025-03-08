@@ -1,7 +1,5 @@
 import { styled } from "styled-components";
-
 import { useState, useRef, useEffect } from "react";
-
 import { Link } from "react-router-dom";
 
 // Icons
@@ -99,7 +97,7 @@ const Tooltip = styled.div`
   }
 `;
 
-const DeleteButton = styled.div`
+const DeleteButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,6 +109,7 @@ const DeleteButton = styled.div`
   cursor: pointer;
   border-radius: 50%;
   transition: background-color 0.2s ease;
+  border: none;
 
   &:hover {
     background-color: rgba(229, 57, 53, 0.1);
@@ -146,13 +145,13 @@ const AsideItem = ({
     }
     setShowTooltip(false);
   };
-  
+
   const handleSelectClick = (e) => {
     e.stopPropagation();
     if (onClick) {
-      onClick(id, title)
+      onClick(id, title);
     }
-  }
+  };
 
   // Cerrar el tooltip al hacer clic fuera
   useEffect(() => {
