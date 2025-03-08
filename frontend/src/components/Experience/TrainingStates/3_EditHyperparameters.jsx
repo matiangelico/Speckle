@@ -79,6 +79,9 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
       try {
         await dispatch(initializeDescriptorsResult(token));
         send({ type: "NEXT" });
+        dispatch(
+          createNotification(`Resultados generados correctamente.`, "success")
+        );
       } catch (error) {
         console.error("Error al procesar la petición:", error);
         dispatch(
@@ -89,9 +92,6 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
         );
       } finally {
         setIsLoading(false);
-        dispatch(
-          createNotification(`Resultados generados correctamente.`, "success")
-        );
       }
     }
   };
@@ -112,82 +112,88 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
 
   return (
     <>
-      <div className='steps-container'>
-        <h2>3. Seleccionar hiperparámetros</h2>
-        <h3>
-          Si los descriptores seleccionados disponen de hiperparámetros
-          ajustables, modifique sus valores para optimizar el análisis. En caso
-          contrario, avance al siguiente paso. Use el botón “Restablecer
-          valores” para volver a la configuración predeterminada en cualquier
-          momento.
-        </h3>
-      </div>
-
-      {isLoading && <Loader />}
-
-      {chekedHyperparameters.length > 0 ? (
-        <HyperparametersContainer>
-          {chekedDescriptors.map(
-            (descriptor, index) =>
-              descriptor.hyperparameters?.length > 0 && (
-                <StyledRow key={index}>
-                  {descriptor.hyperparameters.map((param, paramIndex) =>
-                    param.type === "select" ? (
-                      <Select
-                        key={paramIndex}
-                        primaryLabel={param.paramName}
-                        secondaryLabel={`(${extractTextBetweenParentheses(
-                          descriptor.name
-                        )})`}
-                        id={`${index}-${paramIndex}`}
-                        name={param.paramName}
-                        placeholder='Seleccionar...'
-                        value={param.value}
-                        onChange={(newValue) =>
-                          handleChangeValue(
-                            descriptor.name,
-                            param.paramName,
-                            newValue
-                          )
-                        }
-                        options={param.options}
-                        error=''
-                        searchable={true}
-                      />
-                    ) : (
-                      <Input
-                        key={paramIndex}
-                        primaryLabel={param.paramName}
-                        secondaryLabel={`(${extractTextBetweenParentheses(
-                          descriptor.name
-                        )})`}
-                        type={param.type ? param.type : "number"}
-                        id={`${index}-${paramIndex}`}
-                        name={param.paramName}
-                        min={param.min ? param.min : 0}
-                        max={param.max ? param.max : 10000}
-                        step={param.step ? param.step : 0.01}
-                        value={param.value}
-                        setValue={(newValue) =>
-                          handleChangeValue(
-                            descriptor.name,
-                            param.paramName,
-                            newValue
-                          )
-                        }
-                      />
-                    )
-                  )}
-                </StyledRow>
-              )
-          )}
-        </HyperparametersContainer>
+      {isLoading ? (
+        <div className='steps-container'>
+          <Loader />
+        </div>
       ) : (
-        <EmptyContainer
-          message={
-            "Los descriptores seleccionados no poseen hiperparámetros editables."
-          }
-        />
+        <>
+          <div className='steps-container'>
+            <h2>3. Seleccionar hiperparámetros</h2>
+            <h3>
+              Si los descriptores seleccionados disponen de hiperparámetros
+              ajustables, modifique sus valores para optimizar el análisis. En
+              caso contrario, avance al siguiente paso. Use el botón
+              “Restablecer valores” para volver a la configuración
+              predeterminada en cualquier momento.
+            </h3>
+          </div>
+
+          {chekedHyperparameters.length > 0 ? (
+            <HyperparametersContainer>
+              {chekedDescriptors.map(
+                (descriptor, index) =>
+                  descriptor.hyperparameters?.length > 0 && (
+                    <StyledRow key={index}>
+                      {descriptor.hyperparameters.map((param, paramIndex) =>
+                        param.type === "select" ? (
+                          <Select
+                            key={paramIndex}
+                            primaryLabel={param.paramName}
+                            secondaryLabel={`(${extractTextBetweenParentheses(
+                              descriptor.name
+                            )})`}
+                            id={`${index}-${paramIndex}`}
+                            name={param.paramName}
+                            placeholder='Seleccionar...'
+                            value={param.value}
+                            onChange={(newValue) =>
+                              handleChangeValue(
+                                descriptor.name,
+                                param.paramName,
+                                newValue
+                              )
+                            }
+                            options={param.options}
+                            error=''
+                            searchable={true}
+                          />
+                        ) : (
+                          <Input
+                            key={paramIndex}
+                            primaryLabel={param.paramName}
+                            secondaryLabel={`(${extractTextBetweenParentheses(
+                              descriptor.name
+                            )})`}
+                            type={param.type ? param.type : "number"}
+                            id={`${index}-${paramIndex}`}
+                            name={param.paramName}
+                            min={param.min ? param.min : 0}
+                            max={param.max ? param.max : 10000}
+                            step={param.step ? param.step : 0.01}
+                            value={param.value}
+                            setValue={(newValue) =>
+                              handleChangeValue(
+                                descriptor.name,
+                                param.paramName,
+                                newValue
+                              )
+                            }
+                          />
+                        )
+                      )}
+                    </StyledRow>
+                  )
+              )}
+            </HyperparametersContainer>
+          ) : (
+            <EmptyContainer
+              message={
+                "Los descriptores seleccionados no poseen hiperparámetros editables."
+              }
+            />
+          )}
+        </>
       )}
 
       <div className='two-buttons-container'>

@@ -348,19 +348,23 @@ export const initializeClusteringResult = (token) => {
     const filteredClustering = getState().training.clustering.filter(
       (cluster) => cluster.checked
     );
-
+    
     const selectedDescriptors = filteredDescriptors.map(
       (descriptor) => descriptor.id
     );
+    
+    console.log(filteredClustering);
 
     const selectedClustering = filteredClustering.map((cluster) => ({
       id: cluster.name, // Se asume que 'name' es el identificador del método
       params: cluster.parameters.map((param) => ({
-        paramId: param.paramName,
+        paramId: param.paramId,
         value: param.value.toString(),
       })),
     }));
 
+    console.log(selectedClustering);
+    
     // Enviar ambos parámetros al servicio
     const results = await trainingService.getClusteringResults(
       token,

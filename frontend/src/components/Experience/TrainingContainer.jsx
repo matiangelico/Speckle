@@ -104,7 +104,8 @@ const ExperienceHeader = styled.div`
 const ExperienceContent = styled.div`
   max-height: 100vh;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: ${({ childCount }) =>
+    childCount === 2 ? '1fr auto' : 'auto 1fr auto'};
   padding: 0rem 2rem 1rem 2rem;
   gap: 1rem;
   overflow-y: auto;
@@ -115,19 +116,14 @@ const ExperienceContent = styled.div`
     box-sizing: content-box;
   }
 
-  /* Color del track (fondo de la barra) */
   &::-webkit-scrollbar-track {
     background: var(--dark-200);
-    // border-radius: 6px;
   }
 
-  /* Color y estilo de la “thumb” (la parte que se mueve) */
   &::-webkit-scrollbar-thumb {
     background-color: var(--dark-400);
-    // border-radius: 6px;
   }
 
-  /* Efecto hover para la thumb */
   &::-webkit-scrollbar-thumb:hover {
     background-color: var(--dark-300);
   }
@@ -147,17 +143,15 @@ const ExperienceContent = styled.div`
 
   .steps-container h2 {
     color: var(--dark-800);
-
     font-family: Inter;
     font-size: 1.6rem;
     font-style: normal;
     font-weight: 700;
-    line-height: 140%; /* 2.6rem */
+    line-height: 140%;
   }
 
   .steps-container h3 {
     color: var(--dark-400);
-
     font-family: Inter;
     font-size: 1rem;
     font-style: normal;
@@ -181,6 +175,7 @@ const ExperienceContent = styled.div`
     align-items: center;
   }
 `;
+
 
 const TrainingContainer = () => {
   const dispatch = useDispatch();
