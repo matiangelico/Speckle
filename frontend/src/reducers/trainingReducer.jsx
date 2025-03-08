@@ -223,9 +223,9 @@ const trainingSlice = createSlice({
       state.neuralNetworkParams = action.payload;
     },
     updateNeuralNetworkParams(state, action) {
-      const { parameterName, newValue } = action.payload;
+      const { parameterId, newValue } = action.payload;
       state.neuralNetworkParams = state.neuralNetworkParams.map((param) =>
-        param.name === parameterName ? { ...param, value: newValue } : param
+        param.id === parameterId ? { ...param, value: newValue } : param
       );
     },
     setNeuralNetworkLayers(state, action) {
@@ -370,14 +370,19 @@ export const initializeClusteringResult = (token) => {
 
     console.log("results", results);
 
-    // Mapear la respuesta para construir el estado de clusteringResults
-    const clusteringResults = results.imagenes_clustering.map((result) => ({
-      name: result.id_clustering,
-      id: result.id_clustering,
-      clusterCenters: result.nro_clusters || -1,
-      image: result.imagen_clustering,
-      checked: false,
-    }));
+    const clusteringResults = results.imagenes_clustering.map((result) => {
+      const matchedDescriptor = filteredClustering.find(
+        (descriptor) => descriptor.id === result.id_clustering
+      );
+
+      return {
+        name: matchedDescriptor ? matchedDescriptor.name : result.id_clustering,
+        id: result.id_clustering,
+        clusterCenters: result.nro_clusters || -1,
+        image: result.imagen_clustering,
+        checked: false,
+      };
+    });
 
     dispatch(setClusteringResults(clusteringResults));
   };

@@ -39,7 +39,6 @@ const EditNeuralNetworkLayers = ({ send, layerTemplate, layers }) => {
         // Aquí podrías agregar validaciones adicionales para los hiperparámetros
         send({ type: "NEXT" });
         dispatch(createNotification(`Red entrenada correctamente.`, "success"));
-        setIsLoading(false);
       } catch (error) {
         console.error("Error al procesar la petición:", error);
         dispatch(
@@ -48,6 +47,8 @@ const EditNeuralNetworkLayers = ({ send, layerTemplate, layers }) => {
             "error"
           )
         );
+      } finally {
+        setIsLoading(false);
       }
     }
   };

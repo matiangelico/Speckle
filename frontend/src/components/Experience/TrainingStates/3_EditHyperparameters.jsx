@@ -92,6 +92,8 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
             "error"
           )
         );
+      } finally {
+        setIsLoading(false);
       }
     }
   };

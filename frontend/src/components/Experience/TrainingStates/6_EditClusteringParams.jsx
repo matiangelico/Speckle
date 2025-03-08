@@ -81,7 +81,6 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
         dispatch(
           createNotification(`Resultados generados correctamente.`, "success")
         );
-        setIsLoading(false);
       } catch (error) {
         console.error("Error al procesar la petición:", error);
         dispatch(
@@ -90,6 +89,8 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
             "error"
           )
         );
+      } finally {
+        setIsLoading(false);
       }
     }
   };

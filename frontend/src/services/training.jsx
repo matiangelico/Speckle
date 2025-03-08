@@ -82,8 +82,6 @@ const getTrainingResults = async (
     selectedClustering,
   };
 
-  console.log("payload", payload);
-
   try {
     const response = await axios.post(`${baseUrl}/training`, payload, {
       headers: {
