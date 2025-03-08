@@ -9,3 +9,7 @@ fastapi
 uvicorn
 numpy
 python-dotenv
+seaborn
+matpltlib.pyplot
+zipfile
+

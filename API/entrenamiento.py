@@ -3,7 +3,6 @@ import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from tensorflow import keras
-from keras.utils import to_categorical
 from keras.layers import BatchNormalization, Dropout, Dense
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
