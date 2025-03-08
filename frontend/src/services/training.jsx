@@ -45,24 +45,16 @@ const getDescriptorsMatrix = async () => {
 };
 
 const getClusteringResults = async (token, selectedDescriptors, selectedClustering) => {
-  const formData = new FormData();
-  
-  // Agregar los descriptores seleccionados como JSON
-  formData.append(
-    "selectedDescriptors",
-    new Blob([JSON.stringify(selectedDescriptors)], { type: "application/json" })
-  );
-  
-  // Agregar los datos de clustering como JSON
-  formData.append(
-    "selectedClustering",
-    new Blob([JSON.stringify(selectedClustering)], { type: "application/json" })
-  );
-  
+  // Construir el objeto payload
+  const payload = {
+    selectedDescriptors,
+    selectedClustering,
+  };
+
   try {
-    const response = await axios.post(`${baseUrl}/calculateClustering`, formData, {
+    const response = await axios.post(`${baseUrl}/clustering`, payload, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
@@ -74,6 +66,7 @@ const getClusteringResults = async (token, selectedDescriptors, selectedClusteri
     );
   }
 };
+
 
 
 const getTrainingResults = async () => {

@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
-import { useAuth0 } from "@auth0/auth0-react";
-import React, { useState, useEffect } from "react";
 
+import React, { useState, useEffect } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +16,7 @@ import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 import AsideItem from "./AsideLink";
 import TimeItem from "./AsideLabel";
 import ToolsContainer from "./ToolsContainer";
-import AsideButton from './AsideButton';
+import AsideButton from "./AsideButton";
 
 // Icons
 import MoreIcon from "../../../assets/svg/icon-more-horizontal.svg?react";
@@ -27,6 +27,7 @@ import {
   isToday,
   isYesterday,
   isThisWeek,
+  convertToTimestamp,
 } from "../../../utils/dateUtils";
 
 const AsideContainer = styled.aside`
@@ -161,11 +162,11 @@ const Aside = () => {
 
       // Filtrar por fechas usando timestamps
       if (dateFilters.startDate) {
-        filtered = filtered.filter((exp) => exp.date >= dateFilters.startDate);
+        filtered = filtered.filter((exp) => exp.date >= convertToTimestamp(dateFilters.startDate));
       }
 
       if (dateFilters.endDate) {
-        filtered = filtered.filter((exp) => exp.date <= dateFilters.endDate);
+        filtered = filtered.filter((exp) => exp.date <= convertToTimestamp(dateFilters.endDate));
       }
 
       setFilteredExperiences(filtered);
@@ -177,7 +178,7 @@ const Aside = () => {
       showConfirmationAlertAsync({
         title: `¿Eliminar ${title}?`,
         message:
-          "Estás a punto de eliminar esta experiencia. Una vez eliminada, no se podrá recuperar. ¿Deseas continuar?",
+          "Estás a punto de eliminar este entrenamiento. Una vez eliminado, no se podrá recuperar. ¿Deseas continuar?",
       })
     );
 
@@ -187,16 +188,16 @@ const Aside = () => {
 
     dispatch(removeExperience(id));
     dispatch(
-      createNotification(`Experiencia eliminada correctamente.`, "success")
+      createNotification(`Entrenamiento eliminado correctamente.`, "success")
     );
   };
 
   const handleSelectExperience = async (id, title) => {
     console.log(id);
     console.log(title);
-    
+
     setActiveItem((prev) => (prev === id ? null : id));
-  }
+  };
 
   const groupedExperiences = groupByDateRange(filteredExperiences);
 
@@ -231,8 +232,9 @@ const Aside = () => {
         </ExperiencesContainer>
       </TopContainer>
       <BottomContainer>
-      <AsideButton onClick={() => logout({ returnTo: window.location.origin })} />
-
+        <AsideButton
+          onClick={() => logout({ returnTo: window.location.origin })}
+        />
       </BottomContainer>
     </AsideContainer>
   );

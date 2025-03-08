@@ -48,6 +48,7 @@ export const initializeTrainingAsync = createAsyncThunk(
       // Inicializar clustering a partir de defaultValues.clustering
       if (defaultValues?.clustering) {
         const clusteringParams = defaultValues.clustering.map((cluster) => ({
+          id: cluster.id,
           name: cluster.name,
           checked: false,
           parameters: cluster.params,
@@ -339,10 +340,35 @@ export const resetClusteringParams = () => {
 };
 
 // 7.
-export const initializeClusteringResult = () => {
-  return async (dispatch) => {
-    const results = await trainingService.getClusteringResults();
+export const initializeClusteringResult = (token) => {
+  return async (dispatch, getState) => {
+    const filteredDescriptors = getState().training.descriptors.filter(
+      (descriptor) => descriptor.checked
+    );
+    const filteredClustering = getState().training.clustering.filter(
+      (cluster) => cluster.checked
+    );
 
+    const selectedDescriptors = filteredDescriptors.map(
+      (descriptor) => descriptor.id
+    );
+
+    const selectedClustering = filteredClustering.map((cluster) => ({
+      id: cluster.name, // Se asume que 'name' es el identificador del método
+      params: cluster.parameters.map((param) => ({
+        paramId: param.paramName,
+        value: param.value.toString(),
+      })),
+    }));
+
+    // Enviar ambos parámetros al servicio
+    const results = await trainingService.getClusteringResults(
+      token,
+      selectedDescriptors,
+      selectedClustering
+    );
+
+    // Mapear la respuesta para construir el estado de clusteringResults
     const clusteringResults = results.map((result) => ({
       name: result.id,
       clusterCenters: result.clusterCenters || 99,
@@ -353,6 +379,7 @@ export const initializeClusteringResult = () => {
     dispatch(setClusteringResults(clusteringResults));
   };
 };
+
 
 // 10. deprecated en el futuro
 export const initializeTrainingResult = () => {

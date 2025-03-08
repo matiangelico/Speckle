@@ -7,6 +7,7 @@ import {
   initializeClusteringResult,
   resetClusteringParams,
 } from "../../../reducers/trainingReducer";
+import { createNotification } from '../../../reducers/notificationReducer';
 
 //Components
 import EmptyContainer from "../../common/EmptyContainer";
@@ -18,6 +19,9 @@ import Input from "../../common/Input";
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
 import SlidersIcon from "../../../assets/svg/icon-sliders.svg?react";
+
+//Hooks
+import useToken from "../../../Hooks/useToken";
 
 const ClusteringParamContainer = styled.div`
   display: grid;
@@ -49,6 +53,7 @@ const StyledRow = styled.div`
 
 const EditClusteringParams = ({ send, chekedClustering }) => {
   const dispatch = useDispatch();
+  const { token, loading: tokenLoading } = useToken();
   const chekedClusteringParams = chekedClustering.filter(
     (clustering) => clustering.parameters.length > 0
   );
@@ -57,12 +62,22 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
     send({ type: "BACK" });
   };
 
-  const handleNext = () => {
-    dispatch(initializeClusteringResult());
-
-    if (chekedClusteringParams.length !== 0) {
-      // ALGUNA VALIDACION DE HIPERPARAMETROS?
-      send({ type: "NEXT" });
+  const handleNext = async () => {
+    // Evita la acción si ya se está cargando o no hay token disponible
+    if (!tokenLoading && token) {
+      try {
+        await dispatch(initializeClusteringResult(token));
+        // Aquí podrías agregar validaciones adicionales para los hiperparámetros
+        if (chekedClusteringParams.length !== 0) {
+          send({ type: "NEXT" });
+        }
+      } catch (error) {
+        console.error("Error al procesar la petición:", error);
+      } finally {
+        dispatch(
+          createNotification(`Resultados generados correctamente.`, "success")
+        );
+      }
     }
   };
 

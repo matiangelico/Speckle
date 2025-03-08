@@ -121,24 +121,19 @@ const DeleteButton = styled.button`
   }
 `;
 
-const AsideItem = ({
-  icon: Icon,
-  id,
-  title,
-  isActive,
-  onClick,
-  onDelete,
-}) => {
+const AsideItem = ({ icon: Icon, id, title, isActive, onClick, onDelete }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipRef = useRef(null);
   const iconRef = useRef(null);
 
   const handleIconClick = (e) => {
+    e.preventDefault();
     e.stopPropagation();
     setShowTooltip(!showTooltip);
   };
 
   const handleDeleteClick = (e) => {
+    e.preventDefault();
     e.stopPropagation();
     if (onDelete) {
       onDelete(id, title);

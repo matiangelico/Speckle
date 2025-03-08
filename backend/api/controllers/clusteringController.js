@@ -8,6 +8,7 @@ require("dotenv").config({ path: "../../.env" });
 
 const agent = new https.Agent({ rejectUnauthorized: false });
 const API_KEY = process.env.API_KEY;
+const API_URL = process.env.API_URL;
 
 exports.calculateClustering = async (req, res) => {
   const { selectedDescriptors, selectedClustering } = req.body;
@@ -17,6 +18,9 @@ exports.calculateClustering = async (req, res) => {
       .status(400)
       .json({ error: "Se requieren selectedDescriptors y selectedClustering" });
   }
+
+  console.log(JSON.stringify(selectedDescriptors, null, 2));
+  console.log(JSON.stringify(selectedClustering, null, 2));
 
   if (!req.auth?.payload?.sub) {
     return res.status(401).json({ error: "Usuario no autenticado" });
@@ -46,17 +50,16 @@ exports.calculateClustering = async (req, res) => {
     );
 
     if (filteredMatrices.length === 0) {
-      return res
-        .status(404)
-        .json({
-          error: "No se encontraron matrices para los descriptores enviados",
-        });
-    }
+      return res.status(404).json({
+        error: "No se encontraron matrices para los descriptores enviados",
+      });
+    }    
 
     const filteredMatricesPath = path.join(
       userTempDir,
       "filteredMatrices.json"
     );
+
     fs.writeFileSync(
       filteredMatricesPath,
       JSON.stringify(filteredMatrices, null, 2)
@@ -67,25 +70,31 @@ exports.calculateClustering = async (req, res) => {
       name: method.id,
       nro_clusters: method.value,
     }));
-
+    
     const formData = new FormData();
     const fileStream = fs.createReadStream(filteredMatricesPath);
-
+    
     formData.append("matrices_descriptores", fileStream, {
       filename: "matrices.json",
       contentType: "application/json",
     });
-
+    
     const clusteringParamsString = JSON.stringify(selectedClustering);
     formData.append("datos_clustering", clusteringParamsString);
-
-    const response = await axios.post(`${URL_KEY}/clustering`, formData, {
+    
+    // const response = await axios.post(`${API_URL}/clustering`, formData, {
+      const response = await axios.post(
+          `https://127.0.0.1:8000/clustering`,
+          formData,
+        {
       headers: {
         "x-api-key": API_KEY,
         ...formData.getHeaders(),
       },
       httpsAgent: agent,
     });
+
+    console.log("pasoooooooooooooooooo 111111111");
 
     const { imagenes_clustering, matrices_clustering } = response.data;
 
@@ -99,6 +108,7 @@ exports.calculateClustering = async (req, res) => {
       userTempDir,
       "matricesClustering.json"
     );
+
     fs.writeFileSync(
       matricesClusteringPath,
       JSON.stringify(matrices_clustering, null, 2)

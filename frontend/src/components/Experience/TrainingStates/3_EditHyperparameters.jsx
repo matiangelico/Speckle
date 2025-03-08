@@ -8,6 +8,7 @@ import {
   resetHyperparameters,
   updateHyperparameter,
 } from "../../../reducers/trainingReducer";
+import { createNotification } from "../../../reducers/notificationReducer";
 
 //Commons
 import Input from "../../common/Input";
@@ -69,19 +70,28 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
   };
 
   const handleNext = async () => {
-    // Evita la acción si ya se está cargando o no hay token disponible
+    if (chekedDescriptors.length === 0) {
+      return;
+    }
+
     if (!tokenLoading && token) {
       setIsLoading(true);
       try {
         await dispatch(initializeDescriptorsResult(token));
-        // Aquí podrías agregar validaciones adicionales para los hiperparámetros
-        if (chekedDescriptors.length !== 0) {
-          send({ type: "NEXT" });
-        }
+        send({ type: "NEXT" });
       } catch (error) {
         console.error("Error al procesar la petición:", error);
+        dispatch(
+          createNotification(
+            `Ha ocurrido un error vuelve a intentarlo.`,
+            "error"
+          )
+        );
       } finally {
         setIsLoading(false);
+        dispatch(
+          createNotification(`Resultados generados correctamente.`, "success")
+        );
       }
     }
   };
@@ -102,7 +112,7 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
 
   return (
     <>
-      <div className="steps-container">
+      <div className='steps-container'>
         <h2>3. Seleccionar hiperparámetros</h2>
         <h3>
           Si los descriptores seleccionados disponen de hiperparámetros
@@ -131,7 +141,7 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
                         )})`}
                         id={`${index}-${paramIndex}`}
                         name={param.paramName}
-                        placeholder="Seleccionar..."
+                        placeholder='Seleccionar...'
                         value={param.value}
                         onChange={(newValue) =>
                           handleChangeValue(
@@ -141,7 +151,7 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
                           )
                         }
                         options={param.options}
-                        error=""
+                        error=''
                         searchable={true}
                       />
                     ) : (
@@ -180,7 +190,7 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
         />
       )}
 
-      <div className="two-buttons-container">
+      <div className='two-buttons-container'>
         <SecondaryButton
           handleClick={handleBack}
           SVG={ArrowLeftIcon}

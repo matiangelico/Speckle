@@ -8,7 +8,7 @@ require("dotenv").config({ path: "../../.env" });
 
 const agent = new https.Agent({ rejectUnauthorized: false });
 const API_KEY = process.env.API_KEY;
-const URL_KEY = process.env.URL_KEY;
+const API_URL = process.env.API_URL;
 
 exports.uploadVideo = async (req, res) => {
   console.log("Cuerpo de la solicitud (body):", req.body);
@@ -65,7 +65,7 @@ exports.uploadVideo = async (req, res) => {
       JSON.stringify(descriptors.selectedDescriptors)
     ); // Envía solo el array
 
-    // const response = await axios.post(`${URL_KEY}/descriptores`, formData, {
+    // const response = await axios.post(`${API_URL}/descriptores`, formData, {
     const response = await axios.post(`https://127.0.0.1:8000/descriptores`, formData, {
       headers: {
         "x-api-key": API_KEY,
