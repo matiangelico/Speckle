@@ -213,6 +213,7 @@ const RegisterForm = () => {
       authorizationParams: {
         connection: "google-oauth2",
         screen_hint: "signup",
+        prompt: "select_account"
       },
     });
   };

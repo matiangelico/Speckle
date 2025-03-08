@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 // Router
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 //Commons
 import Input from "../common/Input";
@@ -182,6 +182,7 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ email: false, password: false });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -205,10 +206,17 @@ const LoginForm = () => {
         );
 
         localStorage.setItem("access_token", response.data.access_token);
-        window.location.href = "/";
+        navigate("/");
       } catch (error) {
-        console.error("Error:", error.response?.data || error.message);
-        alert("Credenciales incorrectas");
+        let errorMessage = "Error desconocido";
+        if (error.response) {
+          errorMessage = error.response.data.error_description || "Credenciales incorrectas";
+        } else if (error.request) {
+          errorMessage = "No hay conexión al servidor";
+        } else {
+          errorMessage = error.message;
+        }
+        alert(errorMessage);
       }
     }
   };
@@ -216,8 +224,8 @@ const LoginForm = () => {
   const handleGoogleLogin = () => {
     loginWithRedirect({
       authorizationParams: {
-        connection: "google-oauth2", // Conexión social de Google
-      },
+        connection: "google-oauth2" // Conexión social de Google
+      }
     });
   };
 

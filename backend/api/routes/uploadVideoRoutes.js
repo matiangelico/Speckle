@@ -30,12 +30,10 @@ const storage = multer.diskStorage({
   }
 });
 
-// 2. Filtrado de archivos y límites
 const fileFilter = (req, file, cb) => {
   try {
     console.log(`Procesando archivo: ${file.fieldname} - Tipo: ${file.mimetype}`);
 
-    // Validar tipos de archivo
     if (file.fieldname === "video") {
       const allowedVideoTypes = [
         'video/avi',

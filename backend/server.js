@@ -13,6 +13,7 @@ const trainingRoutes = require("./api/routes/trainingRoutes");
 const experienceRoutes = require("./api/routes/experienceRoutes");
 const predictionRoutes = require("./api/routes/predictionRoutes");
 const downloadRoutes = require("./api/routes/downloadRoutes");
+const videoDimensionsRoutes = require("./api/routes/videoDimensionsRoutes");
 
 app.use(cors());
 app.use(express.json()); 
@@ -38,6 +39,7 @@ app.use("/training", trainingRoutes);
 app.use("/experience", experienceRoutes);
 app.use("/prediction", predictionRoutes);
 app.use("/download", downloadRoutes);
+app.use("/dimensions", videoDimensionsRoutes);
 
 
 const PORT = 5000;
