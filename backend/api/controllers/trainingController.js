@@ -10,6 +10,7 @@ require("dotenv").config({ path: "../../.env" });
 
 const agent = new https.Agent({ rejectUnauthorized: false });
 const API_KEY = process.env.API_KEY;
+const API_URL = process.env.API_URL;
 
 const uploadsBasePath = path.join(__dirname, "../../uploads/temp");
 
@@ -25,6 +26,8 @@ const entrenamientoRed = async (req, res, next) => {
   try {
     const { neuralNetworkLayers, neuralNetworkParams, selectedClustering } =
       req.body;
+
+    console.log(req.body);
 
     const [matricesDescData, matricesClusData] = await Promise.all([
       fs.promises.readFile(path.join(userTempDir, "filteredMatrices.json")),
@@ -66,7 +69,7 @@ const entrenamientoRed = async (req, res, next) => {
     trainingForm.append("parametros_entrenamiento", parametrosEntrenamiento);
 
     const { data } = await axios.post(
-      `${URL_KEY}/entrenamientoRed`,
+      `${API_URL}/entrenamientoRed`,
       trainingForm,
       {
         headers: {

@@ -348,23 +348,19 @@ export const initializeClusteringResult = (token) => {
     const filteredClustering = getState().training.clustering.filter(
       (cluster) => cluster.checked
     );
-    
+
     const selectedDescriptors = filteredDescriptors.map(
       (descriptor) => descriptor.id
     );
-    
-    console.log(filteredClustering);
 
     const selectedClustering = filteredClustering.map((cluster) => ({
-      id: cluster.name, // Se asume que 'name' es el identificador del método
+      id: cluster.id,
       params: cluster.parameters.map((param) => ({
         paramId: param.paramId,
         value: param.value.toString(),
       })),
     }));
 
-    console.log(selectedClustering);
-    
     // Enviar ambos parámetros al servicio
     const results = await trainingService.getClusteringResults(
       token,
@@ -372,11 +368,14 @@ export const initializeClusteringResult = (token) => {
       selectedClustering
     );
 
+    console.log("results", results);
+
     // Mapear la respuesta para construir el estado de clusteringResults
-    const clusteringResults = results.map((result) => ({
-      name: result.id,
-      clusterCenters: result.clusterCenters || 99,
-      image: result.image,
+    const clusteringResults = results.imagenes_clustering.map((result) => ({
+      name: result.id_clustering,
+      id: result.id_clustering,
+      clusterCenters: result.nro_clusters || -1,
+      image: result.imagen_clustering,
       checked: false,
     }));
 
@@ -384,11 +383,39 @@ export const initializeClusteringResult = (token) => {
   };
 };
 
+// 10.
+export const initializeTrainingResult = (token) => {
+  return async (dispatch, getState) => {
+    const filteredClustering = getState().training.clusteringResults.filter(
+      (cluster) => cluster.checked
+    );
+    const neuralNetworkLayers = getState().training.neuralNetworkLayers;
+    const neuralNetworkParamsArray = getState().training.neuralNetworkParams;
 
-// 10. deprecated en el futuro
-export const initializeTrainingResult = () => {
-  return async (dispatch) => {
-    const result = await trainingService.getTrainingResults();
+    const neuralNetworkParams = neuralNetworkParamsArray.reduce(
+      (acc, param) => {
+        const key =
+          param.id.toLowerCase() === "epochs"
+            ? "epocs"
+            : param.id.toLowerCase();
+        acc[key] =
+          param.type === "number"
+            ? Number(param.value)
+            : param.value.toString();
+        return acc;
+      },
+      {}
+    );
+
+    const selectedClustering =
+      filteredClustering.length > 0 ? filteredClustering[0].id : "";
+
+    const result = await trainingService.getTrainingResults(
+      token,
+      neuralNetworkLayers,
+      neuralNetworkParams,
+      selectedClustering
+    );
 
     const trainingResult = {
       image: result,
@@ -397,6 +424,5 @@ export const initializeTrainingResult = () => {
     dispatch(setTrainingResult(trainingResult));
   };
 };
-//
 
 export default trainingSlice.reducer;

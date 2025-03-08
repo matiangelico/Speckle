@@ -82,19 +82,17 @@ exports.calculateClustering = async (req, res) => {
     const clusteringParamsString = JSON.stringify(selectedClustering);
     formData.append("datos_clustering", clusteringParamsString);
     
-    // const response = await axios.post(`${API_URL}/clustering`, formData, {
-      const response = await axios.post(
-          `https://127.0.0.1:8000/clustering`,
-          formData,
-        {
+    const response = await axios.post(`${API_URL}/clustering`, formData, {
+      // const response = await axios.post(
+      //     `https://127.0.0.1:8000/clustering`,
+      //     formData,
+      //   {
       headers: {
         "x-api-key": API_KEY,
         ...formData.getHeaders(),
       },
       httpsAgent: agent,
     });
-
-    console.log("pasoooooooooooooooooo 111111111");
 
     const { imagenes_clustering, matrices_clustering } = response.data;
 

@@ -32,7 +32,6 @@ const getDescriptorsResults = async (token, videoFile, selectedDescriptors) => {
   }
 };
 
-
 // Deprecated en el futuro =============
 const getDescriptorsMatrix = async () => {
   const response = await axios.get(
@@ -44,8 +43,11 @@ const getDescriptorsMatrix = async () => {
   return unaMatriz;
 };
 
-const getClusteringResults = async (token, selectedDescriptors, selectedClustering) => {
-  // Construir el objeto payload
+const getClusteringResults = async (
+  token,
+  selectedDescriptors,
+  selectedClustering
+) => {
   const payload = {
     selectedDescriptors,
     selectedClustering,
@@ -62,20 +64,42 @@ const getClusteringResults = async (token, selectedDescriptors, selectedClusteri
   } catch (error) {
     console.error("Error en el clustering:", error);
     throw new Error(
-      error.response?.data?.error || "Error al procesar la solicitud de clustering."
+      error.response?.data?.error ||
+        "Error al procesar la solicitud de clustering."
     );
   }
 };
 
+const getTrainingResults = async (
+  token,
+  neuralNetworkLayers,
+  neuralNetworkParams,
+  selectedClustering
+) => {
+  const payload = {
+    neuralNetworkLayers,
+    neuralNetworkParams,
+    selectedClustering,
+  };
 
+  console.log("payload", payload);
 
-const getTrainingResults = async () => {
-  const response = await axios.get(`${baseUrlOrigin}/matrizConfusion`);
-
-  return response.data;
+  try {
+    const response = await axios.post(`${baseUrl}/training`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error en training:", error);
+    throw new Error(
+      error.response?.data?.error ||
+        "Error al procesar la solicitud de training."
+    );
+  }
 };
-
-// ================
 
 const trainingExperienceServices = {
   getDescriptorsResults,

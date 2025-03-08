@@ -1,5 +1,6 @@
-import { useState } from "react";
 import styled from "styled-components";
+
+import { useState } from "react";
 
 //Redux
 import { useDispatch } from "react-redux";
@@ -82,6 +83,7 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
         dispatch(
           createNotification(`Resultados generados correctamente.`, "success")
         );
+        setIsLoading(false);
       } catch (error) {
         console.error("Error al procesar la petición:", error);
         dispatch(
@@ -90,8 +92,6 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
             "error"
           )
         );
-      } finally {
-        setIsLoading(false);
       }
     }
   };
@@ -193,30 +193,30 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
               }
             />
           )}
+
+          <div className='two-buttons-container'>
+            <SecondaryButton
+              handleClick={handleBack}
+              SVG={ArrowLeftIcon}
+              text={"Seleccionar descriptores"}
+            />
+
+            {chekedHyperparameters.length > 0 ? (
+              <SecondaryButton
+                handleClick={handleSetDefaultValues}
+                SVG={SlidersIcon}
+                text={"Restablecer valores"}
+              />
+            ) : null}
+
+            <PrimaryButton
+              handleClick={handleNext}
+              RightSVG={ArrowRightIcon}
+              text={"Generar resultados"}
+            />
+          </div>
         </>
       )}
-
-      <div className='two-buttons-container'>
-        <SecondaryButton
-          handleClick={handleBack}
-          SVG={ArrowLeftIcon}
-          text={"Seleccionar descriptores"}
-        />
-
-        {chekedHyperparameters.length > 0 ? (
-          <SecondaryButton
-            handleClick={handleSetDefaultValues}
-            SVG={SlidersIcon}
-            text={"Restablecer valores"}
-          />
-        ) : null}
-
-        <PrimaryButton
-          handleClick={handleNext}
-          RightSVG={ArrowRightIcon}
-          text={"Generar resultados"}
-        />
-      </div>
     </>
   );
 };
