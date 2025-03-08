@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import styled from "styled-components";
 
-// Estilos para FloatingPaths
+import { motion } from "framer-motion";
+
 const PathsContainer = styled.div`
   position: absolute;
   top: 0;
@@ -15,15 +14,13 @@ const PathsContainer = styled.div`
 const StyledSvg = styled.svg`
   width: 100%;
   height: 100%;
-  color: #0f172a; /* equivale a text-slate-950 */
+  color: #0f172a;
 
-  /* Si se aplica la clase .dark en un contenedor superior */
   .dark & {
     color: white;
   }
 `;
 
-// Contenedor principal (loader) basado en motion para la animación de desvanecimiento
 const MotionLoaderContainer = styled(motion.div)`
   position: relative;
   min-height: 100vh;
@@ -35,7 +32,7 @@ const MotionLoaderContainer = styled(motion.div)`
   background-color: white;
 
   .dark & {
-    background-color: #171717; /* aproximación a dark:bg-neutral-950 */
+    background-color: #171717;
   }
 `;
 
@@ -57,7 +54,7 @@ const ContentWrapper = styled.div`
 `;
 
 const AnimatedContainer = styled(motion.div)`
-  max-width: 56rem; /* equivale a max-w-4xl */
+  max-width: 56rem;
   margin: 0 auto;
 `;
 
@@ -72,11 +69,11 @@ const Title = styled.h1`
   letter-spacing: 10px;
 
   @media (min-width: 640px) {
-    font-size: 4.5rem; /* sm: text-7xl */
+    font-size: 4.5rem;
   }
 
   @media (min-width: 768px) {
-    font-size: 6rem; /* md: text-8xl */
+    font-size: 6rem;
   }
 `;
 
@@ -150,13 +147,13 @@ function FloatingPaths({ position }) {
 
   return (
     <PathsContainer>
-      <StyledSvg viewBox='0 0 696 316' fill='none'>
+      <StyledSvg viewBox="0 0 696 316" fill="none">
         <title>Background Paths</title>
         {paths.map((path) => (
           <motion.path
             key={path.id}
             d={path.d}
-            stroke='currentColor'
+            stroke="currentColor"
             strokeWidth={path.width}
             strokeOpacity={0.1 + path.id * 0.03}
             initial={{ pathLength: 0.3, opacity: 0.6 }}
@@ -167,7 +164,7 @@ function FloatingPaths({ position }) {
             }}
             transition={{
               duration: 20 + Math.random() * 10,
-              repeat: Number.POSITIVE_INFINITY,
+              repeat: Infinity,
               ease: "linear",
             }}
           />
@@ -177,33 +174,12 @@ function FloatingPaths({ position }) {
   );
 }
 
-// Componente MainLoader con animación de desvanecimiento y prop onFinish
-const MainLoader = ({ title = "Cargando.", onFinish }) => {
-  const [isFading, setIsFading] = useState(false);
+const MainLoader = ({ title = "Cargando." }) => {
   const words = title.split(" ");
-
-  // Inicia el fade-out luego de 2 segundos (ajusta el delay si es necesario)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsFading(true);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <MotionLoaderContainer
-      initial='visible'
-      animate={isFading ? "fadeOut" : "visible"}
-      variants={{
-        visible: { opacity: 1 },
-        fadeOut: { opacity: 0, transition: { duration: 1 } },
-      }}
-      // Cuando la animación completa, si es fadeOut se invoca el callback
-      onAnimationComplete={(definition) => {
-        if (isFading && definition.opacity === 0 && onFinish) {
-          onFinish();
-        }
-      }}
+      animate={{ opacity: 1 }} // Siempre visible
     >
       <PathsWrapper>
         <FloatingPaths position={1} />

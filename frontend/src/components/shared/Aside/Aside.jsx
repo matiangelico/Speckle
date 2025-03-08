@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useState, useEffect } from "react";
 
+
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -12,13 +13,13 @@ import { createNotification } from "../../../reducers/notificationReducer";
 import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 
 // Components
-import AsideItem from "./AsideButton";
+import AsideItem from "./AsideLink";
 import TimeItem from "./AsideLabel";
 import ToolsContainer from "./ToolsContainer";
+import AsideButton from './AsideButton';
 
 // Icons
 import MoreIcon from "../../../assets/svg/icon-more-horizontal.svg?react";
-import LogOutIcon from "../../../assets/svg/icon-log-out.svg?react";
 
 // Date utils
 import {
@@ -90,7 +91,7 @@ const BottomContainer = styled.div`
   display: flex;
   width: 16.125rem;
   border-top: 2px solid var(--dark-500);
-  padding: 1rem 0rem 1rem 0rem;
+  padding: 0.5rem 0rem;
   flex-direction: column;
   align-items: flex-start;
 `;
@@ -133,6 +134,7 @@ const Aside = () => {
   const { logout } = useAuth0();
   const dispatch = useDispatch();
   const experiences = useSelector((state) => state.savedExperiences);
+
   const [filteredExperiences, setFilteredExperiences] = useState([]);
   const [activeItem, setActiveItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -189,6 +191,13 @@ const Aside = () => {
     );
   };
 
+  const handleSelectExperience = async (id, title) => {
+    console.log(id);
+    console.log(title);
+    
+    setActiveItem((prev) => (prev === id ? null : id));
+  }
+
   const groupedExperiences = groupByDateRange(filteredExperiences);
 
   return (
@@ -212,9 +221,7 @@ const Aside = () => {
                     icon={MoreIcon}
                     title={exp.name}
                     isActive={activeItem === exp.id}
-                    handleClick={() =>
-                      setActiveItem((prev) => (prev === exp.id ? null : exp.id))
-                    }
+                    onClick={(id, title) => handleSelectExperience(id, title)}
                     onDelete={(id, title) => handleDeleteExperience(id, title)}
                   />
                 ))}
@@ -224,12 +231,8 @@ const Aside = () => {
         </ExperiencesContainer>
       </TopContainer>
       <BottomContainer>
-        <AsideItem
-          icon={LogOutIcon}
-          title='Cerrar sesión'
-          isActive={false}
-          handleClick={() => logout({ returnTo: window.location.origin })}
-        />
+      <AsideButton onClick={() => logout({ returnTo: window.location.origin })} />
+
       </BottomContainer>
     </AsideContainer>
   );

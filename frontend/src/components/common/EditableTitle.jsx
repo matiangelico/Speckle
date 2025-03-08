@@ -2,8 +2,10 @@ import styled from "styled-components";
 
 import { useState, useEffect } from "react";
 
-//Icons
+// Icons
 import EditIcon from "../../assets/svg/icon-edit.svg?react";
+
+// Commons
 import SvgButton from "./SvgButton";
 
 const StyledTitle = styled.h1`
@@ -36,10 +38,10 @@ const StyledInput = styled.input`
   }
 `;
 
-const EditableTitle = ({ initialTitle, onSave }) => {
+const EditableTitle = ({ initialTitle, onSave, isEditable = true }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(initialTitle);
-  const [tempTitle, setTempTitle] = useState(initialTitle); // Guarda el título temporalmente
+  const [tempTitle, setTempTitle] = useState(initialTitle);
 
   useEffect(() => {
     setTitle(initialTitle);
@@ -47,7 +49,9 @@ const EditableTitle = ({ initialTitle, onSave }) => {
   }, [initialTitle]);
 
   const handleDoubleClick = () => {
-    setIsEditing(true);
+    if (isEditable) {
+      setIsEditing(true);
+    }
   };
 
   const handleChange = (e) => {
@@ -68,9 +72,14 @@ const EditableTitle = ({ initialTitle, onSave }) => {
     }
     if (e.key === "Escape") {
       setIsEditing(false);
-      setTempTitle(title); // Cancela cambios
+      setTempTitle(title);
     }
   };
+
+  // Si no es editable, se renderiza solo el título sin funciones de edición.
+  if (!isEditable) {
+    return <StyledTitle>{title}</StyledTitle>;
+  }
 
   return (
     <>
