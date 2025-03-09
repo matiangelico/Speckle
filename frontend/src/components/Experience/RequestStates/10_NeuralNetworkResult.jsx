@@ -5,7 +5,7 @@ import { useState } from "react";
 //Redux
 import { useDispatch } from "react-redux";
 import { createNotification } from "../../../reducers/notificationReducer";
-import { saveExperience } from "../../../reducers/savedExperienceReducer";
+import { saveTraining } from "../../../reducers/savedExperienceReducer";
 import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 
 //Components
@@ -71,7 +71,7 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
     };
 
     //Training Reducer
-    dispatch(saveExperience(toSave));
+    dispatch(saveTraining(toSave));
     dispatch(
       createNotification(`Experiencia eliminada correctamente.`, "success")
     );

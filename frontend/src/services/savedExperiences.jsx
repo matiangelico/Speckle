@@ -17,12 +17,12 @@ const getAll = async (token) => {
   }
 };
 
-const save = async (token, newExperience) => {
+const save = async (token, newTraining) => {
   try {
     const payload = {
-      name: newExperience.name,
-      video: newExperience.video,
-      selectedDescriptors: newExperience.selectedDescriptors,
+      name: newTraining.name,
+      video: newTraining.video,
+      selectedDescriptors: newTraining.selectedDescriptors,
     };
 
     const response = await axios.post(`${baseUrl}/experience`, payload, {
@@ -31,6 +31,9 @@ const save = async (token, newExperience) => {
         Authorization: `Bearer ${token}`,
       },
     });
+
+    console.log(response.data);
+
     return response.data;
   } catch (error) {
     console.error("Error al guardar experiencia:", error);

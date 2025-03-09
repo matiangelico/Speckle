@@ -432,8 +432,6 @@ export const initializeTrainingResult = (token) => {
       selectedClustering
     );
 
-    console.log("result", result);
-
     const trainingResult = {
       image: result.image_prediction,
     };

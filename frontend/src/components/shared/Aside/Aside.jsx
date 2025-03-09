@@ -5,7 +5,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
-import { removeExperience } from "../../../reducers/savedExperienceReducer";
+import { removeTraining } from "../../../reducers/savedExperienceReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
 import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 
@@ -188,7 +188,7 @@ const Aside = () => {
 
     if (!tokenLoading && token) {
       try {
-        await dispatch(removeExperience(token, id));
+        await dispatch(removeTraining(token, id));
 
         dispatch(
           createNotification(

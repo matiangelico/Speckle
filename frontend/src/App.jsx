@@ -8,7 +8,7 @@ import ReactModal from "react-modal";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import { initializeDefaultValues } from "./reducers/defaultValuesReducer";
-import { initializeSavedExperiences } from "./reducers/savedExperienceReducer";
+import { initializeSavedTrainings } from "./reducers/savedExperienceReducer";
 
 // Router
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
@@ -88,7 +88,7 @@ const App = () => {
   // Inicializar savedExperiences
   useEffect(() => {
     if (!tokenLoading && token) {      
-      dispatch(initializeSavedExperiences(token));
+      dispatch(initializeSavedTrainings(token));
     }
   }, [dispatch, token, tokenLoading]);
 

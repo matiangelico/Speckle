@@ -5,8 +5,8 @@ import { useState } from "react";
 //Redux
 import { useDispatch } from "react-redux";
 import { createNotification } from "../../../reducers/notificationReducer";
-import { saveExperience } from "../../../reducers/savedExperienceReducer";
 import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
+import { saveTraining } from "../../../reducers/savedExperienceReducer";
 
 //Components
 import ResultContainer from "../../common/ResultContainer";
@@ -71,11 +71,11 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
     if (!tokenLoading && token) {
       setIsLoading(true);
 
-      const toSave = {
+      const newTraining = {
         name: trainingName,
         date: convertToTimestamp(training.createdAt),
         video: {
-          name: training.video.name,
+          name: training.video.file.name,
         },
         selectedDescriptors: chekedDescriptors.map((d) => {
           return {
@@ -85,8 +85,10 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
         }),
       };
 
+      console.log("newTraining", newTraining);
+
       try {
-        await dispatch(saveExperience(token, toSave));
+        await dispatch(saveTraining(token, newTraining));
 
         dispatch(
           createNotification(`Experiencia guardada correctamente.`, "success")
