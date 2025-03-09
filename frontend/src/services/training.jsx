@@ -2,6 +2,28 @@ import axios from "axios";
 
 const baseUrl = "http://localhost:5000";
 
+const getVideoDimensions = async (token, videoFile) => {
+  const formData = new FormData();
+  formData.append("video", videoFile);
+
+  try {
+    const response = await axios.post(`${baseUrl}/dimensions`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error("Error al subir archivo:", error);
+    throw new Error(
+      error.response?.data?.error ||
+        "Error al subir los archivos. Inténtalo de nuevo."
+    );
+  }
+};
+
 const getDescriptorsResults = async (token, videoFile, selectedDescriptors) => {
   const formData = new FormData();
   formData.append("video", videoFile);
@@ -106,6 +128,7 @@ const getDescriptorsMatrix = async (token, type, method) => {
 };
 
 const trainingExperienceServices = {
+  getVideoDimensions,
   getDescriptorsResults,
   getClusteringResults,
   getTrainingResults,

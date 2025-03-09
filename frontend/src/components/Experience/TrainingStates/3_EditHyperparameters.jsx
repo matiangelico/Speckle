@@ -57,7 +57,7 @@ const StyledRow = styled.div`
   }
 `;
 
-const EditHyperparameters = ({ send, chekedDescriptors }) => {
+const EditHyperparameters = ({ send, chekedDescriptors, videoFrames }) => {
   const dispatch = useDispatch();
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
@@ -66,12 +66,65 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
     (descriptor) => descriptor.hyperparameters.length > 0
   );
 
+  console.log("chekedDescriptors", chekedDescriptors);
+
+  const areHyperparamsValid = () => {
+    const log2 = (num) => {
+      if (num <= 0) {
+        throw new Error("El número debe ser mayor a cero");
+      }
+
+      return Math.log2 ? Math.log2(num) : Math.log(num) / Math.log(2);
+    };
+
+    return chekedDescriptors.map((descriptor) => {
+      const hyperparameters = descriptor.hyperparameters;
+      let isValid = true;
+
+      switch (descriptor.id) {
+        case "wgd":
+          {
+            const [weight] = hyperparameters;
+
+            isValid = 1 <= weight.value && weight.value <= videoFrames;
+          }
+          break;
+        case "we":
+          {
+            const [, level] = hyperparameters;
+
+            isValid = 1 <= level.value && level.value <= log2(videoFrames);
+          }
+          break;
+        case "lfeb":
+          
+
+          break;
+        case "mfeb":
+          break;
+        case "hfeb":
+          break;
+        default:
+          break;
+      }
+
+      return isValid;
+    });
+
+    dispatch(createNotification(`Ha ocurrido un error vuelve a intentarlo.`));
+  };
+
   const handleBack = () => {
     send({ type: "BACK" });
   };
 
   const handleNext = async () => {
     if (chekedDescriptors.length === 0) {
+      send({ type: "BACK" });
+      return;
+    }
+
+    if (!areHyperparamsValid) {
       return;
     }
 

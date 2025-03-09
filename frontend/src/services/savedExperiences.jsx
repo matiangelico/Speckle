@@ -17,26 +17,17 @@ const getAll = async (token) => {
   }
 };
 
-// Crea (guarda) una nueva experiencia
-const create = async (newExperience, token) => {
+const save = async (token, newExperience) => {
   try {
-    // newExperience debe incluir las propiedades: name, video y selectedDescriptors.
-    // Si 'video' es un archivo y se debe enviar como multipart/form-data,
-    // puedes crear un FormData, por ejemplo:
-    const formData = new FormData();
-    formData.append("name", newExperience.name);
-    // Suponiendo que newExperience.video es un File, lo agregamos directamente
-    formData.append("video", newExperience.video);
-    // Si selectedDescriptors es un objeto o array, lo convertimos a JSON
-    formData.append(
-      "selectedDescriptors",
-      new Blob([JSON.stringify(newExperience.selectedDescriptors)], {
-        type: "application/json",
-      })
-    );
-    const response = await axios.post(`${baseUrl}/savedExperience`, formData, {
+    const payload = {
+      name: newExperience.name,
+      video: newExperience.video,
+      selectedDescriptors: newExperience.selectedDescriptors,
+    };
+
+    const response = await axios.post(`${baseUrl}/experience`, payload, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
@@ -49,8 +40,7 @@ const create = async (newExperience, token) => {
   }
 };
 
-// Elimina una experiencia según su ID
-const remove = async (id, token) => {
+const remove = async (token, id) => {
   try {
     const response = await axios.delete(`${baseUrl}/experience/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -66,7 +56,7 @@ const remove = async (id, token) => {
 
 const experienceServices = {
   getAll,
-  create,
+  save,
   remove,
 };
 

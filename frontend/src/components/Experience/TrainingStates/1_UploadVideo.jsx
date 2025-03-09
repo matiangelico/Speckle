@@ -1,18 +1,25 @@
+import { useState } from "react";
+
+//Redux
+import { useDispatch } from "react-redux";
+import { createNotification } from "../../../reducers/notificationReducer";
+import { getVideoData } from "../../../reducers/trainingReducer";
+
 //Commons
 import PrimaryButton from "../../common/PrimaryButton";
 import FileDropArea from "../Utils/FileDropArea";
+import Loader from "../../common/Loader";
 
 //Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 
-//Redux
-import { useDispatch, useSelector } from "react-redux";
-import { createNotification } from "../../../reducers/notificationReducer";
-import { setVideo } from "../../../reducers/trainingReducer";
+//Hooks
+import useToken from "../../../Hooks/useToken";
 
-const UploadVideo = ({ send }) => {
+const UploadVideo = ({ send, video }) => {
   const dispatch = useDispatch();
-  const video = useSelector((state) => state.training.video);
+  const { token, loading: tokenLoading } = useToken();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleNext = () => {
     if (video) {
@@ -24,7 +31,7 @@ const UploadVideo = ({ send }) => {
     }
   };
 
-  const handleFileDrop = (file) => {
+  const handleFileDrop = async (file) => {
     const validTypes = ["video/avi"]; // Tipo MIME para archivos .avi
 
     if (!validTypes.includes(file.type)) {
@@ -34,32 +41,61 @@ const UploadVideo = ({ send }) => {
       return;
     }
 
-    dispatch(setVideo(file));
+    if (!tokenLoading && token) {
+      setIsLoading(true);
+      try {
+        await dispatch(getVideoData(token, file));
+
+        dispatch(createNotification(`Video subido correctamente.`, "success"));
+      } catch (error) {
+        console.error("Error al procesar la petición:", error);
+
+        dispatch(
+          createNotification(
+            `Ha ocurrido un error intentando procesar el video, vuelve a intentarlo mas tarde.`,
+            "error"
+          )
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
     <>
-      <div className='steps-container'>
-        <h2>1. Subir video</h2>
-        <h3>
-          Adjunte el archivo de video que servirá como entrada para el
-          entrenamiento.
-        </h3>
-      </div>
+      {isLoading ? (
+        <div className='steps-container'>
+          <Loader />
+        </div>
+      ) : (
+        <>
+          <div className='steps-container'>
+            <h2>1. Subir video</h2>
+            <h3>
+              Adjunte el archivo de video que servirá como entrada para el
+              entrenamiento.
+            </h3>
+          </div>
 
-      <FileDropArea
-        onFileDrop={handleFileDrop}
-        fileName={video?.name || ""}
-        fileSize={video ? (video.size / (1024 * 1024)).toFixed(2) : ""}
-      />
+          <FileDropArea
+            onFileDrop={handleFileDrop}
+            fileName={video?.file.name || ""}
+            fileSize={video ? (video.file.size / (1024 * 1024)).toFixed(2) : ""}
+            videoWidth={video?.width}
+            videoHeight={video?.height}
+            videoFrames={video?.frames}
+          />
 
-      <div className='one-button-container'>
-        <PrimaryButton
-          handleClick={handleNext}
-          RightSVG={ArrowRightIcon}
-          text={"Seleccionar descriptores"}
-        />
-      </div>
+          <div className='one-button-container'>
+            <PrimaryButton
+              handleClick={handleNext}
+              RightSVG={ArrowRightIcon}
+              text={"Seleccionar descriptores"}
+            />
+          </div>
+        </>
+      )}
     </>
   );
 };

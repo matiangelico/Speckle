@@ -7,7 +7,8 @@ import ReactModal from "react-modal";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
-import { initializeDefaultValues } from "./reducers/defaultValuesReducer.jsx";
+import { initializeDefaultValues } from "./reducers/defaultValuesReducer";
+import { initializeSavedExperiences } from "./reducers/savedExperienceReducer";
 
 // Router
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
@@ -50,11 +51,13 @@ const ProtectedLayout = () => {
     return <Navigate to='/login' replace />;
   }
 
-  console.log(user);
-  
   return (
     <AppContainer>
-      <Header userName={user.name} userEmail={user.email} userImage={user.picture}/>
+      <Header
+        userName={user.name}
+        userEmail={user.email}
+        userImage={user.picture}
+      />
       <StyledMainContent>
         <Aside />
 
@@ -79,6 +82,13 @@ const App = () => {
   useEffect(() => {
     if (!tokenLoading && token) {
       dispatch(initializeDefaultValues(token));
+    }
+  }, [dispatch, token, tokenLoading]);
+
+  // Inicializar savedExperiences
+  useEffect(() => {
+    if (!tokenLoading && token) {      
+      dispatch(initializeSavedExperiences(token));
     }
   }, [dispatch, token, tokenLoading]);
 

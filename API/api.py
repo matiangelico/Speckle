@@ -1,6 +1,13 @@
 # python -m uvicorn api:app --reload --ssl-keyfile key.pem --ssl-certfile cert.pem
 # python -m uvicorn api:app --ssl-keyfile key.pem --ssl-certfile cert.pem --workers 4
 
+import base64
+import io
+import zipfile
+import uvicorn
+from dotenv import load_dotenv
+from tensorflow import metrics
+from tensorflow import keras
 from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks, Header, HTTPException
 from fastapi.responses import StreamingResponse
 import descriptores as ds
@@ -8,17 +15,10 @@ import numpy as np
 import json
 import aviamat
 import generaImagen as gi
-from clustering import kmeans,minibatchKmeans,sustractivo,bisectingKMeans,gaussianMixture
+from clustering import kmeans, minibatchKmeans, sustractivo, bisectingKMeans, gaussianMixture
 import entrenamiento as train
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-from tensorflow import keras
-from tensorflow import metrics
-from dotenv import load_dotenv
-import uvicorn
-import zipfile
-import io
-import base64
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 

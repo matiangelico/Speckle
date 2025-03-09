@@ -281,6 +281,22 @@ export const {
   setTrainingResult,
 } = trainingSlice.actions;
 
+// 1.
+export const getVideoData = (token, videoFile) => {
+  return async (dispatch) => {
+    const result = await trainingService.getVideoDimensions(token, videoFile);
+
+    const videoWithDimensions = {
+      file: videoFile,
+      width: result?.width || null,
+      height: result?.height || null,
+      frames: result?.frames || null,
+    };
+
+    dispatch(setVideo(videoWithDimensions));
+  };
+};
+
 // 3.
 export const resetHyperparameters = () => {
   return (dispatch, getState) => {
@@ -293,7 +309,7 @@ export const resetHyperparameters = () => {
 // 4.
 export const initializeDescriptorsResult = (token) => {
   return async (dispatch, getState) => {
-    const video = await getState().training.video;
+    const videoFile = await getState().training.video.file;
     const filtered = await getState().training.descriptors.filter(
       (descriptor) => descriptor.checked
     );
@@ -309,7 +325,7 @@ export const initializeDescriptorsResult = (token) => {
 
     const results = await trainingService.getDescriptorsResults(
       token,
-      video,
+      videoFile,
       selectedDescriptors
     );
 
