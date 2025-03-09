@@ -66,52 +66,94 @@ const EditHyperparameters = ({ send, chekedDescriptors, videoFrames }) => {
     (descriptor) => descriptor.hyperparameters.length > 0
   );
 
-  console.log("chekedDescriptors", chekedDescriptors);
-
   const areHyperparamsValid = () => {
     const log2 = (num) => {
       if (num <= 0) {
         throw new Error("El número debe ser mayor a cero");
       }
-
       return Math.log2 ? Math.log2(num) : Math.log(num) / Math.log(2);
     };
 
-    return chekedDescriptors.map((descriptor) => {
+    for (const descriptor of chekedDescriptors) {
       const hyperparameters = descriptor.hyperparameters;
-      let isValid = true;
 
       switch (descriptor.id) {
-        case "wgd":
-          {
-            const [weight] = hyperparameters;
-
-            isValid = 1 <= weight.value && weight.value <= videoFrames;
+        case "wgd": {
+          const [weight] = hyperparameters;
+          if (
+            !(
+              1 < parseFloat(weight.value) &&
+              parseFloat(weight.value) < videoFrames
+            )
+          ) {
+            return {
+              isValid: false,
+              message:
+                "El parámetro 'weight' debe ser mayor a 1 y menor que la cantidad de frames del video",
+            };
           }
           break;
-        case "we":
-          {
-            const [, level] = hyperparameters;
-
-            isValid = 1 <= level.value && level.value <= log2(videoFrames);
+        }
+        case "we": {
+          // Se ignora el primer parámetro y se toma el segundo
+          const [, level] = hyperparameters;
+          if (
+            !(
+              1 < parseFloat(level.value) &&
+              parseFloat(level.value) < log2(videoFrames)
+            )
+          ) {
+            return {
+              isValid: false,
+              message:
+                "El parámetro 'level' debe ser mayor a 1 y menor que log2(cantidad de frames del video)",
+            };
           }
           break;
+        }
         case "lfeb":
-          
-
-          break;
         case "mfeb":
+        case "hfeb": {
+          const [fmin, fmax, atPaso, atRechazo] = hyperparameters;
+          if (
+            !(
+              0 <= parseFloat(fmin.value) &&
+              parseFloat(fmin.value) < parseFloat(fmax.value) &&
+              parseFloat(fmax.value) < 1
+            )
+          ) {
+            return {
+              isValid: false,
+              message: "Debe cumplirse: 0 <= Fmin < Fmax < 1",
+            };
+          }
+          if (!(parseFloat(fmax.value) - parseFloat(fmin.value) > 0.01)) {
+            return {
+              isValid: false,
+              message: "La diferencia entre Fmax y Fmin debe ser mayor a 0.01",
+            };
+          }
+          if (
+            !(
+              0 <= parseFloat(atPaso.value) &&
+              parseFloat(atPaso.value) < parseFloat(atRechazo.value) &&
+              parseFloat(atRechazo.value) < 100
+            )
+          ) {
+            return {
+              isValid: false,
+              message: "Debe cumplirse: 0 <= atPaso < atRechazo < 100",
+            };
+          }
           break;
-        case "hfeb":
-          break;
+        }
         default:
+          // Si no hay validaciones específicas, asumimos que es válido.
           break;
       }
+    }
 
-      return isValid;
-    });
-
-    dispatch(createNotification(`Ha ocurrido un error vuelve a intentarlo.`));
+    return { isValid: true, message: "Parámetros válidos" };
   };
 
   const handleBack = () => {
@@ -124,7 +166,10 @@ const EditHyperparameters = ({ send, chekedDescriptors, videoFrames }) => {
       return;
     }
 
-    if (!areHyperparamsValid) {
+    const { isValid, message } = areHyperparamsValid();
+
+    if (!isValid) {
+      dispatch(createNotification(`No cumple con la condicion: ${message}`));
       return;
     }
 

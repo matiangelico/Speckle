@@ -233,7 +233,7 @@ const TrainingContainer = () => {
           <EditHyperparameters
             send={send}
             chekedDescriptors={chekedDescriptors}
-            video={video?.frames}
+            videoFrames={video?.frames}
           />
         );
       case "SELECT_DESCRIPTOR_RESULTS": //4
@@ -304,9 +304,7 @@ const TrainingContainer = () => {
     //State Machine
     send({ type: "RESET" });
 
-    dispatch(
-      createNotification("Nuevo entrenamiento creado.")
-    );
+    dispatch(createNotification("Nuevo entrenamiento creado."));
   };
 
   return (
