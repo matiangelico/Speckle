@@ -65,8 +65,8 @@ exports.uploadVideo = async (req, res) => {
       JSON.stringify(descriptors.selectedDescriptors)
     ); // Envía solo el array
 
-    //const response = await axios.post(`${API_URL}/descriptores`, formData, {
-    const response = await axios.post(`https://127.0.0.1:8000/descriptores`, formData, {
+    //const response = await axios.post(`https://127.0.0.1:8000/descriptores`, formData, {
+    const response = await axios.post(`${API_URL}/descriptores`, formData, {
       headers: {
         "x-api-key": API_KEY,
         ...formData.getHeaders(),

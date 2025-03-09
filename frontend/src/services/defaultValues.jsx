@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000/defaultValues";
+const baseUrl = "http://localhost:5000";
 
 const getAll = async (token) => {  
   try {
-    const { data } = await axios.get(baseUrl, {
+    const { data } = await axios.get(`${baseUrl}/defaultValues`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     

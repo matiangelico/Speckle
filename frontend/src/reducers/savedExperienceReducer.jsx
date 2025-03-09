@@ -34,34 +34,36 @@ export const { setExperiences, appendExperience, deleteExperience } =
   savedExperienceSlice.actions;
 export default savedExperienceSlice.reducer;
 
-export const initializeSavedExperiences = () => {
+export const initializeSavedTrainings = (token) => {
   return async (dispatch) => {
-    const experiences = await savedExperiencesServices.getAll();
+    const experiences = await savedExperiencesServices.getAll(token);
+
     dispatch(setExperiences(experiences));
   };
 };
 
-export const saveExperience = (newExperience) => {
+export const saveTraining = (token, newExperience) => {
   return async (dispatch) => {
-    // const createdExperience = await savedExperiencesServices.create(
-    //   newExperience
-    // );
+    const createdTraining = await savedExperiencesServices.save(
+      token,
+      newExperience
+    );
 
-    const createdExperience = {
-      id: "67a02a003198ffd6e93d0a8a",
+    const newTraining = {
+      id: createdTraining.id,
       name: newExperience.name,
       date: newExperience.date,
     };
 
-    dispatch(appendExperience(createdExperience));
+    dispatch(appendExperience(newTraining));
   };
 };
 
-export const removeExperience = (experienceId) => {
+export const removeTraining = (experienceId, token) => {
   return (dispatch) => {
-    // savedExperiencesServices
-    //   .remove(experience)
-    //   .then(() => dispatch(deleteExperience(experience)));
+    savedExperiencesServices
+      .remove(experienceId, token)
+      .then(() => dispatch(deleteExperience(experienceId)));
     dispatch(deleteExperience(experienceId));
   };
 };

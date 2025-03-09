@@ -14,6 +14,7 @@ import {
   initializeTrainingAsync,
 } from "../../reducers/trainingReducer";
 import { showConfirmationAlertAsync } from "../../reducers/alertReducer";
+import { createNotification } from "../../reducers/notificationReducer.jsx";
 
 // Componentes de estado
 import UploadVideo from "./TrainingStates/1_UploadVideo.jsx";
@@ -191,6 +192,8 @@ const TrainingContainer = () => {
   const trainingStatus = useSelector((state) => state.training.status);
   const trainingName = useSelector((state) => state.training.name);
   const createdAt = useSelector((state) => state.training.createdAt);
+  //1.
+  const video = useSelector((state) => state.training.video);
   //2.
   const descriptors = useSelector((state) => state.training.descriptors);
   //3.
@@ -222,7 +225,7 @@ const TrainingContainer = () => {
   const renderState = () => {
     switch (state.value) {
       case "UPLOAD_VIDEO": //1
-        return <UploadVideo send={send} />;
+        return <UploadVideo send={send} video={video} />;
       case "SELECT_DESCRIPTORS": //2
         return <SelectDescriptors send={send} descriptors={descriptors} />;
       case "EDIT_HYPERPARAMETERS": //3
@@ -230,6 +233,7 @@ const TrainingContainer = () => {
           <EditHyperparameters
             send={send}
             chekedDescriptors={chekedDescriptors}
+            videoFrames={video?.frames}
           />
         );
       case "SELECT_DESCRIPTOR_RESULTS": //4
@@ -299,6 +303,8 @@ const TrainingContainer = () => {
     }
     //State Machine
     send({ type: "RESET" });
+
+    dispatch(createNotification("Nuevo entrenamiento creado."));
   };
 
   return (

@@ -1,7 +1,28 @@
 import axios from "axios";
 
-const baseUrlOrigin = "http://localhost:3002";
 const baseUrl = "http://localhost:5000";
+
+const getVideoDimensions = async (token, videoFile) => {
+  const formData = new FormData();
+  formData.append("video", videoFile);
+
+  try {
+    const response = await axios.post(`${baseUrl}/dimensions`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error("Error al subir archivo:", error);
+    throw new Error(
+      error.response?.data?.error ||
+        "Error al subir los archivos. Inténtalo de nuevo."
+    );
+  }
+};
 
 const getDescriptorsResults = async (token, videoFile, selectedDescriptors) => {
   const formData = new FormData();
@@ -30,17 +51,6 @@ const getDescriptorsResults = async (token, videoFile, selectedDescriptors) => {
         "Error al subir los archivos. Inténtalo de nuevo."
     );
   }
-};
-
-// Deprecated en el futuro =============
-const getDescriptorsMatrix = async () => {
-  const response = await axios.get(
-    `${baseUrlOrigin}/ejemploMatrizDescriptores`
-  );
-
-  const unaMatriz = response.data[0].matriz_descriptor;
-
-  return unaMatriz;
 };
 
 const getClusteringResults = async (
@@ -100,8 +110,8 @@ const getTrainingResults = async (
 };
 
 const trainingExperienceServices = {
+  getVideoDimensions,
   getDescriptorsResults,
-  getDescriptorsMatrix,
   getClusteringResults,
   getTrainingResults,
 };

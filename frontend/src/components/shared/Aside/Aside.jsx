@@ -5,10 +5,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
-import {
-  initializeSavedExperiences,
-  removeExperience,
-} from "../../../reducers/savedExperienceReducer";
+import { removeTraining } from "../../../reducers/savedExperienceReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
 import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 
@@ -20,6 +17,9 @@ import AsideButton from "./AsideButton";
 
 // Icons
 import MoreIcon from "../../../assets/svg/icon-more-horizontal.svg?react";
+
+//Hooks
+import useToken from "../../../Hooks/useToken";
 
 // Date utils
 import {
@@ -132,8 +132,9 @@ const groupByDateRange = (experiences) => {
 };
 
 const Aside = () => {
-  const { logout } = useAuth0();
   const dispatch = useDispatch();
+  const { logout } = useAuth0();
+  const { token, loading: tokenLoading } = useToken();
   const experiences = useSelector((state) => state.savedExperiences);
 
   const [filteredExperiences, setFilteredExperiences] = useState([]);
@@ -143,10 +144,6 @@ const Aside = () => {
     startDate: null,
     endDate: null,
   });
-
-  useEffect(() => {
-    dispatch(initializeSavedExperiences());
-  }, [dispatch]);
 
   //Filtro
   useEffect(() => {
@@ -162,11 +159,14 @@ const Aside = () => {
 
       // Filtrar por fechas usando timestamps
       if (dateFilters.startDate) {
-        filtered = filtered.filter((exp) => exp.date >= convertToTimestamp(dateFilters.startDate));
+        filtered = filtered.filter(
+          (exp) => exp.date >= convertToTimestamp(dateFilters.startDate)
+        );
       }
-
       if (dateFilters.endDate) {
-        filtered = filtered.filter((exp) => exp.date <= convertToTimestamp(dateFilters.endDate));
+        filtered = filtered.filter(
+          (exp) => exp.date <= convertToTimestamp(dateFilters.endDate)
+        );
       }
 
       setFilteredExperiences(filtered);
@@ -186,7 +186,27 @@ const Aside = () => {
       return;
     }
 
-    dispatch(removeExperience(id));
+    if (!tokenLoading && token) {
+      try {
+        await dispatch(removeTraining(token, id));
+
+        dispatch(
+          createNotification(
+            `Entrenamiento eliminado correctamente.`,
+            "success"
+          )
+        );
+      } catch (error) {
+        console.error("Error al procesar la petición:", error);
+        dispatch(
+          createNotification(
+            `Hubo un error al intentar eliminar el entrenamiento, vuelve a intentarlo mas tarde.`,
+            "error"
+          )
+        );
+      }
+    }
+
     dispatch(
       createNotification(`Entrenamiento eliminado correctamente.`, "success")
     );

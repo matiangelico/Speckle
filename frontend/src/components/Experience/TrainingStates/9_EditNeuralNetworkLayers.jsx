@@ -34,6 +34,7 @@ const EditNeuralNetworkLayers = ({ send, layerTemplate, layers }) => {
 
   const handleNext = async () => {
     if (!tokenLoading && token) {
+      setIsLoading(true);
       try {
         await dispatch(initializeTrainingResult(token));
         // Aquí podrías agregar validaciones adicionales para los hiperparámetros

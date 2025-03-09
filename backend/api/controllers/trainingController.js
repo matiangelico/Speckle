@@ -27,8 +27,6 @@ const entrenamientoRed = async (req, res, next) => {
     const { neuralNetworkLayers, neuralNetworkParams, selectedClustering } =
       req.body;
 
-    console.log(req.body);
-
     const [matricesDescData, matricesClusData] = await Promise.all([
       fs.promises.readFile(path.join(userTempDir, "filteredMatrices.json")),
       fs.promises.readFile(path.join(userTempDir, "matricesClustering.json")),

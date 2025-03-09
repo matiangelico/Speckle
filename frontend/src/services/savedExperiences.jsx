@@ -1,25 +1,66 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:3001";
+const baseUrl = "http://localhost:5000";
 
-const getAll = async () => {
-  const response = await axios.get(`${baseUrl}/defaultValues`);
+const getAll = async (token) => {
+  try {
+    const response = await axios.get(`${baseUrl}/experience/user/all `, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  return response.data.experiencias;
+    return response.data.experiencias || response.data;
+  } catch (error) {
+    console.error("Error al obtener experiencias:", error);
+    throw new Error(
+      error.response?.data?.error || "Error al obtener las experiencias."
+    );
+  }
 };
 
-const create = async (newObject) => {
-  console.log(newObject);
+const save = async (token, newTraining) => {
+  try {
+    const payload = {
+      name: newTraining.name,
+      video: newTraining.video,
+      selectedDescriptors: newTraining.selectedDescriptors,
+    };
 
-  // const response = await axios.post(baseUrl, newObject, config())
-  // return response.data
-}
+    const response = await axios.post(`${baseUrl}/experience`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-const remove = (id) => {
-  console.log(id);
+    console.log(response.data);
 
-  // return axios.delete(`${baseUrl}/experience/${id}`, config())
-}
+    return response.data;
+  } catch (error) {
+    console.error("Error al guardar experiencia:", error);
+    throw new Error(
+      error.response?.data?.error || "Error al guardar la experiencia."
+    );
+  }
+};
 
-export default { getAll, create, remove }
-// export default { getAll, create, remove }
+const remove = async (token, id) => {
+  try {
+    const response = await axios.delete(`${baseUrl}/experience/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar experiencia:", error);
+    throw new Error(
+      error.response?.data?.error || "Error al eliminar la experiencia."
+    );
+  }
+};
+
+const experienceServices = {
+  getAll,
+  save,
+  remove,
+};
+
+export default experienceServices;

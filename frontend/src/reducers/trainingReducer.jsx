@@ -281,6 +281,22 @@ export const {
   setTrainingResult,
 } = trainingSlice.actions;
 
+// 1.
+export const getVideoData = (token, videoFile) => {
+  return async (dispatch) => {
+    const result = await trainingService.getVideoDimensions(token, videoFile);
+
+    const videoWithDimensions = {
+      file: videoFile,
+      width: result?.width || null,
+      height: result?.height || null,
+      frames: result?.frames || null,
+    };
+
+    dispatch(setVideo(videoWithDimensions));
+  };
+};
+
 // 3.
 export const resetHyperparameters = () => {
   return (dispatch, getState) => {
@@ -293,7 +309,7 @@ export const resetHyperparameters = () => {
 // 4.
 export const initializeDescriptorsResult = (token) => {
   return async (dispatch, getState) => {
-    const video = await getState().training.video;
+    const videoFile = await getState().training.video.file;
     const filtered = await getState().training.descriptors.filter(
       (descriptor) => descriptor.checked
     );
@@ -309,7 +325,7 @@ export const initializeDescriptorsResult = (token) => {
 
     const results = await trainingService.getDescriptorsResults(
       token,
-      video,
+      videoFile,
       selectedDescriptors
     );
 
@@ -361,14 +377,11 @@ export const initializeClusteringResult = (token) => {
       })),
     }));
 
-    // Enviar ambos parámetros al servicio
     const results = await trainingService.getClusteringResults(
       token,
       selectedDescriptors,
       selectedClustering
     );
-
-    console.log("results", results);
 
     const clusteringResults = results.imagenes_clustering.map((result) => {
       const matchedDescriptor = filteredClustering.find(
@@ -399,10 +412,7 @@ export const initializeTrainingResult = (token) => {
 
     const neuralNetworkParams = neuralNetworkParamsArray.reduce(
       (acc, param) => {
-        const key =
-          param.id.toLowerCase() === "epochs"
-            ? "epocs"
-            : param.id.toLowerCase();
+        const key = param.id.toLowerCase();
         acc[key] =
           param.type === "number"
             ? Number(param.value)
@@ -423,7 +433,7 @@ export const initializeTrainingResult = (token) => {
     );
 
     const trainingResult = {
-      image: result,
+      image: result.image_prediction,
     };
 
     dispatch(setTrainingResult(trainingResult));

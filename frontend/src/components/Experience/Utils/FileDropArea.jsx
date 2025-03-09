@@ -65,12 +65,19 @@ const DropzoneContent = styled.div`
   }
 `;
 
-const StyledFileSize = styled.p`
+const StyledFileData = styled.p`
   color: var(--dark-400);
   font-size: 14px;
 `;
 
-const FileDropArea = ({ onFileDrop, fileName, fileSize }) => {
+const FileDropArea = ({
+  onFileDrop,
+  fileName,
+  fileSize,
+  videoWidth,
+  videoHeight,
+  videoFrames,
+}) => {
   const dispatch = useDispatch();
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
@@ -99,7 +106,15 @@ const FileDropArea = ({ onFileDrop, fileName, fileSize }) => {
         {fileName ? (
           <>
             <p>{fileName}</p>
-            <StyledFileSize>{fileSize} MB</StyledFileSize>
+            <StyledFileData>{fileSize} MB</StyledFileData>
+            {videoWidth && videoHeight && (
+              <StyledFileData>
+                {videoWidth} x {videoHeight} (WxH)
+              </StyledFileData>
+            )}
+            {videoFrames && (
+              <StyledFileData>{videoFrames} frames</StyledFileData>
+            )}
           </>
         ) : (
           <p>
