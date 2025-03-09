@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs").promises;
 const ffprobePath = require("ffprobe-static").path;
 
-// controllers/videoDimensionsController.js
+
 exports.getDimensions = async (req, res) => {
   let videoPath;
 
@@ -33,19 +33,14 @@ exports.getDimensions = async (req, res) => {
               throw new Error("Formato de video no soportado");
             }
 
-            // Calcular frames si no viene en nb_frames
-            let frames = parseInt(stream.nb_frames);
+            const frames = stream.nb_frames 
+              ? parseInt(stream.nb_frames) 
+              : null;
             
-            if (!frames) {
-              const duration = parseFloat(stream.duration);
-              const rate = stream.r_frame_rate.split('/').reduce((a, b) => a / b);
-              frames = Math.round(duration * rate);
-            }
-
             resolve({
               width: stream.width,
               height: stream.height,
-              frames: frames || 'No disponible' // Fallback por seguridad
+              frames: !isNaN(frames) ? frames : null
             });
             
           } catch (error) {
