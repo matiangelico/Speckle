@@ -110,8 +110,8 @@ exports.saveExperience = async (req, res) => {
       trainedModel,
     });
 
-    await newExperience.save();
-    res.status(201).json({ message: "Experiencia guardada exitosamente" });
+    const savedExperience = await newExperience.save();
+    res.status(201).json({ id: savedExperience._id });
   } catch (error) {
     console.error("Error al guardar la experiencia:", error);
     res.status(500).json({
