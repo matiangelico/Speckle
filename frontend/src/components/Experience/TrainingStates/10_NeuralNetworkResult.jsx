@@ -15,7 +15,7 @@ import SecondaryButton from "../../common/SecondaryButton";
 
 //Utils
 import ResultModal from "../Utils/ResultModal";
-import { convertToTimestamp } from '../../../utils/dateUtils';
+import { convertToTimestamp } from "../../../utils/dateUtils";
 
 //Icons
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
@@ -27,6 +27,11 @@ const CenterContainer = styled.div`
   align-items: center;
   height: min-content;
   overflow-y: auto;
+
+  img {
+    max-width: 602px;
+    max-height: 100%;
+  }
 
   @media (min-height: 900px) {
     height: 100%;

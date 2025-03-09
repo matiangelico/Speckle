@@ -361,14 +361,11 @@ export const initializeClusteringResult = (token) => {
       })),
     }));
 
-    // Enviar ambos parámetros al servicio
     const results = await trainingService.getClusteringResults(
       token,
       selectedDescriptors,
       selectedClustering
     );
-
-    console.log("results", results);
 
     const clusteringResults = results.imagenes_clustering.map((result) => {
       const matchedDescriptor = filteredClustering.find(
@@ -399,10 +396,7 @@ export const initializeTrainingResult = (token) => {
 
     const neuralNetworkParams = neuralNetworkParamsArray.reduce(
       (acc, param) => {
-        const key =
-          param.id.toLowerCase() === "epochs"
-            ? "epocs"
-            : param.id.toLowerCase();
+        const key = param.id.toLowerCase();
         acc[key] =
           param.type === "number"
             ? Number(param.value)
@@ -422,8 +416,10 @@ export const initializeTrainingResult = (token) => {
       selectedClustering
     );
 
+    console.log("result", result);
+
     const trainingResult = {
-      image: result,
+      image: result.image_prediction,
     };
 
     dispatch(setTrainingResult(trainingResult));

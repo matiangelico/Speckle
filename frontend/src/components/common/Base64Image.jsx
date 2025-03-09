@@ -5,7 +5,6 @@ const StyledImage = styled.img`
   height: 100%;
   object-fit: cover;
   flex-shrink: 0;
-
   border-radius: 4px;
 
   max-width: 502px;

@@ -66,8 +66,7 @@ const EditNeuralNetworkParams = ({ send, networkParams }) => {
       case "earlyStopping":
         {
           const actValue = networkParams.find(
-            (param) =>
-              param.name === "earlyStopping" && param.type === "checkbox"
+            (param) => param.id === "earlyStopping" && param.type === "checkbox"
           );
 
           dispatch(
@@ -82,10 +81,6 @@ const EditNeuralNetworkParams = ({ send, networkParams }) => {
         break;
     }
   };
-
-  // const handleSetDefaultValues = () => {
-  //   dispatch(resetClusteringParams());
-  // };
 
   return (
     <>
@@ -124,7 +119,7 @@ const EditNeuralNetworkParams = ({ send, networkParams }) => {
                   parameter.value !== undefined ? parameter.value : false
                 }
                 onChange={(newValue) =>
-                  handleChangeValue(parameter.name, newValue)
+                  handleChangeValue(parameter.id, newValue)
                 }
               />
             )

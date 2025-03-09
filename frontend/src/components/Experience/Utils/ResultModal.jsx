@@ -1,5 +1,4 @@
 import { styled } from "styled-components";
-
 import ReactModal from "react-modal";
 
 //Redux
@@ -33,11 +32,8 @@ import FileTextIcon from "../../../assets/svg/icon-file-text.svg?react";
 //Services
 import trainingService from "../../../services/training";
 
-// Modal & Overlay styles in GlobalStyles
-
 const ModalHeader = styled.div`
   display: grid;
-  // height: 54px;
   padding: 2px 4px 2px 24px;
   align-items: center;
   align-self: stretch;
@@ -47,10 +43,13 @@ const ModalHeader = styled.div`
   border-bottom: 2px solid var(--dark-800, #2d3648);
   background: var(--white);
 
-  grid-template-columns: ${
-    ({ childCount }) =>
-      childCount === 2 ? "1fr auto" : childCount === 3 ? "auto 1fr auto" : "1fr" // un valor por defecto si no son 2 o 3
-  };
+  /* Usamos la transient prop $childCount para definir las columnas */
+  grid-template-columns: ${({ $childCount }) =>
+    $childCount === 2
+      ? "1fr auto"
+      : $childCount === 3
+      ? "auto 1fr auto"
+      : "1fr"};
 
   h2 {
     flex: 1;
@@ -62,7 +61,6 @@ const ModalHeader = styled.div`
   p {
     color: var(--dark-400);
     font-feature-settings: "calt" off;
-
     font-size: 1rem;
     font-style: normal;
     font-weight: 500;
@@ -88,6 +86,7 @@ const ModalContent = styled.div`
     max-width: 100%;
     border-radius: 8px;
     margin-bottom: 8px;
+    max-height: 100%;
   }
 `;
 
@@ -137,14 +136,14 @@ const ResultModal = ({
 
   const downloadByFormat = (format, image, title) => {
     switch (format.toUpperCase()) {
-      //Matrix
+      // Matrix
       case "TXT":
         return downloadTxt(image, `${title}-matrix.txt`);
       case "CSV":
         return downloadCsv(image, `${title}-matrix.csv`);
       case "JSON":
         return downloadJson(image, `${title}-matrix.json`);
-      //Image
+      // Image
       case "PNG":
         return downloadPng(image, `${title}-image.png`);
       case "JPG":
@@ -201,12 +200,12 @@ const ResultModal = ({
   return (
     <ReactModal
       isOpen={isOpen}
-      onRequestClose={onClose} // Cierra el modal al hacer clic en el overlay o presionar Escape
+      onRequestClose={onClose}
       className={modalClassName}
       overlayClassName={overlayClassName}
-      shouldCloseOnOverlayClick={true} // Habilita cierre al hacer clic en el overlay
+      shouldCloseOnOverlayClick={true}
     >
-      <ModalHeader childCount={subtitle ? 3 : 2}>
+      <ModalHeader $childCount={subtitle ? 3 : 2}>
         <h2>{title}</h2>
         {subtitle && <p>{subtitle} clusters</p>}
         <SvgButton SvgIcon={CrossIcon} onClick={onClose} />

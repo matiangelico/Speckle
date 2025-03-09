@@ -1,6 +1,5 @@
 import axios from "axios";
 
-const baseUrlOrigin = "http://localhost:3002";
 const baseUrl = "http://localhost:5000";
 
 const getDescriptorsResults = async (token, videoFile, selectedDescriptors) => {
@@ -30,17 +29,6 @@ const getDescriptorsResults = async (token, videoFile, selectedDescriptors) => {
         "Error al subir los archivos. Inténtalo de nuevo."
     );
   }
-};
-
-// Deprecated en el futuro =============
-const getDescriptorsMatrix = async () => {
-  const response = await axios.get(
-    `${baseUrlOrigin}/ejemploMatrizDescriptores`
-  );
-
-  const unaMatriz = response.data[0].matriz_descriptor;
-
-  return unaMatriz;
 };
 
 const getClusteringResults = async (
@@ -99,11 +87,29 @@ const getTrainingResults = async (
   }
 };
 
+const getDescriptorsMatrix = async (token, type, method) => {
+  try {
+    const response = await axios.get(`${baseUrl}/downloadMatrix`, {
+      params: { type, method },
+      headers: { Authorization: `Bearer ${token}` },
+      // Indicamos que esperamos una respuesta en formato texto, ya que se envía la matriz formateada
+      responseType: "text",
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al descargar matriz:", error);
+    throw new Error(
+      error.response?.data?.error ||
+        "Error al procesar la solicitud de descarga de matriz."
+    );
+  }
+};
+
 const trainingExperienceServices = {
   getDescriptorsResults,
-  getDescriptorsMatrix,
   getClusteringResults,
   getTrainingResults,
+  getDescriptorsMatrix,
 };
 
 export default trainingExperienceServices;
