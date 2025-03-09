@@ -9,42 +9,45 @@ exports.getDimensions = async (req, res) => {
 
   try {
     if (!req.file) throw new Error("No se recibió archivo de video");
-
-    // Usar la ruta directa de Multer
     videoPath = req.file.path;
 
-    const dimensions = await new Promise((resolve, reject) => {
+    const videoData = await new Promise((resolve, reject) => {
       execFile(
         ffprobePath,
         [
-          "-v",
-          "error",
-          "-select_streams",
-          "v:0",
-          "-show_entries",
-          "stream=width,height",
-          "-of",
-          "json",
-          videoPath,
+          "-v", "error",
+          "-select_streams", "v:0",
+          "-show_entries", 
+          "stream=width,height,nb_frames,duration,r_frame_rate", // Nuevos campos
+          "-of", "json",
+          videoPath
         ],
         (err, stdout, stderr) => {
-          if (err)
-            return reject(
-              new Error(`Error en ffprobe: ${stderr || err.message}`)
-            );
-
+          if (err) return reject(new Error(`Error en ffprobe: ${stderr || err.message}`));
+          
           try {
             const metadata = JSON.parse(stdout);
             const stream = metadata.streams[0];
-
+            
             if (!stream?.width || !stream?.height) {
               throw new Error("Formato de video no soportado");
+            }
+
+            // Calcular frames si no viene en nb_frames
+            let frames = parseInt(stream.nb_frames);
+            
+            if (!frames) {
+              const duration = parseFloat(stream.duration);
+              const rate = stream.r_frame_rate.split('/').reduce((a, b) => a / b);
+              frames = Math.round(duration * rate);
             }
 
             resolve({
               width: stream.width,
               height: stream.height,
+              frames: frames || 'No disponible' // Fallback por seguridad
             });
+            
           } catch (error) {
             reject(error);
           }
@@ -52,7 +55,8 @@ exports.getDimensions = async (req, res) => {
       );
     });
 
-    res.status(200).json(dimensions);
+    res.status(200).json(videoData);
+    
   } catch (error) {
     res.status(500).json({
       error: "Error al obtener dimensiones",
