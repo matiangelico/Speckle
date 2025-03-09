@@ -66,8 +66,6 @@ const EditHyperparameters = ({ send, chekedDescriptors, videoFrames }) => {
     (descriptor) => descriptor.hyperparameters.length > 0
   );
 
-  console.log("chekedDescriptors", chekedDescriptors);
-
   const areHyperparamsValid = () => {
     const log2 = (num) => {
       if (num <= 0) {
