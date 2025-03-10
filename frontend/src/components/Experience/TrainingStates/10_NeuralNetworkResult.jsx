@@ -93,7 +93,7 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
         dispatch(
           createNotification(`Experiencia guardada correctamente.`, "success")
         );
-        send({ type: "RESET" });
+        // send({ type: "RESET" });
       } catch (error) {
         console.error("Error al procesar la petición:", error);
         dispatch(
