@@ -7,6 +7,7 @@ const Experience = require("../models/experienceConfig");
 
 const agent = new https.Agent({ rejectUnauthorized: false });
 const API_KEY = process.env.API_KEY;
+const API_URL = process.env.API_URL;
 
 exports.experiencePrediction = async (req, res) => {
   let videoPath, modelPath, matricesFilePath;
@@ -15,6 +16,8 @@ exports.experiencePrediction = async (req, res) => {
     const { experienceId } = req.body;
     const video = req.file;
     const userId = req.auth.payload.sub;
+
+    console.log("experienceId", experienceId);
 
     // Validaciones iniciales
     if (!experienceId || !video) {
@@ -87,7 +90,7 @@ exports.experiencePrediction = async (req, res) => {
     );
 
     const response = await axios.post(
-      `${URL_KEY}/prediccionRed`,
+      `${API_URL}/prediccionRed`,
       predictionForm,
       {
         headers: {
@@ -142,7 +145,7 @@ const generateDescriptorMatrices = async ({ videoPath, descriptors }) => {
     formData.append("datos_descriptores", JSON.stringify(descriptors));
 
     const response = await axios.post(
-      "https://localhost:8000/descriptores",
+      `${API_URL}/descriptores`,
       formData,
       {
         headers: {
