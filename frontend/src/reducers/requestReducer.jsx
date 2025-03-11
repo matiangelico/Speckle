@@ -1,17 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // Services
-import requestService from "../services/request";
+import savedTrainingService from "../services/savedTraning";
+import trainingService from "../services/training";
 
 // Redux
 import { initializeDefaultValues } from "./defaultValuesReducer";
 
 // Estado inicial de training
 export const initialRequestState = {
-  name: null,
+  name: " ",
   createdAt: null,
-  video: null,
+  oldVideo: null,
+  newVideo: null,
   descriptors: [],
+  descriptorsResults: [],
   requestResult: null,
   status: "idle", // Para el estado de carga
   error: null,
@@ -47,14 +50,17 @@ const requestSlice = createSlice({
   reducers: {
     resetRequest: () => initialRequestState,
     setTraining(state, action) {
-      const training = action.payload;
+      const savedTraining = action.payload;
 
       return {
         ...state,
-        name: training.name,
-        createdAt: training.date,
-        video: training.video,
+        name: savedTraining.name,
+        createdAt: savedTraining.date,
+        oldVideo: savedTraining.video,
       };
+    },
+    setNewVideo(state, action) {
+      return { ...state, newVideo: action.payload };
     },
     setDescriptors(state, action) {
       return { ...state, descriptors: action.payload };
@@ -188,25 +194,25 @@ const requestSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-      builder
-        .addCase(initializeRequestAsync.pending, (state) => {
-          state.status = "loading";
-          state.error = null;
-        })
-        .addCase(initializeRequestAsync.fulfilled, (state) => {
-          state.status = "succeeded";
-        })
-        .addCase(initializeRequestAsync.rejected, (state, action) => {
-          state.status = "failed";
-          state.error = action.payload;
-        });
-    },
+    builder
+      .addCase(initializeRequestAsync.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(initializeRequestAsync.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(initializeRequestAsync.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      });
+  },
 });
 
 export const {
   resetRequest,
   setTraining,
-  setVideo,
+  setNewVideo,
   setDescriptors,
   selectDescriptor,
   selectAllDescriptors,
@@ -220,10 +226,29 @@ export const {
 
 export default requestSlice.reducer;
 
-export const initializeExperience = () => {
+// 1.
+export const getVideoData = (token, videoFile) => {
   return async (dispatch) => {
-    const training = await requestService.getTraining();
+    const result = await trainingService.getVideoDimensions(token, videoFile);
+
+    const videoWithDimensions = {
+      file: videoFile,
+      width: result?.width || null,
+      height: result?.height || null,
+      frames: result?.frames || null,
+    };
+
+    console.log("videoWithDimensions", videoWithDimensions);
+    
+
+    dispatch(setNewVideo(videoWithDimensions));
+  };
+};
+
+export const initializeSavedTraining = (token, id) => {
+  return async (dispatch) => {
+    const training = await savedTrainingService.getTraining(token, id);
     console.log(training);
-    dispatch(setTraining(training))
+    dispatch(setTraining(training));
   };
 };

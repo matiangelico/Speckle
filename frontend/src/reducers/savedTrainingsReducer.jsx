@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 //Services
-import savedExperiencesServices from "../services/savedExperiences";
+import savedTrainingServices from "../services/savedTraning";
 
-const savedExperienceSlice = createSlice({
+const savedTrainingSlice = createSlice({
   name: "savedExperiences",
   initialState: null,
   reducers: {
@@ -31,20 +31,26 @@ const savedExperienceSlice = createSlice({
 });
 
 export const { setExperiences, appendExperience, deleteExperience } =
-  savedExperienceSlice.actions;
-export default savedExperienceSlice.reducer;
+savedTrainingSlice.actions;
+export default savedTrainingSlice.reducer;
 
 export const initializeSavedTrainings = (token) => {
   return async (dispatch) => {
-    const experiences = await savedExperiencesServices.getAll(token);
+    const experiences = await savedTrainingServices.getAll(token);
 
-    dispatch(setExperiences(experiences));
+    const transformedExperiences = experiences.map(exp => ({
+      ...exp, 
+      id: exp._id, // Copia el valor de _id a id
+    }));    
+
+    dispatch(setExperiences(transformedExperiences));
   };
 };
 
+
 export const saveTraining = (token, newExperience) => {
   return async (dispatch) => {
-    const createdTraining = await savedExperiencesServices.save(
+    const createdTraining = await savedTrainingServices.save(
       token,
       newExperience
     );
@@ -61,7 +67,7 @@ export const saveTraining = (token, newExperience) => {
 
 export const removeTraining = (experienceId, token) => {
   return (dispatch) => {
-    savedExperiencesServices
+    savedTrainingServices
       .remove(experienceId, token)
       .then(() => dispatch(deleteExperience(experienceId)));
     dispatch(deleteExperience(experienceId));

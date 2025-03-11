@@ -63,6 +63,11 @@ const DropzoneContent = styled.div`
       background-color: var(--dark-100);
     }
   }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 `;
 
 const StyledFileData = styled.p`

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createNotification } from "../../../reducers/notificationReducer";
 import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
-import { saveTraining } from "../../../reducers/savedExperienceReducer";
+import { saveTraining } from "../../../reducers/savedTrainingsReducer";
 
 //Components
 import ResultContainer from "../../common/ResultContainer";
@@ -76,6 +76,9 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
         date: convertToTimestamp(training.createdAt),
         video: {
           name: training.video.file.name,
+          width:  training.video?.width,
+          height: training.video?.height,
+          frames:  training.video?.frames,
         },
         selectedDescriptors: chekedDescriptors.map((d) => {
           return {

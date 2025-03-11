@@ -38,7 +38,7 @@ const StyledInput = styled.input`
   }
 `;
 
-const EditableTitle = ({ initialTitle, onSave, isEditable = true }) => {
+const EditableTitle = ({ initialTitle = "-", onSave, isEditable = true }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(initialTitle);
   const [tempTitle, setTempTitle] = useState(initialTitle);

@@ -17,6 +17,20 @@ const getAll = async (token) => {
   }
 };
 
+const getTraining = async (token, id) => {
+  try {
+    const response = await axios.get(`${baseUrl}/experience/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener la experiencia:", error);
+    throw new Error(
+      error.response?.data?.error || "Error al obtener la experiencia."
+    );
+  }
+};
+
 const save = async (token, newTraining) => {
   try {
     const payload = {
@@ -57,10 +71,11 @@ const remove = async (token, id) => {
   }
 };
 
-const experienceServices = {
+const trainingServices = {
   getAll,
+  getTraining,
   save,
   remove,
 };
 
-export default experienceServices;
+export default trainingServices;

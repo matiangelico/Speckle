@@ -10,24 +10,26 @@ import RequestMachine from "../../machines/RequestMachine.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import {
   // resetRequest,
-  setName,
-  initializeTrainingAsync,
-} from "../../reducers/trainingReducer";
-// import { showConfirmationAlertAsync } from "../../reducers/alertReducer";
+  // setName,
+  initializeRequestAsync,
+  resetRequest,
+} from "../../reducers/requestReducer.jsx";
+import { showConfirmationAlertAsync } from "../../reducers/alertReducer.jsx";
 
 // Componentes de estado
 import TrainingSelected from "./RequestStates/0_TrainingSelected.jsx";
 import UploadVideo from "./RequestStates/1_UploadVideo.jsx";
 import SelectDescriptors from "./RequestStates/2_SelectDescriptors.jsx";
 import EditHyperparameters from "./RequestStates/3_EditHyperparameters.jsx";
+import SelectDescriptorsResults from "./RequestStates/4_SelectDescriptorsResults.jsx";
 import NeuralNetworkResult from "./RequestStates/10_NeuralNetworkResult.jsx";
 
 // Commons
-// import SecondaryButton from "../common/SecondaryButton";
 import EditableTitle from "../common/EditableTitle";
+import SecondaryButton from "../common/SecondaryButton.jsx";
 
 // Icons
-// import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
+import RefreshIcon from "../../assets/svg/icon-refresh-ccw.svg?react";
 
 //Utils
 import { convertToReadableDateAndHour } from "../../utils/dateUtils";
@@ -77,6 +79,8 @@ const ExperienceHeader = styled.div`
 
   svg {
     color: var(--dark-800);
+    width: 20px;
+    height: 20px;
   }
 
   @media (min-height: 900px) {
@@ -171,31 +175,34 @@ const TrainingContainer = () => {
   const { token, loading: tokenLoading } = useToken();
 
   //0.
-  const trainingStatus = useSelector((state) => state.training.status);
-  const trainingName = useSelector((state) => state.training.name);
-  const createdAt = useSelector((state) => state.training.createdAt);
+  const requestStatus = useSelector((state) => state.request.status);
+  const trainingName = useSelector((state) => state.request.name);
+  const createdAt = useSelector((state) => state.request.createdAt);
+  const oldVideo = useSelector((state) => state.request.oldVideo);
+  //1.
+  const newVideo = useSelector((state) => state.request.newVideo);
   //2.
-  const descriptors = useSelector((state) => state.training.descriptors);
+  const descriptors = useSelector((state) => state.request.descriptors);
   //3.
   const chekedDescriptors = descriptors.filter(
     (descriptor) => descriptor.checked
   );
   // 10
-  const training = useSelector((state) => state.training);
+  const request = useSelector((state) => state.request);
 
   useEffect(() => {
-    if (!tokenLoading && token && trainingStatus === "idle") {
-      dispatch(initializeTrainingAsync(token));
+    if (!tokenLoading && token && requestStatus === "idle") {
+      dispatch(initializeRequestAsync(token));
     }
-  }, [tokenLoading, token, trainingStatus, dispatch]);
+  }, [tokenLoading, token, requestStatus, dispatch]);
 
   // Renderiza el estado actual
   const renderState = () => {
     switch (state.value) {
       case "TRAINING_SELECTED": //0
-        return <TrainingSelected send={send} />;
+        return <TrainingSelected send={send} video={oldVideo} />;
       case "UPLOAD_VIDEO": //1
-        return <UploadVideo send={send} />;
+        return <UploadVideo send={send} video={newVideo} />;
       case "SELECT_DESCRIPTORS": //2
         return <SelectDescriptors send={send} descriptors={descriptors} />;
       case "EDIT_HYPERPARAMETERS": //3
@@ -205,11 +212,13 @@ const TrainingContainer = () => {
             chekedDescriptors={chekedDescriptors}
           />
         );
+      case "SELECT_DESCRIPTOR_RESULTS": //4
+        return <SelectDescriptorsResults send={send} />;
       case "NEURAL_NETWORK_RESULTS": //10
         return (
           <NeuralNetworkResult
             send={send}
-            training={training}
+            training={request}
             chekedDescriptors={chekedDescriptors}
           />
         );
@@ -218,46 +227,38 @@ const TrainingContainer = () => {
     }
   };
 
-  const handleSaveTitle = (newTitle) => {
-    dispatch(setName(newTitle));
+  const handleReset = async () => {
+    const answer = await dispatch(
+      showConfirmationAlertAsync({
+        title: "Reiniciar consulta",
+        message:
+          "¿Deseas reiniciar la consulta actual?\nAl hacerlo, se perderá todo el progreso actual.",
+      })
+    );
+
+    if (!answer) {
+      return;
+    }
+
+    //Request Reducer
+    dispatch(resetRequest());
+    if (!tokenLoading && token) {
+      dispatch(initializeRequestAsync(token));
+    }
+    //State Machine
+    send({ type: "RESET" });
   };
-
-  // const handleReset = async () => {
-  //   const answer = await dispatch(
-  //     showConfirmationAlertAsync({
-  //       title: "Nuevo entrenamiento",
-  //       message:
-  //         '¿Deseas comenzar un nuevo entrenamiento?\nAl hacerlo, se perderá todo el progreso actual. Si prefieres conservarlo, tendrás la opción de guardarlo al final del proceso para consultarlo en la sección "Consulta".',
-  //     })
-  //   );
-
-  //   if (!answer) {
-  //     return;
-  //   }
-
-  //   //Training Reducer
-  //   dispatch(resetTraining());
-  //   if (!tokenLoading && token) {
-  //     dispatch(initializeTrainingAsync(token));
-  //   }
-  //   //State Machine
-  //   send({ type: "RESET" });
-  // };
 
   return (
     <StyledExperienceContainer>
       <ExperienceHeader>
-        <EditableTitle
-          initialTitle={trainingName}
-          onSave={handleSaveTitle}
-          isEditable={false}
-        />
-        <p>{convertToReadableDateAndHour(createdAt)}</p>
-        {/* <SecondaryButton
-          SVG={NewExperienceIcon}
-          text={"Nuevo entrenamiento"}
+        <EditableTitle initialTitle={trainingName} isEditable={false} />
+        {createdAt ? <p>{convertToReadableDateAndHour(createdAt)}</p> : <p> </p>}
+        <SecondaryButton
+          SVG={RefreshIcon}
+          text={"Reiniciar consulta"}
           handleClick={handleReset}
-        /> */}
+        />
       </ExperienceHeader>
       <ExperienceContent>{renderState()}</ExperienceContent>
     </StyledExperienceContainer>

@@ -1,26 +1,31 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000/experience";
+const baseUrl = "http://localhost:5000";
 
-// Deprecated en el futuro =============
-const getTraining = async (id) => {
-  const response = await axios.post(`${baseUrl}/${id}`);
+const getExperiencePrediction = async (token, videoFile, experienceId) => {
+  const formData = new FormData();
+  formData.append("experienceId", experienceId);
+  formData.append("video", videoFile);
 
-  return response.data;
+  try {
+    const response = await axios.post(`${baseUrl}/experiencePrediction`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error en la predicción de experiencia:", error);
+    throw new Error(
+      error.response?.data?.error ||
+        "Error al realizar la predicción de experiencia. Inténtalo de nuevo."
+    );
+  }
 };
 
-const createRequest = async () => {
-  const response = await axios.get(`${baseUrl}/ejemploMatrizDescriptores`);
-
-  const unaMatriz = response.data[0].matriz_descriptor;
-
-  return unaMatriz;
-};
-// ================
-
-const trainingExperienceServices = {
-  getTraining,
-  createRequest,
+const experienceServices = {
+  getExperiencePrediction,
 };
 
-export default trainingExperienceServices;
+export default experienceServices;
