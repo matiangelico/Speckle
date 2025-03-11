@@ -20,8 +20,6 @@ import entrenamiento as train
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-
 app = FastAPI()
 
 load_dotenv()
@@ -281,7 +279,7 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
 
 
 @app.get("/health")
-def health_check():
+async def health_check():
     return {"status": "ok"}
 
 
