@@ -2,6 +2,10 @@ import { styled } from "styled-components";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
+//Redux
+import { useDispatch } from "react-redux";
+import { resetRequest } from "../../../reducers/requestReducer";
+
 //Components
 import NavItem from "./NavItem";
 
@@ -90,6 +94,7 @@ const ProfileImage = styled.img`
 `;
 
 const Header = ({ userName, userEmail, userImage }) => {
+  const dispatch = useDispatch();
   const location = useLocation();
   const [activeItem, setActiveItem] = useState(null);
 
@@ -102,6 +107,10 @@ const Header = ({ userName, userEmail, userImage }) => {
   }, [location.pathname]);
 
   const handleNavItemClick = (item) => {
+    if (item === "Consulta") {
+      dispatch(resetRequest());
+    }
+
     setActiveItem(item);
   };
 
@@ -132,7 +141,10 @@ const Header = ({ userName, userEmail, userImage }) => {
           <UserName>{userName}</UserName>
           <UserEmail>{userEmail}</UserEmail>
         </UserDetails>
-        <ProfileImage src={userImage ? userImage : profilePicture} alt={userName} />
+        <ProfileImage
+          src={userImage ? userImage : profilePicture}
+          alt={userName}
+        />
       </UserInfo>
     </StyledHeader>
   );

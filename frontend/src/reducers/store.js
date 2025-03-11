@@ -1,20 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import defaultValuesReducer from "./defaultValuesReducer";
-import savedExperiencesReducer from "./savedExperienceReducer.jsx";
+import savedTrainingsReducer from "./savedTrainingsReducer";
 import trainingReducer from "./trainingReducer";
+import requestReducer from "./requestReducer";
 import notificationReducer from "./notificationReducer";
-import confirmationAlert from "./alertReducer.jsx"
-import loaderReducer from './loaderReducer';
+import confirmationAlert from "./alertReducer";
 
 const store = configureStore({
   reducer: {
     defaultValues: defaultValuesReducer,
-    savedExperiences: savedExperiencesReducer,
+    savedTrainings: savedTrainingsReducer,
     training: trainingReducer,
+    request: requestReducer,
     notification: notificationReducer,
     confirmationAlert: confirmationAlert,
-    loader: loaderReducer,
   },
   // Deshabilitar la validación de serialización
   middleware: (getDefaultMiddleware) =>
@@ -22,7 +22,5 @@ const store = configureStore({
       serializableCheck: false,
     }),
 });
-
-console.log(store.getState());
 
 export default store;

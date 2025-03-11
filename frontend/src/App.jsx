@@ -8,7 +8,7 @@ import ReactModal from "react-modal";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import { initializeDefaultValues } from "./reducers/defaultValuesReducer";
-import { initializeSavedTrainings } from "./reducers/savedExperienceReducer";
+import { initializeSavedTrainings } from "./reducers/savedTrainingsReducer";
 
 // Router
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";

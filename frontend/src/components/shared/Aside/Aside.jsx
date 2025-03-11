@@ -5,12 +5,13 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
-import { removeTraining } from "../../../reducers/savedExperienceReducer";
+import { removeTraining } from "../../../reducers/savedTrainingsReducer";
+import { initializeSavedTraining } from "../../../reducers/requestReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
 import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 
 // Components
-import AsideItem from "./AsideLink";
+import AsideLink from "./AsideLink";
 import TimeItem from "./AsideLabel";
 import ToolsContainer from "./ToolsContainer";
 import AsideButton from "./AsideButton";
@@ -135,7 +136,7 @@ const Aside = () => {
   const dispatch = useDispatch();
   const { logout } = useAuth0();
   const { token, loading: tokenLoading } = useToken();
-  const experiences = useSelector((state) => state.savedExperiences);
+  const experiences = useSelector((state) => state.savedTrainings);
 
   const [filteredExperiences, setFilteredExperiences] = useState([]);
   const [activeItem, setActiveItem] = useState(null);
@@ -212,11 +213,22 @@ const Aside = () => {
     );
   };
 
-  const handleSelectExperience = async (id, title) => {
-    console.log(id);
-    console.log(title);
-
-    setActiveItem((prev) => (prev === id ? null : id));
+  const handleSelectExperience = async (id) => {
+    if (!tokenLoading && token) {
+      try {
+        // await dispatch(saveTraining(token, newTraining));
+        dispatch(initializeSavedTraining(token, id));
+        setActiveItem((prev) => (prev === id ? null : id));
+      } catch (error) {
+        console.error("Error al procesar la petición:", error);
+        dispatch(
+          createNotification(
+            `Ha ocurrido un error vuelve a intentarlo mas tarde.`,
+            "error"
+          )
+        );
+      }
+    }
   };
 
   const groupedExperiences = groupByDateRange(filteredExperiences);
@@ -236,13 +248,13 @@ const Aside = () => {
               <React.Fragment key={group}>
                 <TimeItem key={group} text={group} />
                 {groupedExperiences[group].map((exp) => (
-                  <AsideItem
+                  <AsideLink
                     key={exp.id}
                     id={exp.id}
                     icon={MoreIcon}
                     title={exp.name}
                     isActive={activeItem === exp.id}
-                    onClick={(id, title) => handleSelectExperience(id, title)}
+                    onClick={(id) => handleSelectExperience(id)}
                     onDelete={(id, title) => handleDeleteExperience(id, title)}
                   />
                 ))}

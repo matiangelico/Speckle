@@ -203,7 +203,7 @@ async def neuronal(background_tasks: BackgroundTasks, x_api_key: str = Header(No
     params = train_params['neuralNetworkParams']
     epocas = int(params['epocs'])
     b_size = int(params['batchsize'])
-    estop = int(params['earlystopping'])
+    estop = int(params['earlystopping'].lower() == 'true')
 
     print(parametros_entrenamiento)
 
