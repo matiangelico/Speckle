@@ -8,7 +8,7 @@ const getExperiencePrediction = async (token, videoFile, experienceId) => {
   formData.append("video", videoFile);
 
   try {
-    const response = await axios.post(`${baseUrl}/experiencePrediction`, formData, {
+    const response = await axios.post(`${baseUrl}/prediction`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,

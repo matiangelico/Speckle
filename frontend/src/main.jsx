@@ -8,13 +8,8 @@ import ErrorBoundary from "./ErrorBoundary.jsx";
 import App from "./App.jsx";
 import store from "./reducers/store";
 
-const apiUrl = import.meta.env.VITE_API_URL;
 const auth0ClientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
 const auth0Domain = import.meta.env.VITE_AUTH0_DOMAIN;
-
-console.log(apiUrl);
-console.log(auth0ClientId);
-console.log(auth0Domain);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

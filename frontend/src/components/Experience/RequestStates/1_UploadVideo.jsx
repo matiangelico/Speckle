@@ -54,14 +54,13 @@ const UploadVideo = ({ send, video }) => {
 
         dispatch(createNotification(`Video subido correctamente.`, "success"));
       } catch (error) {
-        console.error("Error al procesar la petición:", error);
-
-        dispatch(
-          createNotification(
-            `Ha ocurrido un error intentando procesar el video, vuelve a intentarlo mas tarde.`,
-            "error"
-          )
-        );
+        dispatch(createNotification(`${error.message}`, "error"));
+        // dispatch(
+        //   createNotification(
+        //     `Ha ocurrido un error intentando procesar el video, vuelve a intentarlo mas tarde.`,
+        //     "error"
+        //   )
+        // );
       } finally {
         setIsLoading(false);
       }
@@ -79,8 +78,8 @@ const UploadVideo = ({ send, video }) => {
           <div className='steps-container'>
             <h2>1. Subir nuevo video</h2>
             <h3>
-              Adjunte el archivo de video que servirá como entrada para el
-              entrenamiento.
+              Adjunte el archivo de video que servirá como entrada para la
+              consulta.
             </h3>
           </div>
 

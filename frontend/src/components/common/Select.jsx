@@ -1,5 +1,4 @@
 import styled from "styled-components";
-
 import { useState, useRef, useEffect } from "react";
 
 //Icons
@@ -77,6 +76,11 @@ const SelectButton = styled.button`
     outline: none;
   }
 
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
   svg {
     width: 20px;
     heigt: 20px;
@@ -86,7 +90,6 @@ const SelectButton = styled.button`
 
 const DropdownContainer = styled.div`
   position: absolute;
-  // top: calc(100% + 4px);
   top: calc(100% - 45px);
   left: 0;
   right: 0;
@@ -98,26 +101,22 @@ const DropdownContainer = styled.div`
   max-height: 230px;
   display: ${(props) => (props["data-is-open"] ? "block" : "none")};
   overflow-y: auto;
-  
-  /* Personaliza el ancho de la barra */
+
   &::-webkit-scrollbar {
     width: 0px;
     box-sizing: content-box;
   }
 
-  /* Color del track (fondo de la barra) */
   &::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 6px;
   }
 
-  /* Color y estilo de la “thumb” (la parte que se mueve) */
   &::-webkit-scrollbar-thumb {
     background-color: #c1c1c1;
     border-radius: 6px;
   }
 
-  /* Efecto hover para la thumb */
   &::-webkit-scrollbar-thumb:hover {
     background-color: #999;
   }
@@ -143,6 +142,11 @@ const SearchContainer = styled.div`
 
     &::placeholder {
       color: var(--dark-400);
+    }
+
+    &:disabled {
+      background: #f9f9f9;
+      cursor: not-allowed;
     }
   }
 
@@ -192,6 +196,7 @@ const Select = ({
   options = [],
   error,
   searchable = true,
+  editable = true,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -202,6 +207,7 @@ const Select = ({
   );
 
   const handleSelect = (option) => {
+    if (!editable) return;
     onChange(option.value);
     setIsOpen(false);
     setSearchTerm("");
@@ -224,6 +230,7 @@ const Select = ({
   }, []);
 
   const handleKeyDown = (e) => {
+    if (!editable) return;
     if (e.key === "Enter" || e.key === " ") {
       setIsOpen(!isOpen);
     } else if (e.key === "Escape") {
@@ -242,13 +249,16 @@ const Select = ({
         type='button'
         id={id}
         name={name}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          if (editable) setIsOpen(!isOpen);
+        }}
         onKeyDown={handleKeyDown}
         data-is-invalid={error}
         data-is-open={isOpen}
         data-has-value={!!selectedOption}
         aria-expanded={isOpen}
         aria-haspopup='listbox'
+        disabled={!editable}
       >
         <span>{selectedOption ? selectedOption.label : placeholder}</span>
         <ChevronDownIcon />
@@ -264,6 +274,7 @@ const Select = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onClick={(e) => e.stopPropagation()}
+              disabled={!editable}
             />
           </SearchContainer>
         )}

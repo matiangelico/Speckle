@@ -39,6 +39,11 @@ const StyledCheckbox = styled.label`
       outline: none;
       border-color: var(--dark-500);
     }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.8;
+    }
   }
 
   svg {
@@ -67,23 +72,36 @@ const StyledCheckbox = styled.label`
   }
 `;
 
-const Checkbox = ({ label, checked, onChange }) => {
+const Checkbox = ({ label, checked, onChange, editable = true }) => {
   return (
     <StyledCheckbox>
-      <input id={label} type='checkbox' checked={checked} onChange={onChange} />
-      <CheckIcon /> {/* El icono ahora está posicionado encima */}
+      <input
+        id={label}
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        disabled={!editable}
+      />
+      <CheckIcon />
       <span>{label}</span>
     </StyledCheckbox>
   );
 };
 
-const TaskCheckbox = ({ label, checked, onChange }) => {
+const TaskCheckbox = ({ label, checked, onChange, editable = true }) => {
   const handleCheckboxChange = () => {
-    onChange(label, !checked);
+    if (editable) {
+      onChange(label, !checked);
+    }
   };
 
   return (
-    <Checkbox label={label} checked={checked} onChange={handleCheckboxChange} />
+    <Checkbox
+      label={label}
+      checked={checked}
+      onChange={handleCheckboxChange}
+      editable={editable}
+    />
   );
 };
 

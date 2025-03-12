@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // Services
 import savedTrainingService from "../services/savedTraning";
+import requestServices from "../services/request";
 import trainingService from "../services/training";
 
 // Redux
@@ -9,6 +10,7 @@ import { initializeDefaultValues } from "./defaultValuesReducer";
 
 // Estado inicial de training
 export const initialRequestState = {
+  id: null,
   name: " ",
   createdAt: null,
   oldVideo: null,
@@ -52,11 +54,20 @@ const requestSlice = createSlice({
     setTraining(state, action) {
       const savedTraining = action.payload;
 
+      const selectedDescriptorIds = savedTraining.selectedDescriptors.map(
+        (desc) => desc.id
+      );
+
       return {
         ...state,
+        id: savedTraining._id,
         name: savedTraining.name,
         createdAt: savedTraining.date,
         oldVideo: savedTraining.video,
+        descriptors: state.descriptors.map((descriptor) => ({
+          ...descriptor,
+          checked: selectedDescriptorIds.includes(descriptor.id), // Marcar como checked si está en selectedDescriptors
+        })),
       };
     },
     setNewVideo(state, action) {
@@ -65,132 +76,11 @@ const requestSlice = createSlice({
     setDescriptors(state, action) {
       return { ...state, descriptors: action.payload };
     },
-    setHyperparameters(state, action) {
-      const defaultValues = action.payload;
-      state.descriptors = state.descriptors.map((descriptor) => {
-        const defaultDescriptor = defaultValues.find(
-          (defaultDesc) => defaultDesc.name === descriptor.name
-        );
-        if (!defaultDescriptor) return descriptor;
-        const updatedHyperparameters = descriptor.hyperparameters.map(
-          (param) => {
-            const defaultParam = defaultDescriptor.params.find(
-              (defaultParam) => defaultParam.paramName === param.paramName
-            );
-            return defaultParam && param.value !== defaultParam.value
-              ? { ...param, value: defaultParam.value }
-              : param;
-          }
-        );
-        return { ...descriptor, hyperparameters: updatedHyperparameters };
-      });
-    },
-    updateHyperparameter(state, action) {
-      const { descriptorName, hyperparameterName, newValue } = action.payload;
-      state.descriptors = state.descriptors.map((descriptor) => {
-        if (descriptor.name === descriptorName) {
-          const updatedHyperparameters = descriptor.hyperparameters.map(
-            (param) =>
-              param.paramName === hyperparameterName
-                ? { ...param, value: newValue }
-                : param
-          );
-          return { ...descriptor, hyperparameters: updatedHyperparameters };
-        }
-        return descriptor;
-      });
-    },
     setDescriptorsResults(state, action) {
       state.descriptorsResults = action.payload;
     },
-    selectDescriptorResult(state, action) {
-      const name = action.payload;
-      state.descriptorsResults = state.descriptorsResults.map((result) =>
-        result.name === name ? { ...result, checked: !result.checked } : result
-      );
-    },
-    setClustering(state, action) {
-      state.clustering = action.payload;
-    },
-    selectClustering(state, action) {
-      const name = action.payload;
-      state.clustering = state.clustering.map((cluster) =>
-        cluster.name === name
-          ? { ...cluster, checked: !cluster.checked }
-          : cluster
-      );
-    },
-    selectAllClustering(state) {
-      state.clustering = state.clustering.map((cluster) => ({
-        ...cluster,
-        checked: true,
-      }));
-    },
-    deselectAllClustering(state) {
-      state.clustering = state.clustering.map((cluster) => ({
-        ...cluster,
-        checked: false,
-      }));
-    },
-    setClusteringParams(state, action) {
-      const defaultValues = action.payload;
-      state.clustering = state.clustering.map((cluster) => {
-        const defaultCluster = defaultValues.find(
-          (defaultCl) => defaultCl.name === cluster.name
-        );
-        if (!defaultCluster) return cluster;
-        const updatedParameters = cluster.parameters.map((param) => {
-          const defaultParam = defaultCluster.params.find(
-            (defParam) => defParam.paramName === param.paramName
-          );
-          return defaultParam && param.value !== defaultParam.value
-            ? { ...param, value: defaultParam.value }
-            : param;
-        });
-        return { ...cluster, parameters: updatedParameters };
-      });
-    },
-    updateClusteringParam(state, action) {
-      const { clusteringName, parameterName, newValue } = action.payload;
-      state.clustering = state.clustering.map((cluster) => {
-        if (cluster.name === clusteringName) {
-          const updatedParameter = cluster.parameters.map((param) =>
-            param.paramName === parameterName
-              ? { ...param, value: newValue }
-              : param
-          );
-          return { ...cluster, parameters: updatedParameter };
-        }
-        return cluster;
-      });
-    },
-    setClusteringResults(state, action) {
-      state.clusteringResults = action.payload;
-    },
-    selectClusteringResult(state, action) {
-      const name = action.payload;
-      state.clusteringResults = state.clusteringResults.map((result) => ({
-        ...result,
-        checked: result.name === name,
-      }));
-    },
-    setNeuralNetworkParams(state, action) {
-      state.neuralNetworkParams = action.payload;
-    },
-    updateNeuralNetworkParams(state, action) {
-      const { parameterName, newValue } = action.payload;
-      state.neuralNetworkParams = state.neuralNetworkParams.map((param) =>
-        param.name === parameterName ? { ...param, value: newValue } : param
-      );
-    },
-    setNeuralNetworkLayers(state, action) {
-      state.neuralNetworkLayers = action.payload;
-    },
-    setTemplateLayers(state, action) {
-      state.layersTemplate = action.payload;
-    },
-    setTrainingResult(state, action) {
-      state.trainingResult = action.payload;
+    setRequestResult(state, action) {
+      state.requestResult = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -214,22 +104,29 @@ export const {
   setTraining,
   setNewVideo,
   setDescriptors,
-  selectDescriptor,
-  selectAllDescriptors,
-  deselectAllDescriptors,
-  setHyperparameters,
   updateHyperparameter,
   setDescriptorsResults,
-  selectDescriptorResult,
-  setTrainingResult,
+  setRequestResult,
 } = requestSlice.actions;
 
 export default requestSlice.reducer;
 
 // 1.
 export const getVideoData = (token, videoFile) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const oldVideo = getState().request.oldVideo;
+
     const result = await trainingService.getVideoDimensions(token, videoFile);
+
+    if (!result?.width || !result?.height) {
+      throw new Error("Error: Dimensiones del video no disponibles");
+    }
+
+    if (result.width != oldVideo.width || result.height != oldVideo.height) {
+      throw new Error(
+        `Las dimensiones de ambos videos deben coincidir. Las dimensiones del video insertado son ${result.width}x${result.height}.`
+      );
+    }
 
     const videoWithDimensions = {
       file: videoFile,
@@ -238,17 +135,78 @@ export const getVideoData = (token, videoFile) => {
       frames: result?.frames || null,
     };
 
-    console.log("videoWithDimensions", videoWithDimensions);
-    
-
     dispatch(setNewVideo(videoWithDimensions));
   };
 };
 
+// 0.
 export const initializeSavedTraining = (token, id) => {
   return async (dispatch) => {
     const training = await savedTrainingService.getTraining(token, id);
-    console.log(training);
+
+    // dispatch(resetRequest());
     dispatch(setTraining(training));
+  };
+};
+
+// 4.
+export const initializeDescriptorsResult = (token) => {
+  return async (dispatch, getState) => {
+    const videoFile = await getState().request.newVideo.file;
+    const filtered = await getState().request.descriptors.filter(
+      (descriptor) => descriptor.checked
+    );
+
+    const selectedDescriptorsArray = filtered.map((descriptor) => ({
+      id: descriptor.id,
+      params: descriptor.hyperparameters || [],
+    }));
+
+    const selectedDescriptors = {
+      selectedDescriptors: selectedDescriptorsArray,
+    };
+
+    const results = await trainingService.getDescriptorsResults(
+      token,
+      videoFile,
+      selectedDescriptors
+    );
+
+    const descriptorResults = results.imagenes_descriptores.map((result) => {
+      const matchedDescriptor = filtered.find(
+        (descriptor) => descriptor.id === result.id_descriptor
+      );
+
+      return {
+        name: matchedDescriptor ? matchedDescriptor.name : result.id, // Fallback en caso de no encontrar coincidencia
+        id: result.id_descriptor,
+        image: result.imagen_descriptor,
+        checked: false,
+      };
+    });
+
+    dispatch(setDescriptorsResults(descriptorResults));
+  };
+};
+
+// 10.
+export const initializeRequestResult = (token) => {
+  return async (dispatch, getState) => {
+    const trainingId = await getState().request.id;
+    const videoFile = await getState().request.newVideo.file;
+
+    const result = await requestServices.getExperiencePrediction(
+      token,
+      videoFile,
+      trainingId
+    );
+
+    console.log(result);
+
+    const trainingResult = {
+      image: result.prediction_image.imagen,
+    };
+
+    dispatch(setRequestResult(trainingResult));
   };
 };
