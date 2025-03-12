@@ -9,6 +9,7 @@ def setearDimensiones (tensor):
     ancho = tensor.shape[0]
     alto = tensor.shape[1]
     frames = tensor.shape[2]
+    print('frames ',frames)
 
 def rangoDinamico(tensor):
     setearDimensiones(tensor)
@@ -105,7 +106,7 @@ def frecuenciaCorte(tensor):
     return normalizar(desc_fc)
 
 
-def waveletEntropy(tensor,wavelet,level):# wavelet='db2', level=5):
+def waveletEntropy(tensor,wavelet,level):
     setearDimensiones(tensor)
     level = int(level)
     import pywt

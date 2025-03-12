@@ -8,7 +8,7 @@ const agent = new https.Agent({ rejectUnauthorized: false });
 
 const API_KEY = process.env.API_KEY
 
-const datos_descriptores = require('../DatosPrueba/todosDescyParams.json');
+const datos_descriptores = require('../DatosPrueba/nombredescYparametros.json');
 
 const form = new FormData();
 form.append('video_experiencia', fs.createReadStream('../matrizyvideo/Mon5.avi',));
