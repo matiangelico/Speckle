@@ -19,6 +19,9 @@ import ResultModal from "../Utils/ResultModal";
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
 
+//Hooks
+import useToken from "../../../Hooks/useToken";
+
 const ClusteringResultsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -43,6 +46,8 @@ const ClusteringResultsContainer = styled.div`
 
 const SelectClusteringResults = ({ send }) => {
   const dispatch = useDispatch();
+    const { token } = useToken();
+  
   const clusteringResults = useSelector(
     (state) => state.training.clusteringResults
   );
@@ -68,8 +73,8 @@ const SelectClusteringResults = ({ send }) => {
     }
   };
 
-  const openModal = (image, title, subtitle) => {
-    setModalInfo({ image, title, subtitle });
+  const openModal = (image, title, subtitle, id) => {
+    setModalInfo({ image, title, subtitle, token, type: "clustering", id  });
   };
 
   const closeModal = () => {
@@ -102,7 +107,7 @@ const SelectClusteringResults = ({ send }) => {
             checked={result.checked}
             base64Image={result.image}
             handleSelect={handleResultSelected}
-            handleClickInfo={() => openModal(result.image, result.name, result.clusterCenters)}
+            handleClickInfo={() => openModal(result.image, result.name, result.clusterCenters, result.id)}
           />
         ))}
       </ClusteringResultsContainer>
@@ -127,6 +132,9 @@ const SelectClusteringResults = ({ send }) => {
         subtitle={modalInfo?.subtitle}
         isOpen={!!modalInfo}
         onClose={closeModal}
+        token={modalInfo?.token}
+        type={modalInfo?.type}
+        methodId={modalInfo?.id}
       />
     </>
   );

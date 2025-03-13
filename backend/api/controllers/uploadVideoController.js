@@ -94,11 +94,9 @@ exports.uploadVideo = async (req, res) => {
 
     // Manejo específico de errores de JSON
     if (error instanceof SyntaxError) {
-      return res
-        .status(400)
-        .json({
-          error: "Archivo selectedDescriptors con formato JSON inválido",
-        });
+      return res.status(400).json({
+        error: "Archivo selectedDescriptors con formato JSON inválido",
+      });
     }
 
     res.status(500).json({

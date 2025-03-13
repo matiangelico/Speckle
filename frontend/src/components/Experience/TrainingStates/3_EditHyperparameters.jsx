@@ -17,6 +17,7 @@ import EmptyContainer from "../../common/EmptyContainer";
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
 import Loader from "../../common/Loader";
+import Select from "../../common/Select";
 
 //Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
@@ -25,7 +26,6 @@ import SlidersIcon from "../../../assets/svg/icon-sliders.svg?react";
 
 //Utils
 import { extractTextBetweenParentheses } from "../../../utils/stringUtils";
-import Select from "../../common/Select";
 
 //Hooks
 import useToken from "../../../Hooks/useToken";

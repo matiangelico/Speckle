@@ -82,8 +82,8 @@ const SelectDescriptorsResults = ({ send }) => {
     }
   };
 
-  const openModal = (image, title) => {
-    setModalInfo({ image, title });
+  const openModal = (image, title, id) => {
+    setModalInfo({ image, title, token, type: "descriptor", id });
   };
 
   const closeModal = () => {
@@ -114,7 +114,9 @@ const SelectDescriptorsResults = ({ send }) => {
                 title={result.name}
                 checked={result.checked}
                 base64Image={result.image}
-                handleClickInfo={() => openModal(result.image, result.name)}
+                handleClickInfo={() =>
+                  openModal(result.image, result.name, result.id)
+                }
                 editable={false}
               />
             ))}
@@ -139,6 +141,9 @@ const SelectDescriptorsResults = ({ send }) => {
             title={modalInfo?.title}
             isOpen={!!modalInfo}
             onClose={closeModal}
+            token={modalInfo?.token}
+            type={modalInfo?.type}
+            methodId={modalInfo?.id}
           />
         </>
       )}

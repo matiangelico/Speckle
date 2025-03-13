@@ -30,7 +30,7 @@ import CrossIcon from "../../../assets/svg/icon-x.svg?react";
 import FileTextIcon from "../../../assets/svg/icon-file-text.svg?react";
 
 //Services
-import trainingService from "../../../services/training";
+import matrixServices from "../../../services/matrix";
 
 const ModalHeader = styled.div`
   display: grid;
@@ -116,6 +116,10 @@ const ResultModal = ({
   subtitle,
   isOpen,
   onClose,
+  token = null,
+  type,
+  methodId,
+  isMatrixDownloadable = true,
   modalClassName = "Modal",
   overlayClassName = "Overlay",
 }) => {
@@ -165,8 +169,11 @@ const ResultModal = ({
 
     if (isMatrix) {
       try {
-        matrix = await trainingService.getDescriptorsMatrix();
-        console.log(matrix);
+        matrix = await matrixServices.getDescriptorsMatrix(
+          token,
+          type,
+          methodId
+        );
       } catch (error) {
         console.error("Error:", error);
         dispatch(
@@ -215,12 +222,14 @@ const ResultModal = ({
         <Base64Image base64Image={image} title={title} />
 
         <ButtonSection>
-          <SecondaryDownloadButton
-            SVG={FileTextIcon}
-            onDownload={handleDownload}
-            defaultFormat='txt'
-            formats={matrixAvailableFormats}
-          />
+          {isMatrixDownloadable && (
+            <SecondaryDownloadButton
+              SVG={FileTextIcon}
+              onDownload={handleDownload}
+              defaultFormat='txt'
+              formats={matrixAvailableFormats}
+            />
+          )}
 
           <PrimaryDownloadButton
             SVG={DownloadIcon}

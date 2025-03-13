@@ -153,11 +153,9 @@ exports.deleteExperience = async (req, res) => {
     const experience = await Experience.findOne({ _id: id, userId });
 
     if (!experience) {
-      return res
-        .status(404)
-        .json({
-          error: "Experiencia no encontrada o no autorizada para eliminar",
-        });
+      return res.status(404).json({
+        error: "Experiencia no encontrada o no autorizada para eliminar",
+      });
     }
 
     await Experience.deleteOne({ _id: id });

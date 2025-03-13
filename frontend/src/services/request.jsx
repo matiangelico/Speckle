@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000";
+const baseUrl = import.meta.env.VITE_API_URL;
 
 const getExperiencePrediction = async (token, videoFile, experienceId) => {
   const formData = new FormData();

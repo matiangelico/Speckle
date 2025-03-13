@@ -88,8 +88,6 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
         }),
       };
 
-      console.log("newTraining", newTraining);
-
       try {
         await dispatch(saveTraining(token, newTraining));
 
@@ -101,7 +99,7 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
         console.error("Error al procesar la petición:", error);
         dispatch(
           createNotification(
-            `Ha ocurrido un error vuelve a intentarlo.`,
+            `Ha ocurrido un error vuelve a intentarlo mas tarde.`,
             "error"
           )
         );
@@ -173,6 +171,7 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
             title={modalInfo?.title}
             isOpen={!!modalInfo}
             onClose={closeModal}
+            isMatrixDownloadable={false}
           />
         </>
       )}

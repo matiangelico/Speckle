@@ -44,11 +44,9 @@ exports.experiencePrediction = async (req, res) => {
     // Buscar experiencia
     const experience = await Experience.findOne({ _id: experienceId, userId });
     if (!experience) {
-      return res
-        .status(404)
-        .json({
-          error: "Experiencia no encontrada o no pertenece al usuario.",
-        });
+      return res.status(404).json({
+        error: "Experiencia no encontrada o no pertenece al usuario.",
+      });
     }
 
     // Paso 1: Generar matrices de descriptores
@@ -144,17 +142,13 @@ const generateDescriptorMatrices = async ({ videoPath, descriptors }) => {
     formData.append("video_experiencia", videoStream, path.basename(videoPath));
     formData.append("datos_descriptores", JSON.stringify(descriptors));
 
-    const response = await axios.post(
-      `${API_URL}/descriptores`,
-      formData,
-      {
-        headers: {
-          "x-api-key": API_KEY,
-          ...formData.getHeaders(),
-        },
-        httpsAgent: agent,
-      }
-    );
+    const response = await axios.post(`${API_URL}/descriptores`, formData, {
+      headers: {
+        "x-api-key": API_KEY,
+        ...formData.getHeaders(),
+      },
+      httpsAgent: agent,
+    });
 
     if (!response.data.matrices_descriptores) {
       throw new Error("Respuesta inválida del servidor de descriptores");
