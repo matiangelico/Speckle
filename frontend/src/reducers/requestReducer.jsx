@@ -201,8 +201,6 @@ export const initializeRequestResult = (token) => {
       trainingId
     );
 
-    console.log(result);
-
     const trainingResult = {
       image: result.prediction_image.imagen,
     };

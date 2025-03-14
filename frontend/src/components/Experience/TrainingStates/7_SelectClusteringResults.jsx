@@ -13,7 +13,7 @@ import SecondaryButton from "../../common/SecondaryButton";
 import ResultContainer from "../../common/ResultContainer";
 
 //Utils
-import ResultModal from "../Utils/ResultModal";
+import ResultModal from "../ExperienceUtils/ResultModal";
 
 //Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";

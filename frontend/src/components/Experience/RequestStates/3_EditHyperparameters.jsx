@@ -167,7 +167,7 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
             <SecondaryButton
               handleClick={handleBack}
               SVG={ArrowLeftIcon}
-              text={"Seleccionar descriptores"}
+              text={"Descriptores seleccionados"}
             />
 
             <PrimaryButton

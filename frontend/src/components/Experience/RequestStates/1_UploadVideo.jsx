@@ -8,7 +8,7 @@ import { getVideoData } from "../../../reducers/requestReducer";
 //Commons
 import SecondaryButton from "../../common/SecondaryButton";
 import PrimaryButton from "../../common/PrimaryButton";
-import FileDropArea from "../Utils/FileDropArea";
+import FileDropArea from "../ExperienceUtils/FileDropArea";
 import Loader from "../../common/Loader";
 
 //Icons

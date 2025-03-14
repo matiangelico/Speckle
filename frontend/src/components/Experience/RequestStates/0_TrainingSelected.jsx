@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import { createNotification } from "../../../reducers/notificationReducer";
 
 //Utils
-import FileInfoContainer from "../Utils/FileInfoContainer";
+import FileInfoContainer from "../ExperienceUtils/FileInfoContainer";
 
 const TrainingSelected = ({ send, video }) => {
   const dispatch = useDispatch();

@@ -5,12 +5,20 @@ import { useState } from "react";
 //Components
 import ResultContainer from "../../common/ResultContainer";
 import SecondaryButton from "../../common/SecondaryButton";
+import SecondaryDownloadButton from "../../common/SecondaryDownloadButton";
 
 //Utils
-import ResultModal from "../Utils/ResultModal";
+import ResultModal from "../ExperienceUtils/ResultModal";
 
 //Icons
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
+import FileTextIcon from "../../../assets/svg/icon-file-text.svg?react";
+
+//Hooks
+import useToken from "../../../Hooks/useToken";
+import useDownload, {
+  matrixAvailableFormats,
+} from "../../../Hooks/useDownload";
 
 const CenterContainer = styled.div`
   display: flex;
@@ -29,8 +37,15 @@ const CenterContainer = styled.div`
   }
 `;
 
-const NeuralNetworkResult = ({ send, request }) => {
+const RequestResults = ({ send, request }) => {
   const [modalInfo, setModalInfo] = useState(null);
+  const { token } = useToken();
+  const { handleDownload } = useDownload({
+    token,
+    type: "prediction",
+    methodId: "tensor",
+    title: "Descargar tensor",
+  });
 
   const result = request.requestResult;
   const trainingName = request.name;
@@ -40,7 +55,7 @@ const NeuralNetworkResult = ({ send, request }) => {
   };
 
   const openModal = (image, title) => {
-    setModalInfo({ image, title });
+    setModalInfo({ image, title, token, type: "prediction", id: "matrix" });
   };
 
   const closeModal = () => {
@@ -53,10 +68,10 @@ const NeuralNetworkResult = ({ send, request }) => {
         <div className='steps-container'>
           <h2>5. Visualizar resultado de la consulta</h2>
           <h3>
-            Visualice los resultados finales de la consulta. Podra
-            ampliar la imagen, descargar la matriz resultante o imprimir la
-            imagen. Para iniciar una nueva consulta, simplemente
-            presione el botón “Reiniciar consulta”.
+            Visualice los resultados finales de la consulta. Podra ampliar la
+            imagen, descargar la matriz resultante o imprimir la imagen. Para
+            iniciar una nueva consulta, simplemente presione el botón “Reiniciar
+            consulta”.
           </h3>
         </div>
 
@@ -71,20 +86,21 @@ const NeuralNetworkResult = ({ send, request }) => {
           </CenterContainer>
         )}
 
-        <div className='one-button-container'>
+        <div className='two-buttons-container'>
           <SecondaryButton
             className='content'
             handleClick={handleBack}
             SVG={ArrowLeftIcon}
-            text={"Editar capas de la red neuronal"}
+            text={"Resultados de descriptores"}
           />
 
-          {/* <PrimaryButton
-              className='content'
-              handleClick={handleSaveTraining}
-              RightSVG={SaveIcon}
-              text={"Guardar entrenamieto"}
-            /> */}
+          <SecondaryDownloadButton
+            SVG={FileTextIcon}
+            text='Descargar tensor'
+            onDownload={handleDownload}
+            defaultFormat='txt'
+            formats={matrixAvailableFormats}
+          />
         </div>
 
         <ResultModal
@@ -92,10 +108,13 @@ const NeuralNetworkResult = ({ send, request }) => {
           title={modalInfo?.title}
           isOpen={!!modalInfo}
           onClose={closeModal}
+          token={modalInfo?.token}
+          type={modalInfo?.type}
+          methodId={modalInfo?.id}
         />
       </>
     </>
   );
 };
 
-export default NeuralNetworkResult;
+export default RequestResults;

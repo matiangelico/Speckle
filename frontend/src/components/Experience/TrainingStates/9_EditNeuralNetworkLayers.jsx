@@ -16,9 +16,11 @@ import Loader from "../../common/Loader";
 //Icons
 import IconDumbbel from "../../../assets/svg/icon-dumbbel.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
-import NeuralNetworkEditor from "../Utils/NeuralNetworkEditor";
 import AddLayerIcon from "../../../assets/svg/icon-lus-circle.svg?react";
 import RemoveLayerIcon from "../../../assets/svg/icon-divide-circle.svg?react";
+
+//Utils
+import NeuralNetworkEditor from "../ExperienceUtils/NeuralNetworkEditor";
 
 //Hooks
 import useToken from "../../../Hooks/useToken";

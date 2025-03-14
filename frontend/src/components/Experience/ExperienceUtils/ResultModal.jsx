@@ -1,9 +1,6 @@
 import { styled } from "styled-components";
-import ReactModal from "react-modal";
 
-//Redux
-import { useDispatch } from "react-redux";
-import { createNotification } from "../../../reducers/notificationReducer";
+import ReactModal from "react-modal";
 
 //Components
 import SvgButton from "../../common/SvgButton";
@@ -11,26 +8,16 @@ import Base64Image from "../../common/Base64Image";
 import SecondaryDownloadButton from "../../common/SecondaryDownloadButton";
 import PrimaryDownloadButton from "../../common/PrimaryDownloadButton";
 
-//Utils
-import {
-  downloadTxt,
-  downloadCsv,
-  downloadJson,
-} from "../../../utils/matrixUtils";
-import {
-  downloadPng,
-  downloadJpg,
-  downloadSvg,
-  downloadPdf,
-} from "../../../utils/imagesUtils";
-
 //Icons
 import DownloadIcon from "../../../assets/svg/icon-download.svg?react";
 import CrossIcon from "../../../assets/svg/icon-x.svg?react";
 import FileTextIcon from "../../../assets/svg/icon-file-text.svg?react";
 
-//Services
-import matrixServices from "../../../services/matrix";
+//Hooks
+import useDownload, {
+  matrixAvailableFormats,
+  imageAvailableFormats,
+} from "../../../Hooks/useDownload";
 
 const ModalHeader = styled.div`
   display: grid;
@@ -123,86 +110,9 @@ const ResultModal = ({
   modalClassName = "Modal",
   overlayClassName = "Overlay",
 }) => {
-  const dispatch = useDispatch();
-  const matrixAvailableFormats = [
-    { value: "txt", label: "TXT" },
-    { value: "csv", label: "CSV" },
-    { value: "json", label: "JSON" },
-  ];
-  const imageAvailableFormats = [
-    { value: "png", label: "PNG" },
-    { value: "jpg", label: "JPG" },
-    { value: "svg", label: "SVG" },
-    { value: "pdf", label: "PDF" },
-  ];
+  const { handleDownload } = useDownload({ token, image, type, methodId, title });
 
   if (!image) return null; // No renderizar si no hay imagen
-
-  const downloadByFormat = (format, image, title) => {
-    switch (format.toUpperCase()) {
-      // Matrix
-      case "TXT":
-        return downloadTxt(image, `${title}-matrix.txt`);
-      case "CSV":
-        return downloadCsv(image, `${title}-matrix.csv`);
-      case "JSON":
-        return downloadJson(image, `${title}-matrix.json`);
-      // Image
-      case "PNG":
-        return downloadPng(image, `${title}-image.png`);
-      case "JPG":
-        return downloadJpg(image, `${title}-image.jpg`);
-      case "SVG":
-        return downloadSvg(image, `${title}-image.svg`);
-      case "PDF":
-        return downloadPdf(image, `${title}-image.pdf`);
-      default:
-        return downloadPng(image, `${title}-image.png`);
-    }
-  };
-
-  const handleDownload = async (format) => {
-    const isMatrix = matrixAvailableFormats.some(
-      (formatToCheck) => formatToCheck.value === format
-    );
-    let matrix = null;
-
-    if (isMatrix) {
-      try {
-        matrix = await matrixServices.getDescriptorsMatrix(
-          token,
-          type,
-          methodId
-        );
-      } catch (error) {
-        console.error("Error:", error);
-        dispatch(
-          createNotification(
-            `Hubo un error al intentar generar la matriz.`,
-            "error"
-          )
-        );
-      }
-    }
-
-    downloadByFormat(format, matrix === null ? image : matrix, title)
-      .then(() => {
-        dispatch(
-          createNotification(
-            `${format.toUpperCase()} descargado correctamente.`,
-            "success"
-          )
-        );
-      })
-      .catch(() => {
-        dispatch(
-          createNotification(
-            `Error al descargar el ${format.toUpperCase()}.`,
-            "error"
-          )
-        );
-      });
-  };
 
   return (
     <ReactModal
@@ -225,7 +135,7 @@ const ResultModal = ({
           {isMatrixDownloadable && (
             <SecondaryDownloadButton
               SVG={FileTextIcon}
-              onDownload={handleDownload}
+              onDownload={(format) => handleDownload(format, null)}
               defaultFormat='txt'
               formats={matrixAvailableFormats}
             />
@@ -233,7 +143,7 @@ const ResultModal = ({
 
           <PrimaryDownloadButton
             SVG={DownloadIcon}
-            onDownload={handleDownload}
+            onDownload={(format) => handleDownload(format, image)}
             defaultFormat='png'
             formats={imageAvailableFormats}
           />

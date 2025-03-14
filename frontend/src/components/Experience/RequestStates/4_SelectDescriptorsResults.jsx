@@ -14,7 +14,7 @@ import ResultContainer from "../../common/ResultContainer";
 import Loader from "../../common/Loader";
 
 //Utils
-import ResultModal from "../Utils/ResultModal";
+import ResultModal from "../ExperienceUtils/ResultModal";
 
 //Icons
 import IconBrain from "../../../assets/svg/icon-brain.svg?react";
@@ -126,7 +126,7 @@ const SelectDescriptorsResults = ({ send }) => {
             <SecondaryButton
               handleClick={handleBack}
               SVG={ArrowLeftIcon}
-              text={"Seleccionar hiperparametros"}
+              text={"Hiperparametros seleccionados"}
             />
 
             <PrimaryButton

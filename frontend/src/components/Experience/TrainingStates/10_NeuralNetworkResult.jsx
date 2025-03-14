@@ -15,7 +15,7 @@ import SecondaryButton from "../../common/SecondaryButton";
 import Loader from "../../common/Loader";
 
 //Utils
-import ResultModal from "../Utils/ResultModal";
+import ResultModal from "../ExperienceUtils/ResultModal";
 import { convertToTimestamp } from "../../../utils/dateUtils";
 
 //Icons

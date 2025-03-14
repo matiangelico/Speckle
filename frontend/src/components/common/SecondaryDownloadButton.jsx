@@ -125,6 +125,7 @@ const StyledText = styled.span`
 
 const SecondaryDownloadButton = ({
   SVG,
+  text = "Descargar",
   onDownload,
   disabled = false,
   defaultFormat = "txt",
@@ -159,7 +160,7 @@ const SecondaryDownloadButton = ({
       <ButtonGroup>
         <MainButton onClick={handleDownload} disabled={disabled} aria-label="Descargar archivo">
           <SVG />
-          <StyledText>Descargar</StyledText>
+          <StyledText>{text}</StyledText>
         </MainButton>
 
         <FormatButton

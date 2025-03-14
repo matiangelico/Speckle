@@ -7,8 +7,10 @@ import { getVideoData } from "../../../reducers/trainingReducer";
 
 //Commons
 import PrimaryButton from "../../common/PrimaryButton";
-import FileDropArea from "../Utils/FileDropArea";
 import Loader from "../../common/Loader";
+
+//Utils
+import FileDropArea from "../ExperienceUtils/FileDropArea";
 
 //Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
