@@ -8,10 +8,10 @@ const agent = new https.Agent({ rejectUnauthorized: false });
 
 const API_KEY = process.env.API_KEY
 
-const datos_descriptores = require('../DatosPrueba/todosDescyParams.json');
+const datos_descriptores = require('../DatosPrueba/nombredescYparametros.json');
 
 const form = new FormData();
-form.append('video_experiencia', fs.createReadStream('../matrizyvideo/Mon5.avi',));
+form.append('video_experiencia', fs.createReadStream('../matrizyvideo/bac1.avi',));
 form.append('datos_descriptores', JSON.stringify(datos_descriptores))
 
 axios.post('https://127.0.0.1:8000/descriptores', form, {

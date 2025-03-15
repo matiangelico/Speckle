@@ -61,16 +61,19 @@ export const downloadSvg = (base64Data, fileName = "downloaded-image.svg") => {
 };
 
 // Función para descargar un documento en formato PDF
-export const downloadPdf = (base64Data, fileName = "downloaded-document.pdf") => {
+export const downloadPdf = (
+  base64Data,
+  fileName = "downloaded-document.pdf"
+) => {
   return new Promise((resolve, reject) => {
     const base64WithPrefix = `data:image/png;base64,${base64Data}`;
-    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
     // Define los márgenes (padding) en milímetros
     const horizontalPadding = 10; // 10 mm a cada lado
-    const verticalPadding = 10;   // 10 mm arriba y abajo (opcional)
+    const verticalPadding = 10; // 10 mm arriba y abajo (opcional)
 
     // Calcula el ancho y alto disponibles descontando los márgenes
     const availableWidth = pageWidth - 2 * horizontalPadding;
@@ -84,7 +87,10 @@ export const downloadPdf = (base64Data, fileName = "downloaded-document.pdf") =>
         const imgWidth = img.naturalWidth;
         const imgHeight = img.naturalHeight;
         // Calcula el ratio para que la imagen quepa en el espacio disponible sin deformarse
-        const ratio = Math.min(availableWidth / imgWidth, availableHeight / imgHeight);
+        const ratio = Math.min(
+          availableWidth / imgWidth,
+          availableHeight / imgHeight
+        );
         const width = imgWidth * ratio;
         const height = imgHeight * ratio;
 

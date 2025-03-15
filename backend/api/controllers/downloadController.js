@@ -7,10 +7,7 @@ exports.downloadMatrix = async (req, res) => {
     const userId = req.auth.payload.sub;
 
     // Validación de parámetros
-    if (
-      !["descriptor", "clustering", "prediction"].includes(type) ||
-      !method
-    ) {
+    if (!["descriptor", "clustering", "prediction"].includes(type) || !method) {
       return res.status(400).json({ error: "Parámetros inválidos" });
     }
 
@@ -59,29 +56,32 @@ exports.downloadMatrix = async (req, res) => {
         matrix = descriptor.matriz_descriptor;
         break;
 
-        case "clustering":
-          const clustering = jsonData.find(
-            (item) => item.id_clustering === method 
-          );
-          if (!clustering) {
-            return res.status(404).json({ error: "Método de clustering no encontrado" });
-          }
-          matrix = clustering.matriz_clustering;
-          break;
+      case "clustering":
+        const clustering = jsonData.find(
+          (item) => item.id_clustering === method
+        );
+        if (!clustering) {
+          return res
+            .status(404)
+            .json({ error: "Método de clustering no encontrado" });
+        }
+        matrix = clustering.matriz_clustering;
+        break;
 
-          case "prediction":
-            if (method === "tensor") {
-              matrix = jsonData.tensor; 
-            } else {
-              matrix = jsonData.matriz;
-            }
-            break;
+      case "prediction":
+        if (method === "tensor") {
+          matrix = jsonData.tensor;
+        } else {
+          matrix = jsonData.matriz;
+        }
+        break;
     }
 
     res.setHeader("Content-Type", "application/json");
+    // res.attachment(`${type}_${method}_${Date.now()}.json`);
+    // res.send(JSON.stringify(matrix));
     res.attachment(`${type}_${method}_${Date.now()}.json`);
-    res.send(JSON.stringify(matrix));
-
+    res.json(matrix);
   } catch (error) {
     console.error("Error en descarga:", error);
 

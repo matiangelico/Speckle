@@ -63,12 +63,83 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
     (clustering) => clustering.parameters.length > 0
   );
 
+  const areParamsValid = () => {
+    for (const clustering of chekedClusteringParams) {
+      const parameters = clustering.parameters;
+
+      switch (clustering.id) {
+        case "subtractiveClustering": {
+          const [ra, rb, eUp, eDown] = parameters;
+
+          console.log("ra", ra);
+          console.log("rb", rb);
+          console.log("1.2 * ra", 1.2 * ra);
+
+          if (!(0 < parseFloat(ra.value) && parseFloat(ra.value) < 1)) {
+            return {
+              isValid: false,
+              message: "0 < ra < 1. Recomendado: 0.2 < ra < 0.8",
+            };
+          }
+
+          if (
+            !(
+              1.2 * ra.value <= parseFloat(rb.value) &&
+              parseFloat(rb.value) <= 2 * ra.value
+            )
+          ) {
+            return {
+              isValid: false,
+              message: "1.2ra <= rb <= 2ra. Recomendado: rb = 1.5ra",
+            };
+          }
+
+          if (
+            !(0.3 <= parseFloat(eDown.value) && parseFloat(eDown.value) <= 0.7)
+          ) {
+            return {
+              isValid: false,
+              message: "0.3 <= eDown <= 0.7",
+            };
+          }
+
+          if (!(0.5 <= parseFloat(eUp.value) && parseFloat(eUp.value) <= 1.0)) {
+            return {
+              isValid: false,
+              message: "0.5 <= eUp <= 1.0",
+            };
+          }
+
+          if (!(parseFloat(eUp.value) - parseFloat(eDown.value) > 0.01)) {
+            return {
+              isValid: false,
+              message: "La diferencia entre eUp y eDown debe ser mayor a 0.01",
+            };
+          }
+          break;
+        }
+        default:
+          break;
+      }
+    }
+
+    return { isValid: true, message: "Parámetros válidos" };
+  };
+
   const handleBack = () => {
     send({ type: "BACK" });
   };
 
   const handleNext = async () => {
     if (chekedClustering.length === 0) {
+      send({ type: "BACK" });
+      return;
+    }
+
+    const { isValid, message } = areParamsValid();
+
+    if (!isValid) {
+      dispatch(createNotification(`No cumple con la condicion: ${message}`));
       return;
     }
 
@@ -76,7 +147,6 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
       setIsLoading(true);
       try {
         await dispatch(initializeClusteringResult(token));
-        // Aquí podrías agregar validaciones adicionales para los hiperparámetros
         send({ type: "NEXT" });
         dispatch(
           createNotification(`Resultados generados correctamente.`, "success")
@@ -96,6 +166,8 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
   };
 
   const handleChangeValue = (clusteringName, paramName, newValue) => {
+    console.log(paramName);
+
     dispatch(
       updateClusteringParam({
         clusteringName: clusteringName,
@@ -103,6 +175,16 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
         newValue: newValue,
       })
     );
+
+    if (paramName == "Radio de clustering (ra)") {
+      dispatch(
+        updateClusteringParam({
+          clusteringName: clusteringName,
+          parameterName: "Factor de reducción (rb)",
+          newValue: (newValue * 1.5).toFixed(2),
+        })
+      );
+    }
   };
 
   const handleSetDefaultValues = () => {

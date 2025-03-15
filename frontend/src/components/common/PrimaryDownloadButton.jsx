@@ -117,6 +117,7 @@ const Option = styled.li`
 
 const PrimaryDownloadButton = ({
   SVG,
+  text = "Imprimir",
   onDownload,
   disabled = false,
   defaultFormat,
@@ -158,7 +159,7 @@ const PrimaryDownloadButton = ({
           aria-label='Descargar archivo'
         >
           <SVG />
-          <span>Descargar</span>
+          <span>{text}</span>
         </MainButton>
 
         <FormatButton

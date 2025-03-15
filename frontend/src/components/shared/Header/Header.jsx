@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 //Redux
-import { useDispatch } from "react-redux";
-import { resetRequest } from "../../../reducers/requestReducer";
+// import { useDispatch } from "react-redux";
+// import { resetRequest } from "../../../reducers/requestReducer";
 
 //Components
 import NavItem from "./NavItem";
@@ -94,7 +94,7 @@ const ProfileImage = styled.img`
 `;
 
 const Header = ({ userName, userEmail, userImage }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const location = useLocation();
   const [activeItem, setActiveItem] = useState(null);
 
@@ -108,7 +108,7 @@ const Header = ({ userName, userEmail, userImage }) => {
 
   const handleNavItemClick = (item) => {
     if (item === "Consulta") {
-      dispatch(resetRequest());
+      // dispatch(resetRequest());
     }
 
     setActiveItem(item);

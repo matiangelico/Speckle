@@ -1,17 +1,43 @@
 [
-
   {
-    "name": "Gaussian Mixture",
-    "id": "gaussianMixture",
+    "name": "Subtractive Clustering",
+    "id": "subtractiveClustering",
     "params": [
       {
-        "paramName": "Numero de componentes",
-        "paramId": "nroComponents",
+        "paramName": "Radio de clustering (ra)",
+        "paramId": "ra",
         "type": "number",
         "min": "1",
-        "max": "50",
-        "step": "1",
-        "value": "3"
+        "max": "100",
+        "step": "0.01",
+        "value": "0.3"
+      },
+      {
+        "paramName": "Factor de reducción (rb)",
+        "paramId": "rb",
+        "type": "number",
+        "min": "0",
+        "max": "100",
+        "step": "0.01",
+        "value": "0.6"
+      },
+      {
+        "paramName": "Umbral de aceptación (eUp)",
+        "paramId": "eUp",
+        "type": "number",
+        "min": "0",
+        "max": "100",
+        "step": "0.01",
+        "value": "0.6"
+      },
+      {
+        "paramName": "Umbral de rechazo (eDown)",
+        "paramId": "eDown",
+        "type": "number",
+        "min": "0",
+        "max": "100",
+        "step": "0.01",
+        "value": "0.6"
       }
     ]
   }

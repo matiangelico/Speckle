@@ -22,7 +22,7 @@ import UploadVideo from "./RequestStates/1_UploadVideo.jsx";
 import SelectDescriptors from "./RequestStates/2_SelectDescriptors.jsx";
 import EditHyperparameters from "./RequestStates/3_EditHyperparameters.jsx";
 import SelectDescriptorsResults from "./RequestStates/4_SelectDescriptorsResults.jsx";
-import NeuralNetworkResult from "./RequestStates/10_NeuralNetworkResult.jsx";
+import RequestResults from "./RequestStates/5_RequestResult.jsx";
 
 // Commons
 import EditableTitle from "../common/EditableTitle";
@@ -214,12 +214,11 @@ const TrainingContainer = () => {
         );
       case "SELECT_DESCRIPTOR_RESULTS": //4
         return <SelectDescriptorsResults send={send} />;
-      case "NEURAL_NETWORK_RESULTS": //10
+      case "REQUEST_RESULTS": //5
         return (
-          <NeuralNetworkResult
+          <RequestResults
             send={send}
-            training={request}
-            chekedDescriptors={chekedDescriptors}
+            request={request}
           />
         );
       default:

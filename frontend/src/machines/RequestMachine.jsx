@@ -33,10 +33,10 @@ const RequestMachine = createMachine({
     SELECT_DESCRIPTOR_RESULTS: {
       on: {
         BACK: "EDIT_HYPERPARAMETERS",
-        NEXT: "NEURAL_NETWORK_RESULTS",
+        NEXT: "REQUEST_RESULTS",
       },
     },
-    NEURAL_NETWORK_RESULTS: {
+    REQUEST_RESULTS: {
       on: {
         BACK: "SELECT_DESCRIPTOR_RESULTS",
       },

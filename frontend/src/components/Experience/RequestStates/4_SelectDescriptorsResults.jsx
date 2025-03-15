@@ -4,20 +4,24 @@ import { useState } from "react";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { selectDescriptorResult } from "../../../reducers/trainingReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
+import { initializeRequestResult } from "../../../reducers/requestReducer";
 
 //Commons
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
 import ResultContainer from "../../common/ResultContainer";
+import Loader from "../../common/Loader";
 
 //Utils
-import ResultModal from "../Utils/ResultModal";
+import ResultModal from "../ExperienceUtils/ResultModal";
 
 //Icons
-import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
+import IconBrain from "../../../assets/svg/icon-brain.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
+
+//Hooks
+import useToken from "../../../Hooks/useToken";
 
 const DescriptorResultsContainer = styled.div`
   display: grid;
@@ -43,8 +47,10 @@ const DescriptorResultsContainer = styled.div`
 
 const SelectDescriptorsResults = ({ send }) => {
   const dispatch = useDispatch();
+  const { token, loading: tokenLoading } = useToken();
+  const [isLoading, setIsLoading] = useState(false);
   const descriptorsResults = useSelector(
-    (state) => state.training.descriptorsResults
+    (state) => state.request.descriptorsResults
   );
   const [modalInfo, setModalInfo] = useState(null);
 
@@ -52,81 +58,95 @@ const SelectDescriptorsResults = ({ send }) => {
     send({ type: "BACK" });
   };
 
-  const handleNext = () => {
-    const isAnyDescriptorChecked = descriptorsResults.some(
-      (result) => result.checked
-    );
-
-    if (isAnyDescriptorChecked) {
-      send({ type: "NEXT" });
-    } else {
-      dispatch(
-        createNotification(
-          "Por favor, selecciona al menos un resultado para continuar."
-        )
-      );
+  const handleNext = async () => {
+    if (!tokenLoading && token) {
+      setIsLoading(true);
+      try {
+        await dispatch(initializeRequestResult(token));
+        send({ type: "NEXT" });
+        dispatch(
+          createNotification(`Resultado generado correctamente.`, "success")
+        );
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error al procesar la petición:", error);
+        dispatch(
+          createNotification(
+            `Ha ocurrido un error vuelve a intentarlo mas tarde.`,
+            "error"
+          )
+        );
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
-  const openModal = (image, title) => {
-    setModalInfo({ image, title });
+  const openModal = (image, title, id) => {
+    setModalInfo({ image, title, token, type: "descriptor", id });
   };
 
   const closeModal = () => {
     setModalInfo(null);
   };
 
-  const handleResultSelected = (resultSelected) => {
-    dispatch(selectDescriptorResult(resultSelected));
-  };
-
   return (
     <>
-      <div className='steps-container'>
-        <h2>4. Seleccionar resultados de descriptores</h2>
-        <h3>
-          Revise los resultados generados por los descriptores. Podrá ampliar
-          las imágenes para examinar detalles, descargar la matriz resultante o
-          imprimir la imagen de un descriptor específico. Es imprescindible
-          seleccionar al menos un resultado para continuar con el procesamiento
-          mediante algoritmos de clustering.
-        </h3>
-      </div>
+      {isLoading ? (
+        <div className='steps-container'>
+          <Loader />
+        </div>
+      ) : (
+        <>
+          <div className='steps-container'>
+            <h2>4. Resultados de descriptores para la consulta</h2>
+            <h3>
+              Revise los resultados generados por los descriptores utilizados en
+              el entrenamiento utilizando como parametro el video insertado como
+              parte de la consulta.
+            </h3>
+          </div>
 
-      <DescriptorResultsContainer>
-        {descriptorsResults.map((result, index) => (
-          <ResultContainer
-            key={index}
-            title={result.name}
-            checked={result.checked}
-            base64Image={result.image}
-            handleSelect={handleResultSelected}
-            handleClickInfo={() => openModal(result.image, result.name)}
+          <DescriptorResultsContainer>
+            {descriptorsResults.map((result, index) => (
+              <ResultContainer
+                key={index}
+                title={result.name}
+                checked={result.checked}
+                base64Image={result.image}
+                handleClickInfo={() =>
+                  openModal(result.image, result.name, result.id)
+                }
+                editable={false}
+              />
+            ))}
+          </DescriptorResultsContainer>
+
+          <div className='two-buttons-container'>
+            <SecondaryButton
+              handleClick={handleBack}
+              SVG={ArrowLeftIcon}
+              text={"Hiperparametros seleccionados"}
+            />
+
+            <PrimaryButton
+              handleClick={handleNext}
+              RightSVG={IconBrain}
+              text={"Realizar consulta"}
+            />
+          </div>
+
+          <ResultModal
+            image={modalInfo?.image}
+            title={modalInfo?.title}
+            isOpen={!!modalInfo}
+            onClose={closeModal}
+            token={modalInfo?.token}
+            type={modalInfo?.type}
+            methodId={modalInfo?.id}
           />
-        ))}
-      </DescriptorResultsContainer>
-
-      <div className='two-buttons-container'>
-        <SecondaryButton
-          handleClick={handleBack}
-          SVG={ArrowLeftIcon}
-          text={"Seleccionar hiperparametros"}
-        />
-
-        <PrimaryButton
-          handleClick={handleNext}
-          RightSVG={ArrowRightIcon}
-          text={"Editar parametros de clustering"}
-        />
-      </div>
-
-      <ResultModal
-        image={modalInfo?.image}
-        title={modalInfo?.title}
-        
-        isOpen={!!modalInfo}
-        onClose={closeModal}
-      />
+        </>
+      )}
     </>
   );
 };

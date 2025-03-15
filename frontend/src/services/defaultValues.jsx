@@ -1,13 +1,13 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000";
+const baseUrl = import.meta.env.VITE_API_URL;
 
-const getAll = async (token) => {  
+const getAll = async (token) => {
   try {
     const { data } = await axios.get(`${baseUrl}/defaultValues`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     });
-    
+
     return data;
   } catch (error) {
     console.error(error);

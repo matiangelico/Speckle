@@ -8,16 +8,15 @@ import Base64Image from "./Base64Image";
 import InfoIcon from "../../assets/svg/icon-info.svg?react";
 
 const StyledResultContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "isChecked",
+  shouldForwardProp: (prop) => prop !== "isChecked" && prop !== "editable",
 })`
   display: flex;
-  // max-width: 18rem;
   background-color: var(--white);
   flex-direction: column;
   align-items: flex-start;
   border-radius: 10px;
   border: 2px solid var(--dark-800);
-  cursor: pointer;
+  cursor: ${({ editable }) => (editable ? "pointer" : "default")};
   transition: border 0.3s ease, background-color 0.3s ease;
   box-shadow: ${({ isChecked }) =>
     isChecked
@@ -38,8 +37,14 @@ const StyledResultContainer = styled.div.withConfig({
 
   &:hover {
     & > div:first-child {
-      background-color: ${({ isChecked }) =>
-        isChecked ? "var(--dark-500)" : "var(--dark-200)"};
+      background-color: ${({ isChecked, editable }) =>
+        editable
+          ? isChecked
+            ? "var(--dark-500)"
+            : "var(--dark-200)"
+          : isChecked
+          ? "var(--dark-800)"
+          : "var(--white)"};
     }
   }
 
@@ -74,10 +79,8 @@ const ResultHeader = styled.div.withConfig({
   border-radius: 8px 8px 0px 0px;
   border-bottom: 2px solid var(--dark-800, #2d3648);
 
-  grid-template-columns: ${
-    ({ childCount }) =>
-      childCount === 2 ? "1fr auto" : childCount === 3 ? "auto 1fr auto" : "1fr" // un valor por defecto si no son 2 o 3
-  };
+  grid-template-columns: ${({ childCount }) =>
+    childCount === 2 ? "1fr auto" : childCount === 3 ? "auto 1fr auto" : "1fr"};
 
   span {
     font-feature-settings: "calt" off;
@@ -91,7 +94,6 @@ const ResultHeader = styled.div.withConfig({
   p {
     color: var(--dark-400);
     font-feature-settings: "calt" off;
-
     font-size: 0.8rem;
     font-style: normal;
     font-weight: 500;
@@ -117,8 +119,10 @@ const ResultContainer = ({
   subtitle,
   checked,
   base64Image,
+  editable = true,
 }) => {
   const toggleSelection = () => {
+    if (!editable) return;
     if (handleSelect) {
       handleSelect(title, !checked);
     }
@@ -128,9 +132,10 @@ const ResultContainer = ({
     <StyledResultContainer
       onClick={toggleSelection}
       isChecked={checked}
-      role='checkbox'
+      editable={editable}
+      role="checkbox"
       aria-checked={checked}
-      tabIndex='0' // Hacer el contenedor accesible con el teclado
+      tabIndex="0" // Hace el contenedor accesible con el teclado
     >
       <ResultHeader childCount={subtitle ? 3 : 2}>
         <span>{title}</span>

@@ -1,14 +1,37 @@
 [ 
   {
-    "id": "Fuzzy Granularity (FG)",
-    "params": []
-  },
-  {
-    "id": "High to Low Ratio (HLR)",
-    "params": []
-  },
-  {
-    "id": "Averaged Diferences (AD)",
-    "params": []
+    "name": "Wavelet Entropy (WE)",
+    "id": "we",
+    "params": [
+      {
+        "paramName": "Wavelet",
+        "paramId": "wavelet",
+        "value": "db4",
+        "type": "select",
+        "options": [
+          { "value": "db2", "label": "db2" },
+          { "value": "db4", "label": "db4" },
+          { "value": "db6", "label": "db6" },
+          { "value": "db7", "label": "sym2" },
+          { "value": "db8", "label": "sym4" },
+          { "value": "db9", "label": "sym6" },
+          { "value": "db10", "label": "coif1" },
+          { "value": "db10", "label": "bior2.2" },
+          { "value": "db10", "label": "bior3.3" },
+          { "value": "db10", "label": "rbio2.2" },
+          { "value": "db10", "label": "rbio3.3" },
+          { "value": "db10", "label": "haar" }
+        ]
+      },
+      {
+        "paramName": "Level",
+        "paramId": "level",
+        "type": "number",
+        "min": "1",
+        "max": "100",
+        "step": "1",
+        "value": "9"
+      }
+    ]
   }
 ]

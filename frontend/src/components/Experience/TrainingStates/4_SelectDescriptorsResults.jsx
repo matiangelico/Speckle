@@ -13,11 +13,14 @@ import SecondaryButton from "../../common/SecondaryButton";
 import ResultContainer from "../../common/ResultContainer";
 
 //Utils
-import ResultModal from "../Utils/ResultModal";
+import ResultModal from "../ExperienceUtils/ResultModal";
 
 //Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
+
+//Hooks
+import useToken from "../../../Hooks/useToken";
 
 const DescriptorResultsContainer = styled.div`
   display: grid;
@@ -43,6 +46,8 @@ const DescriptorResultsContainer = styled.div`
 
 const SelectDescriptorsResults = ({ send }) => {
   const dispatch = useDispatch();
+  const { token } = useToken();
+
   const descriptorsResults = useSelector(
     (state) => state.training.descriptorsResults
   );
@@ -68,8 +73,8 @@ const SelectDescriptorsResults = ({ send }) => {
     }
   };
 
-  const openModal = (image, title) => {
-    setModalInfo({ image, title });
+  const openModal = (image, title, id) => {    
+    setModalInfo({ image, title, token, type: "descriptor", id });
   };
 
   const closeModal = () => {
@@ -101,7 +106,7 @@ const SelectDescriptorsResults = ({ send }) => {
             checked={result.checked}
             base64Image={result.image}
             handleSelect={handleResultSelected}
-            handleClickInfo={() => openModal(result.image, result.name)}
+            handleClickInfo={() => openModal(result.image, result.name, result.id)}
           />
         ))}
       </DescriptorResultsContainer>
@@ -123,9 +128,11 @@ const SelectDescriptorsResults = ({ send }) => {
       <ResultModal
         image={modalInfo?.image}
         title={modalInfo?.title}
-        
         isOpen={!!modalInfo}
         onClose={closeModal}
+        token={modalInfo?.token}
+        type={modalInfo?.type}
+        methodId={modalInfo?.id}
       />
     </>
   );

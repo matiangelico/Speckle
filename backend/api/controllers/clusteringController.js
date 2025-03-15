@@ -53,7 +53,7 @@ exports.calculateClustering = async (req, res) => {
       return res.status(404).json({
         error: "No se encontraron matrices para los descriptores enviados",
       });
-    }    
+    }
 
     const filteredMatricesPath = path.join(
       userTempDir,
@@ -70,18 +70,18 @@ exports.calculateClustering = async (req, res) => {
       name: method.id,
       nro_clusters: method.value,
     }));
-    
+
     const formData = new FormData();
     const fileStream = fs.createReadStream(filteredMatricesPath);
-    
+
     formData.append("matrices_descriptores", fileStream, {
       filename: "matrices.json",
       contentType: "application/json",
     });
-    
+
     const clusteringParamsString = JSON.stringify(selectedClustering);
     formData.append("datos_clustering", clusteringParamsString);
-    
+
     const response = await axios.post(`${API_URL}/clustering`, formData, {
       // const response = await axios.post(
       //     `https://127.0.0.1:8000/clustering`,

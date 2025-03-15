@@ -12,14 +12,14 @@ from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks, Header, HT
 from fastapi.responses import StreamingResponse
 import descriptores as ds
 import numpy as np
+from normalizar import normalizar
 import json
 import aviamat
-import generaImagen as gi
+import generaImagenDescriptor as gid
+import generaImagenCluster as gic
 from clustering import kmeans, minibatchKmeans, sustractivo, bisectingKMeans, gaussianMixture
 import entrenamiento as train
 import os
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 app = FastAPI()
@@ -65,14 +65,14 @@ async def validaApiKey(x_api_key):
 async def descriptores(x_api_key: str = Header(None), video_experiencia: UploadFile = File(...), datos_descriptores: str = Form(...)):
     await validaApiKey(x_api_key)
     videoAvi = await video_experiencia.read()
-    print(
-        f"Archivo recibido: {video_experiencia.filename}, tamaño: {len(videoAvi)} bytes")
-    tensor = np.array(aviamat.videoamat(videoAvi)).transpose(
-        1, 2, 0).astype(np.uint8)
+    print(f"Archivo recibido: {video_experiencia.filename}, tamaño: {len(videoAvi)} bytes")
+    tensor = np.array(aviamat.videoamat(videoAvi)).transpose(1, 2, 0).astype(np.uint8)
+    print (f"Dimensiones: {tensor.shape}")
     desc_params = json.loads(datos_descriptores)
 
     respuesta_imagenes = []
     respuesta_matrices = []
+    respuesta_matrices_normalizada = []
     for datos in desc_params:
         id = datos['id']
         rutina = rutinas_descriptores.get(id)
@@ -97,14 +97,16 @@ async def descriptores(x_api_key: str = Header(None), video_experiencia: UploadF
             parametros.append(
                 next((param['value'] for param in params if param['paramId'] == 'level'), None))
 
-        matriz = rutina(tensor, *parametros).tolist()
-        imagenes = {"id_descriptor": id,
-                    "imagen_descriptor": gi.colorMap(matriz)}
-        matrices = {"id_descriptor": id, "matriz_descriptor": matriz}
+        matriz = rutina(tensor, *parametros)
+        matrices = {"id_descriptor": id, "matriz_descriptor": matriz.tolist()}
+        matriz = normalizar(matriz).tolist()
+        imagenes = {"id_descriptor": id,"imagen_descriptor": gid.colorMap(matriz)}
+        matrices_normalizadas = {"id_descriptor": id, "matriz_descriptor": matriz}
         respuesta_imagenes.append(imagenes)
         respuesta_matrices.append(matrices)
+        respuesta_matrices_normalizada.append(matrices_normalizadas)
 
-    return {"matrices_descriptores": respuesta_matrices, "imagenes_descriptores": respuesta_imagenes}
+    return {"matrices_descriptores": respuesta_matrices, "imagenes_descriptores": respuesta_imagenes,"matrices_descriptores_normalizada": respuesta_matrices_normalizada}
 
 
 @app.post("/clustering")
@@ -116,12 +118,13 @@ async def clustering(x_api_key: str = Header(None), matrices_descriptores: Uploa
     clust_params = json.loads(datos_clustering)
 
     total = len(matrices_desc)
-
+    print(len(matrices_desc[0]['matriz_descriptor']))
+    print(len(matrices_desc[0]['matriz_descriptor']))
     print(f"Nro de matrices de descriptores recibidas: {total}")
     print(f"Cantidad de clustering a procesar: {len(clust_params)}")
 
-    tensor = np.zeros((len(matrices_desc[0]['matriz_descriptor'][0]), len(
-        matrices_desc[0]['matriz_descriptor'][1]), total))
+    tensor = np.zeros((len(matrices_desc[0]['matriz_descriptor']), len(
+        matrices_desc[0]['matriz_descriptor'][0]), total))
 
     print(tensor.shape)
 
@@ -152,14 +155,18 @@ async def clustering(x_api_key: str = Header(None), matrices_descriptores: Uploa
             parametros.append(
                 next((param['value'] for param in params if param['paramId'] == 'eDown'), None))
         print(id, *parametros)
-        m, clusters = rutina(tensor, *parametros)
-        matriz = m.tolist()
-        imagenes = {"id_clustering": id, "imagen_clustering": gi.colorMap(
-            matriz), "nro_clusters": clusters}
-        matrices = {"id_clustering": id,
-                    "matriz_clustering": matriz, "nro_clusters": clusters}
-        respuesta_imagenes.append(imagenes)
-        respuesta_matrices.append(matrices)
+        
+        respuesta = rutina(tensor, *parametros)
+        
+        if respuesta is not None:
+            m, clusters = respuesta
+            matriz = m.tolist()
+            imagenes = {"id_clustering": id, "imagen_clustering": gic.colorMap(
+                m), "nro_clusters": clusters}
+            matrices = {"id_clustering": id,
+                        "matriz_clustering": matriz, "nro_clusters": clusters}
+            respuesta_imagenes.append(imagenes)
+            respuesta_matrices.append(matrices)
 
     return {"matrices_clustering": respuesta_matrices, "imagenes_clustering": respuesta_imagenes}
 
@@ -180,8 +187,8 @@ async def neuronal(background_tasks: BackgroundTasks, x_api_key: str = Header(No
     print(f"Nro de matrices de descriptores recibidas: {total}")
     print(f"Clustering seleccionado: {matriz_clus['id_clustering']}")
 
-    tensor = np.zeros((len(matrices_desc[0]['matriz_descriptor'][0]), len(
-        matrices_desc[0]['matriz_descriptor'][1]), total))
+    tensor = np.zeros((len(matrices_desc[0]['matriz_descriptor']), len(
+        matrices_desc[0]['matriz_descriptor'][0]), total))
 
     for t, datos in enumerate(matrices_desc):
         tensor[:, :, t] = np.array(datos['matriz_descriptor'])
@@ -265,7 +272,7 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
 
     print(entrada.shape)
 
-    resultado = modelo.predict(entrada).astype(np.float16)
+    resultado = modelo.predict(entrada).astype(np.float32)
 
     resultado_matriz = np.argmax(resultado, axis=-1)
 
@@ -275,13 +282,13 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
 
     respuesta_matriz = {"matriz": resultado_matriz.tolist()}
     respuesta_tensor = {"tensor": resultado.tolist()}
-    respuesta_imagen = {"imagen": gi.colorMap(resultado_matriz.tolist())}
+    respuesta_imagen = {"imagen": gic.colorMap(resultado_matriz.tolist())}
 
     return {"matriz_prediccion": respuesta_matriz, "imagen_prediccion": respuesta_imagen, "tensor_prediccion": respuesta_tensor}
 
 
 @app.get("/health")
-def health_check():
+async def health_check():
     return {"status": "ok"}
 
 
