@@ -59,7 +59,6 @@ def autoCorrelacion(tensor):
 def fuzzy(tensor):
     setearDimensiones(tensor)
     intervalos = np.percentile(tensor[:,:,0], [20,40,60,80],method='nearest')
-    print(intervalos)
 
     act = ff = np.zeros((alto,ancho,3))
     for f in range (frames):

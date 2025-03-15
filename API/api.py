@@ -118,8 +118,6 @@ async def clustering(x_api_key: str = Header(None), matrices_descriptores: Uploa
     clust_params = json.loads(datos_clustering)
 
     total = len(matrices_desc)
-    print(len(matrices_desc[0]['matriz_descriptor']))
-    print(len(matrices_desc[0]['matriz_descriptor']))
     print(f"Nro de matrices de descriptores recibidas: {total}")
     print(f"Cantidad de clustering a procesar: {len(clust_params)}")
 
