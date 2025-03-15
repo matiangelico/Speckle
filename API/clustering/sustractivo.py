@@ -1,7 +1,7 @@
 import numpy as np
 from numba import njit, prange
 
-def subtractive_clustering(data, ra, rb, Eup, Edown):
+def subtractive_clustering(data, ra, rb, Eup, Edown, max_clus=20):
 
     ra = float(ra)
     rb = float(rb)
@@ -14,7 +14,14 @@ def subtractive_clustering(data, ra, rb, Eup, Edown):
     max_potential_index = np.argmax(potential)
     cluster_centers = []
     
+    supero20 = False
+
     while max_potential_value > 0:
+
+        if len(cluster_centers) >= max_clus:  
+            supero20 = True
+            break
+
         max_potential_vector = data[max_potential_index]
         potential_ratio = max_potential_value / np.max(potential)
         
@@ -34,7 +41,7 @@ def subtractive_clustering(data, ra, rb, Eup, Edown):
         max_potential_value = np.max(potential)
         max_potential_index = np.argmax(potential)
     
-    return np.array(cluster_centers)
+    return np.array(cluster_centers), supero20
 
 @njit(parallel=True)
 def compute_potential(data, ra):
@@ -63,6 +70,6 @@ def classify_points(data, a, b, cluster_centers):
 def sub(tensor, ra,rb,Eup,Edown):
     a,b,c = tensor.shape
     data = tensor.reshape(-1, c)
-    cluster_centers = subtractive_clustering(data,ra,rb,Eup,Edown)
-    return classify_points(data, a, b, cluster_centers), len(cluster_centers)
+    cluster_centers, supero20 = subtractive_clustering(data,ra,rb,Eup,Edown)
+    return (classify_points(data, a, b, cluster_centers), len(cluster_centers)) if not supero20 else None
 

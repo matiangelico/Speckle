@@ -48,7 +48,7 @@ def cmcm(conf_matrix, Y_true, Y_pred):
     ax.set_ylabel("True label", fontsize=14)
 
     # Agregar la leyenda de Accuracy
-    plt.figtext(0.5, -0.05, f'Accuracy: {accuracy*100:.2f}% ({total_aciertos}/{total_muestras})', 
+    plt.figtext(0.5, 0.15, f'Accuracy: {accuracy*100:.2f}% ({total_aciertos}/{total_muestras})', 
                 fontsize=16, ha='center', va='center', backgroundcolor='white')
 
     # Ajustar márgenes
