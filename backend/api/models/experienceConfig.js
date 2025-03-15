@@ -10,6 +10,7 @@ const experienceSchema = new Schema(
       name: { type: String, required: true },
       width: { type: String, required: true },
       height: { type: String, required: true },
+      frames: { type: String, required: true },
     },
     selectedDescriptors: { type: [descriptorSchema], required: true },
     trainedModel: { type: Buffer, required: true },

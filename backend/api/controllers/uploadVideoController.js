@@ -76,15 +76,23 @@ exports.uploadVideo = async (req, res) => {
 
     console.log("Proceso completado");
 
-    const { imagenes_descriptores, matrices_descriptores } = response.data;
+    const { matrices_descriptores,imagenes_descriptores, matrices_descriptores_normalizada } = response.data;
     const matricesFilePath = path.join(
       userTempDir,
       "matrices_descriptores.json"
+    );
+    const matricesNormalizadaFilePath = path.join(
+      userTempDir,
+      "matrices_descriptores_normalizada.json"
     );
 
     fs.writeFileSync(
       matricesFilePath,
       JSON.stringify(matrices_descriptores, null, 2)
+    );
+    fs.writeFileSync(
+      matricesNormalizadaFilePath,
+      JSON.stringify(matrices_descriptores_normalizada, null, 2)
     );
     console.log(`Archivo de matrices creado en: ${matricesFilePath}`);
 

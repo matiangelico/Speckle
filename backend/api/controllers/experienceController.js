@@ -9,92 +9,38 @@ exports.saveExperience = async (req, res) => {
   try {
     const { name, video, selectedDescriptors } = req.body;
     const userId = req.auth.payload.sub;
-    const sanitizedUserId = userId.replace(/[|:<>"?*]/g, "_"); // Sanitiza el ID del usuario
+    const sanitizedUserId = userId.replace(/[|:<>"?*]/g, "_");
 
-    // Carpeta donde se almacenan los videos del usuario
-    const userTempDir = path.join(
-      __dirname,
-      "../../uploads/temp",
-      sanitizedUserId
-    );
+    if (!video?.name || !video?.width || !video?.height || !video?.frames) {
+      throw new Error("Parámetros del video incompletos");
+    }
 
-    // Verifica si la carpeta existe (opcional, pero recomendable)
+    const userTempDir = path.join(__dirname, "../../uploads/temp", sanitizedUserId);
     await fs.access(userTempDir).catch(() => {
       throw new Error("La carpeta del usuario no existe");
-    });
-
-    const videoPath = path.join(userTempDir, video.name);
-
-    console.log("Ruta del video:", videoPath);
-
-    const dimensions = await new Promise((resolve, reject) => {
-      execFile(
-        ffprobePath,
-        [
-          "-v",
-          "error",
-          "-select_streams",
-          "v:0",
-          "-show_entries",
-          "stream=width,height",
-          "-of",
-          "json",
-          videoPath,
-        ],
-        (err, stdout, stderr) => {
-          if (err) {
-            reject(
-              new Error(`Error ejecutando ffprobe: ${stderr || err.message}`)
-            );
-            return;
-          }
-
-          try {
-            const metadata = JSON.parse(stdout);
-            const stream = metadata.streams?.[0];
-
-            if (!stream || !stream.width || !stream.height) {
-              reject(
-                new Error("No se pudieron obtener las dimensiones del video")
-              );
-              return;
-            }
-
-            resolve({ width: stream.width, height: stream.height });
-          } catch (parseError) {
-            reject(new Error("Error al analizar la salida de ffprobe"));
-          }
-        }
-      );
     });
 
     const modelPath = path.join(userTempDir, "modelo_entrenado.keras");
     const trainedModel = await fs.readFile(modelPath);
 
     const defaultConfig = await DefaultValuesConfig.findOne();
-    if (!defaultConfig)
-      throw new Error("Configuración por defecto no encontrada");
+    if (!defaultConfig) throw new Error("Configuración por defecto no encontrada");
 
     const completeDescriptors = selectedDescriptors.map((frontendDesc) => {
       const fullDescriptor = defaultConfig.defaultValues.descriptors.find(
-        (d) => d.id === frontendDesc.id
+        d => d.id === frontendDesc.id
       );
 
-      if (!fullDescriptor)
-        throw new Error(
-          `Descriptor ${frontendDesc.id} no encontrado en configuración`
-        );
-
+      if (!fullDescriptor) throw new Error(`Descriptor ${frontendDesc.id} no encontrado`);
+      
       return {
         name: fullDescriptor.name,
         id: frontendDesc.id,
         params: frontendDesc.params.map((param) => ({
-          paramName:
-            fullDescriptor.params.find((p) => p.paramId === param.paramId)
-              ?.paramName || "unknown",
+          paramName: fullDescriptor.params.find(p => p.paramId === param.paramId)?.paramName || "unknown",
           paramId: param.paramId,
-          value: param.value,
-        })),
+          value: param.value
+        }))
       };
     });
 
@@ -103,8 +49,9 @@ exports.saveExperience = async (req, res) => {
       name,
       video: {
         name: video.name,
-        width: String(dimensions.width),
-        height: String(dimensions.height),
+        width: String(video.width),
+        height: String(video.height),
+        frames: String(video.frames)
       },
       selectedDescriptors: completeDescriptors,
       trainedModel,
@@ -112,11 +59,12 @@ exports.saveExperience = async (req, res) => {
 
     const savedExperience = await newExperience.save();
     res.status(201).json({ id: savedExperience._id });
+    
   } catch (error) {
     console.error("Error al guardar la experiencia:", error);
     res.status(500).json({
       error: "Error al guardar la experiencia",
-      details: error.message,
+      details: error.message
     });
   }
 };
