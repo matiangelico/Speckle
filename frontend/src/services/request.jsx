@@ -6,11 +6,12 @@ const getExperiencePrediction = async (token, experienceId) => {
   try {
     const response = await axios.post(
       `${baseUrl}/prediction/${experienceId}`,
-      {},
+      null,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
+
     return response.data;
   } catch (error) {
     console.error("Error en la predicción de experiencia:", error);

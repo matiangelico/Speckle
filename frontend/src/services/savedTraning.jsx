@@ -46,8 +46,6 @@ const save = async (token, newTraining) => {
       },
     });
 
-    console.log(response.data);
-
     return response.data;
   } catch (error) {
     console.error("Error al guardar experiencia:", error);

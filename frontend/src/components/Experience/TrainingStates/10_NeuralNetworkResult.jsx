@@ -76,9 +76,9 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
         date: convertToTimestamp(training.createdAt),
         video: {
           name: training.video.file.name,
-          width:  training.video?.width,
+          width: training.video?.width,
           height: training.video?.height,
-          frames:  training.video?.frames,
+          frames: training.video?.frames,
         },
         selectedDescriptors: chekedDescriptors.map((d) => {
           return {

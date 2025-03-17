@@ -234,8 +234,6 @@ const TrainingContainer = () => {
     return result && result.checked === true;
   });
 
-  console.log("trullyCheckedDescriptors", trullyCheckedDescriptors);
-
   const training = useSelector((state) => state.training);
 
   useEffect(() => {

@@ -358,7 +358,7 @@ export const resetClusteringParams = () => {
 // 7.
 export const initializeClusteringResult = (token) => {
   return async (dispatch, getState) => {
-    const filteredDescriptors = getState().training.descriptors.filter(
+    const filteredDescriptors = getState().training.descriptorsResults.filter(
       (descriptor) => descriptor.checked
     );
     const filteredClustering = getState().training.clustering.filter(

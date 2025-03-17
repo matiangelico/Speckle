@@ -21,6 +21,7 @@ const savedTrainingSlice = createSlice({
       const byDate = (b1, b2) => b2.date - b1.date;
 
       const removedExperienceId = action.payload;
+
       const experiences = state
         .filter((e) => e.id !== removedExperienceId)
         .sort(byDate);
@@ -31,22 +32,22 @@ const savedTrainingSlice = createSlice({
 });
 
 export const { setExperiences, appendExperience, deleteExperience } =
-savedTrainingSlice.actions;
+  savedTrainingSlice.actions;
 export default savedTrainingSlice.reducer;
 
 export const initializeSavedTrainings = (token) => {
   return async (dispatch) => {
     const experiences = await savedTrainingServices.getAll(token);
 
-    const transformedExperiences = experiences.map(exp => ({
-      ...exp, 
+    const transformedExperiences = experiences.map((exp) => ({
       id: exp._id, // Copia el valor de _id a id
-    }));    
+      name: exp.name,
+      date: exp.date,
+    }));
 
     dispatch(setExperiences(transformedExperiences));
   };
 };
-
 
 export const saveTraining = (token, newExperience) => {
   return async (dispatch) => {
@@ -65,11 +66,10 @@ export const saveTraining = (token, newExperience) => {
   };
 };
 
-export const removeTraining = (experienceId, token) => {
+export const removeTraining = (token, experienceId) => {
   return (dispatch) => {
     savedTrainingServices
-      .remove(experienceId, token)
+      .remove(token, experienceId)
       .then(() => dispatch(deleteExperience(experienceId)));
-    dispatch(deleteExperience(experienceId));
   };
 };
