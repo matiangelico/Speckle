@@ -193,11 +193,9 @@ export const initializeDescriptorsResult = (token) => {
 export const initializeRequestResult = (token) => {
   return async (dispatch, getState) => {
     const trainingId = await getState().request.id;
-    const videoFile = await getState().request.newVideo.file;
 
     const result = await requestServices.getExperiencePrediction(
       token,
-      videoFile,
       trainingId
     );
 

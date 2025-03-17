@@ -36,7 +36,7 @@ const getColor = (value) => {
     default:
       return "#FFFFFF";
   }
-}
+};
 
 const getBatchColor = (value) => {
   switch (true) {
@@ -47,7 +47,7 @@ const getBatchColor = (value) => {
     default:
       return "#FFFFFF";
   }
-}
+};
 
 const EditorContainer = styled.div`
   display: flex;
@@ -168,10 +168,16 @@ const ExtraNeurons = styled.div`
   margin-top: 5px;
 `;
 
-const NeuralNetworkEditor = ({ layers, updateLayer }) => {
+const NeuralNetworkEditor = ({
+  descriptores = 0,
+  layers,
+  updateLayer,
+  nroClusters = 0,
+}) => {
   return (
     <EditorContainer>
       <VisualContainer>
+        <span>{descriptores} descriptores selec.</span>
         <ImageIcon />
         <ArrowRightIcon />
         {layers.map((layer, index) => (
@@ -195,6 +201,7 @@ const NeuralNetworkEditor = ({ layers, updateLayer }) => {
           </LayerWithIcon>
         ))}
         <LayerIcon />
+        <span>{nroClusters} centros de cluster</span>
       </VisualContainer>
       <ParametersContainer>
         {layers.map((layer, index) => (

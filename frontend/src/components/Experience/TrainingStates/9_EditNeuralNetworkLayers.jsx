@@ -25,7 +25,7 @@ import NeuralNetworkEditor from "../ExperienceUtils/NeuralNetworkEditor";
 //Hooks
 import useToken from "../../../Hooks/useToken";
 
-const EditNeuralNetworkLayers = ({ send, layerTemplate, layers }) => {
+const EditNeuralNetworkLayers = ({ selectedDescriptors, send, layerTemplate, layers, nroClusters }) => {
   const dispatch = useDispatch();
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
@@ -111,8 +111,10 @@ const EditNeuralNetworkLayers = ({ send, layerTemplate, layers }) => {
           </div>
 
           <NeuralNetworkEditor
+            descriptores={selectedDescriptors}
             layers={layers}
             updateLayer={handleUpdateLayer}
+            nroClusters={nroClusters}
           />
 
           <div className='two-buttons-container'>

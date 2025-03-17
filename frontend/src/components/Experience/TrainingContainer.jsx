@@ -200,10 +200,25 @@ const TrainingContainer = () => {
   const chekedDescriptors = descriptors.filter(
     (descriptor) => descriptor.checked
   );
+  //4.
+  const descriptorsResults = useSelector(
+    (state) => state.training.descriptorsResults
+  );
+  const chekedDescriptorsResults = descriptorsResults.filter(
+    (descriptor) => descriptor.checked
+  );
+
   //5.
   const clustering = useSelector((state) => state.training.clustering);
   //6.
   const chekedClustering = clustering.filter((algorithm) => algorithm.checked);
+  //7.
+  const clusteringResults = useSelector(
+    (state) => state.training.clusteringResults
+  );
+  const [chekedClusteringResults] = clusteringResults.filter(
+    (algorithm) => algorithm.checked
+  );
   //8.
   const neuralNetworkParams = useSelector(
     (state) => state.training.neuralNetworkParams
@@ -212,7 +227,15 @@ const TrainingContainer = () => {
   const layerTemplate = useSelector((state) => state.training.layersTemplate);
   const layers = useSelector((state) => state.training.neuralNetworkLayers);
   // 10
-  // const trainingResult = useSelector((state) => state.training.trainingResult);
+  const trullyCheckedDescriptors = chekedDescriptors.filter((descriptor) => {
+    const result = chekedDescriptorsResults.find(
+      (item) => item.id === descriptor.id
+    );
+    return result && result.checked === true;
+  });
+
+  console.log("trullyCheckedDescriptors", trullyCheckedDescriptors);
+
   const training = useSelector((state) => state.training);
 
   useEffect(() => {
@@ -261,9 +284,11 @@ const TrainingContainer = () => {
       case "EDIT_NEURAL_NETWORK_LAYERS": //9
         return (
           <EditNeuralNetworkLayers
+            selectedDescriptors={chekedDescriptorsResults.length}
             send={send}
             layerTemplate={layerTemplate}
             layers={layers}
+            nroClusters={chekedClusteringResults.clusterCenters}
           />
         );
       case "NEURAL_NETWORK_RESULTS": //10
@@ -271,7 +296,7 @@ const TrainingContainer = () => {
           <NeuralNetworkResult
             send={send}
             training={training}
-            chekedDescriptors={chekedDescriptors}
+            chekedDescriptors={trullyCheckedDescriptors}
           />
         );
       default:

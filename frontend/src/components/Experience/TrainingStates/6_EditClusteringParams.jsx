@@ -71,10 +71,6 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
         case "subtractiveClustering": {
           const [ra, rb, eUp, eDown] = parameters;
 
-          console.log("ra", ra);
-          console.log("rb", rb);
-          console.log("1.2 * ra", 1.2 * ra);
-
           if (!(0 < parseFloat(ra.value) && parseFloat(ra.value) < 1)) {
             return {
               isValid: false,
@@ -166,8 +162,6 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
   };
 
   const handleChangeValue = (clusteringName, paramName, newValue) => {
-    console.log(paramName);
-
     dispatch(
       updateClusteringParam({
         clusteringName: clusteringName,
