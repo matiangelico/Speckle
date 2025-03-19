@@ -133,6 +133,7 @@ const SelectDescriptorsResults = ({ send }) => {
         token={modalInfo?.token}
         type={modalInfo?.type}
         methodId={modalInfo?.id}
+        areThreeBtn={true}
       />
     </>
   );

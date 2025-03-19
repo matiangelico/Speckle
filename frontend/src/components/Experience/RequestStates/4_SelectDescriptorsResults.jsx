@@ -112,7 +112,7 @@ const SelectDescriptorsResults = ({ send }) => {
               <ResultContainer
                 key={index}
                 title={result.name}
-                checked={result.checked}
+                checked={true}
                 base64Image={result.image}
                 handleClickInfo={() =>
                   openModal(result.image, result.name, result.id)
@@ -126,7 +126,7 @@ const SelectDescriptorsResults = ({ send }) => {
             <SecondaryButton
               handleClick={handleBack}
               SVG={ArrowLeftIcon}
-              text={"Hiperparametros seleccionados"}
+              text={"Hiperparametros utilizados"}
             />
 
             <PrimaryButton
@@ -144,6 +144,7 @@ const SelectDescriptorsResults = ({ send }) => {
             token={modalInfo?.token}
             type={modalInfo?.type}
             methodId={modalInfo?.id}
+            areThreeBtn={true}
           />
         </>
       )}

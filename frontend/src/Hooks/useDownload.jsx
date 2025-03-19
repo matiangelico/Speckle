@@ -54,15 +54,18 @@ const downloadByFormat = (format, data, title) => {
 const useDownload = ({ token, type, methodId, title }) => {
   const dispatch = useDispatch();
 
-  const handleDownload = async (format, image) => {
+  const handleDownload = async (format, image, altType = null) => {
     const isMatrix = matrixAvailableFormats.some((f) => f.value === format);
     let matrix = null;
 
     if (isMatrix) {
+      console.log("altType", altType);
+      console.log("type", type);
+
       try {
         matrix = await matrixServices.getDescriptorsMatrix(
           token,
-          type,
+          altType === null ? type : altType,
           methodId
         );
       } catch (error) {

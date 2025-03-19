@@ -15,7 +15,8 @@ const StyledSecondaryButton = styled.button`
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
-  overflow: hidden; /* Para ocultar la animación que exceda los bordes */
+  overflow: hidden;
+  text-overflow: ellipsis;
   z-index: 1;
   transition: color 0.3s ease;
 
@@ -80,7 +81,14 @@ const StyledText = styled.span`
   letter-spacing: -0.16px;
 `;
 
-const SecondaryButton = ({ SVG, text, handleClick, disabled, type, ariaLabel }) => {
+const SecondaryButton = ({
+  SVG,
+  text,
+  handleClick,
+  disabled,
+  type,
+  ariaLabel,
+}) => {
   return (
     <StyledSecondaryButton
       onClick={handleClick}

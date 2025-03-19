@@ -61,6 +61,9 @@ const ExperienceHeader = styled.div`
   gap: 1rem;
   border-bottom: 2px solid var(--dark-500);
   z-index: 2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:has(:nth-child(3):last-child) {
     grid-template-columns: auto 1fr auto;

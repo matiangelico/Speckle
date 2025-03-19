@@ -56,7 +56,7 @@ const GlobalStyles = createGlobalStyle`
     background-color: var(--white);
     
     max-width: 530px;
-    max-height: 95vh;
+    // max-height: 95vh;
     z-index: 101;
 
     display: flex;

@@ -28,6 +28,7 @@ import {
   isToday,
   isYesterday,
   isThisWeek,
+  isLastWeek,
   convertToTimestamp,
 } from "../../../utils/dateUtils";
 
@@ -119,6 +120,8 @@ const groupByDateRange = (experiences) => {
     } else if (isYesterday(experienceDate)) {
       group = "Ayer";
     } else if (isThisWeek(experienceDate)) {
+      group = "Esta Semana";
+    } else if (isLastWeek(experienceDate)) {
       group = "Semana Pasada";
     } else {
       group = convertToReadableDate(experienceDate.getTime());

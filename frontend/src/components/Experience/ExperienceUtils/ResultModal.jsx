@@ -9,9 +9,9 @@ import SecondaryDownloadButton from "../../common/SecondaryDownloadButton";
 import PrimaryDownloadButton from "../../common/PrimaryDownloadButton";
 
 //Icons
-import DownloadIcon from "../../../assets/svg/icon-download.svg?react";
+import ImageIcon from "../../../assets/svg/icon-image.svg?react";
 import CrossIcon from "../../../assets/svg/icon-x.svg?react";
-import FileTextIcon from "../../../assets/svg/icon-file-text.svg?react";
+import DownloadIcon from "../../../assets/svg/icon-download.svg?react";
 
 //Hooks
 import useDownload, {
@@ -40,9 +40,12 @@ const ModalHeader = styled.div`
 
   h2 {
     flex: 1;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--dark-800, #2d3648);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   p {
@@ -62,7 +65,7 @@ const ModalHeader = styled.div`
 `;
 
 const ModalContent = styled.div`
-  padding: 16px 24px;
+  padding-bottom: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -78,10 +81,7 @@ const ModalContent = styled.div`
 `;
 
 const ButtonSection = styled.div`
-  display: flex;
-  justify-content: space-evenly;
-  margin-top: 16px;
-  align-self: stretch;
+  margin-bottom: 8px;
 
   button {
     display: flex;
@@ -97,6 +97,23 @@ const ButtonSection = styled.div`
   }
 `;
 
+const TwoButtonSection = styled(ButtonSection)`
+  display: flex;
+  justify-content: space-evenly;
+  // margin-top: 16px;
+  align-self: stretch;
+`;
+
+const ThreeButtonSection = styled(ButtonSection)`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: 8px;
+  // margin-top: 16px;
+  align-self: stretch;
+  align-items: center;
+`;
+
 const ResultModal = ({
   image,
   title,
@@ -109,8 +126,15 @@ const ResultModal = ({
   isMatrixDownloadable = true,
   modalClassName = "Modal",
   overlayClassName = "Overlay",
+  areThreeBtn = false,
 }) => {
-  const { handleDownload } = useDownload({ token, image, type, methodId, title });
+  const { handleDownload } = useDownload({
+    token,
+    image,
+    type,
+    methodId,
+    title,
+  });
 
   if (!image) return null; // No renderizar si no hay imagen
 
@@ -131,23 +155,55 @@ const ResultModal = ({
       <ModalContent>
         <Base64Image base64Image={image} title={title} />
 
-        <ButtonSection>
-          {isMatrixDownloadable && (
-            <SecondaryDownloadButton
-              SVG={FileTextIcon}
-              onDownload={(format) => handleDownload(format, null)}
-              defaultFormat='txt'
-              formats={matrixAvailableFormats}
-            />
-          )}
+        {areThreeBtn ? (
+          <ThreeButtonSection>
+            {isMatrixDownloadable && (
+              <>
+                <SecondaryDownloadButton
+                  SVG={DownloadIcon}
+                  text={"Descargar matriz original"}
+                  onDownload={(format) => handleDownload(format, null, "descriptorNormalized")}
+                  defaultFormat='txt'
+                  formats={matrixAvailableFormats}
+                />
 
-          <PrimaryDownloadButton
-            SVG={DownloadIcon}
-            onDownload={(format) => handleDownload(format, image)}
-            defaultFormat='png'
-            formats={imageAvailableFormats}
-          />
-        </ButtonSection>
+                <SecondaryDownloadButton
+                  SVG={DownloadIcon}
+                  text={"Descargar matriz normalizada"}
+                  onDownload={(format) => handleDownload(format, null, "descriptorRaw")}
+                  defaultFormat='txt'
+                  formats={matrixAvailableFormats}
+                />
+              </>
+            )}
+
+            <PrimaryDownloadButton
+              SVG={ImageIcon}
+              text={"Descargar imagen"}
+              onDownload={(format) => handleDownload(format, image)}
+              defaultFormat='png'
+              formats={imageAvailableFormats}
+            />
+          </ThreeButtonSection>
+        ) : (
+          <TwoButtonSection>
+            {isMatrixDownloadable && (
+              <SecondaryDownloadButton
+                SVG={DownloadIcon}
+                onDownload={(format) => handleDownload(format, null)}
+                defaultFormat='txt'
+                formats={matrixAvailableFormats}
+              />
+            )}
+
+            <PrimaryDownloadButton
+              SVG={ImageIcon}
+              onDownload={(format) => handleDownload(format, image)}
+              defaultFormat='png'
+              formats={imageAvailableFormats}
+            />
+          </TwoButtonSection>
+        )}
       </ModalContent>
     </ReactModal>
   );

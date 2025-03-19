@@ -64,3 +64,17 @@ export  const isThisWeek = (date) => {
 
   return date >= startDate && date <= endDate;
 };
+
+export const isLastWeek = (date) => {
+  const today = new Date();
+  
+  // Establecemos el primer día de esta semana
+  const startOfThisWeek = today.getDate() - today.getDay();
+  
+  // La semana pasada sería 7 días antes del inicio de esta semana
+  const startOfLastWeek = new Date(today.setDate(startOfThisWeek - 7));
+  const endOfLastWeek = new Date(today.setDate(startOfThisWeek - 1));
+  
+  // Comprobamos si la fecha proporcionada está dentro de la semana pasada
+  return date >= startOfLastWeek && date <= endOfLastWeek;
+};

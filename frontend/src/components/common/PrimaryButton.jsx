@@ -17,8 +17,9 @@ const StyledPrimaryButton = styled.button`
   border: 2px solid var(--dark-800);
   cursor: pointer;
   overflow: hidden;
+  text-overflow: ellipsis;
   transition: background-color 0.3s ease, transform 0.2s ease,
-    box-shadow 0.3s ease;
+  box-shadow 0.3s ease;
 
   &:hover {
     background: var(--dark-500); /* Fondo más claro al pasar el mouse */

@@ -20,7 +20,7 @@ const StyledAsideItem = styled(Link)`
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
   position: relative;
-  text-decoration: none; /* Remueve subrayado */
+  text-decoration: none;
 
   &:focus {
     outline: 3px solid var(--primary-color);
@@ -58,6 +58,9 @@ const StyledAsideItem = styled(Link)`
     color: inherit;
     flex: 1;
     transition: color 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;
 

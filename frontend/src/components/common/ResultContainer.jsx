@@ -89,6 +89,9 @@ const ResultHeader = styled.div.withConfig({
     font-weight: 700;
     line-height: 170%;
     letter-spacing: -0.14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   p {
@@ -133,9 +136,9 @@ const ResultContainer = ({
       onClick={toggleSelection}
       isChecked={checked}
       editable={editable}
-      role="checkbox"
+      role='checkbox'
       aria-checked={checked}
-      tabIndex="0" // Hace el contenedor accesible con el teclado
+      tabIndex='0' // Hace el contenedor accesible con el teclado
     >
       <ResultHeader childCount={subtitle ? 3 : 2}>
         <span>{title}</span>
