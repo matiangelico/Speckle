@@ -177,6 +177,7 @@ const AsideItem = ({ icon: Icon, id, title, isActive, onClick, onDelete }) => {
       to={`/request`}
       data-is-active={isActive}
       onClick={handleSelectClick}
+      role='link'
     >
       {Icon && (
         <IconWrapper
@@ -184,13 +185,19 @@ const AsideItem = ({ icon: Icon, id, title, isActive, onClick, onDelete }) => {
           ref={iconRef}
           aria-haspopup='true'
           aria-expanded={showTooltip}
+          role='button'
+          aria-label='Mostrar opciones'
         >
-          <Icon />
+          <Icon aria-hidden='true' />
 
           {showTooltip && (
             <Tooltip ref={tooltipRef}>
-              <DeleteButton onClick={handleDeleteClick} aria-label='Eliminar'>
-                <TrashIcon />
+              <DeleteButton
+                onClick={handleDeleteClick}
+                aria-label='Eliminar'
+                role='button'
+              >
+                <TrashIcon aria-hidden='true' />
               </DeleteButton>
             </Tooltip>
           )}

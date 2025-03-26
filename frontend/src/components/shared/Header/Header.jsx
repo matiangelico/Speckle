@@ -1,10 +1,7 @@
 import { styled } from "styled-components";
+
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-
-//Redux
-// import { useDispatch } from "react-redux";
-// import { resetRequest } from "../../../reducers/requestReducer";
 
 //Components
 import NavItem from "./NavItem";

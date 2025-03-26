@@ -1,0 +1,15 @@
+# Allow all robots to access the entire site
+User-agent: *
+Disallow:
+
+# Block specific directory or page
+User-agent: *
+Disallow: /private/
+
+# Allow specific bot to access a page
+User-agent: Googlebot
+Allow: /public/
+
+# Block all crawlers from a specific section
+User-agent: *
+Disallow: /secret-section/

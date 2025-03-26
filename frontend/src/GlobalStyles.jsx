@@ -26,6 +26,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   html {
+    font-display: swap;
     font-family: 'Inter', sans-serif;
     min-width: 375px;
     overflow: hidden;

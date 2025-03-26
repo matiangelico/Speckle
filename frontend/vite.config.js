@@ -4,5 +4,6 @@ import svgr from 'vite-plugin-svgr';
 
 // https://vite.dev/config/
 export default defineConfig({
+  minify: 'esbuild',
   plugins: [react(), svgr()],
 });
