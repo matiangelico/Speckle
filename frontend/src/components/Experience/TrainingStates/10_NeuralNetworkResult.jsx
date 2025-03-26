@@ -134,7 +134,7 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
               neuronal. Además de poder ampliar la imagen, descargar la matriz
               resultante o imprimir la imagen, tendrá la opción de guardar el
               entrenamiento para futuras consultas. Para iniciar un nuevo ciclo
-              de entrenamiento, simplemente presione el botón “Nuevo
+              de entrenamiento, presione el botón “Nuevo
               entrenamiento”.
             </h3>
           </div>

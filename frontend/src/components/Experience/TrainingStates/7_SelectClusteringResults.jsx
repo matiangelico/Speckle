@@ -90,7 +90,7 @@ const SelectClusteringResults = ({ send }) => {
       <div className='steps-container'>
         <h2>7. Seleccionar resultados de clustering</h2>
         <h3>
-          Examine los resultados obtenidos tras aplicar los algoritmos de
+          Examine los resultados tras aplicar los algoritmos de
           clustering. Podrá ampliar las imágenes para ver detalles, descargar la
           matriz resultante o imprimir la imagen correspondiente. Seleccione al
           menos un resultado para proceder al siguiente nivel de análisis con la

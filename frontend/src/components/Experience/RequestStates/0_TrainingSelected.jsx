@@ -31,8 +31,8 @@ const TrainingSelected = ({ send, video }) => {
       <div className='steps-container'>
         <h2>0. Seleccionar entrenamiento</h2>
         <h3>
-          A continuacion se muestran los detalles del video con el cual fue
-          entrenada la red del entrenamiento.
+          A continuación se muestran los detalles del video con el cual fue
+          entrenada la red neuronal.
         </h3>
       </div>
 
