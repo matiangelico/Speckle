@@ -16,12 +16,19 @@ exports.experiencePrediction = async (req, res) => {
   try {
     const { experienceId } = req.params;
     const userId = req.auth.payload.sub;
+    const { video_dimension } = req.body;
 
     console.log("El experienceId es: ", experienceId);
 
     // Validación requerida
     if (!experienceId) {
       return res.status(400).json({ error: "Se requiere el ID de experiencia" });
+    }
+
+    if (!video_dimension || !video_dimension.width || !video_dimension.height) {
+      return res.status(400).json({
+        error: "Dimensiones de video inválidas (width y height requeridos)"
+      });
     }
 
     const sanitizedUserId = userId.replace(/\|/g, "_");
@@ -62,6 +69,7 @@ exports.experiencePrediction = async (req, res) => {
 
     // Preparar formulario
     const predictionForm = new FormData();
+    predictionForm.append("video_dimensiones", JSON.stringify(video_dimension));
     predictionForm.append("modelo_entrenado", fs.createReadStream(modelPath), {
       filename: "model.keras",
       contentType: "application/octet-stream",

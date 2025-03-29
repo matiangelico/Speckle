@@ -11,16 +11,19 @@ const API_KEY = process.env.API_KEY;
 const API_URL = process.env.API_URL;
 
 exports.calculateClustering = async (req, res) => {
-  const { selectedDescriptors, selectedClustering } = req.body;
+  const { selectedDescriptors, selectedClustering, video_dimension } = req.body;
 
-  if (!selectedDescriptors || !selectedClustering) {
+  if (!selectedDescriptors || !selectedClustering || !video_dimension) {
     return res
       .status(400)
       .json({ error: "Se requieren selectedDescriptors y selectedClustering" });
   }
 
-  console.log(JSON.stringify(selectedDescriptors, null, 2));
-  console.log(JSON.stringify(selectedClustering, null, 2));
+  if (!video_dimension.width || !video_dimension.height) {
+    return res.status(400).json({
+      error: "video_dimension debe contener width y height"
+    });
+  }
 
   if (!req.auth?.payload?.sub) {
     return res.status(401).json({ error: "Usuario no autenticado" });
@@ -78,6 +81,7 @@ exports.calculateClustering = async (req, res) => {
       filename: "matrices.json",
       contentType: "application/json",
     });
+    formData.append("video_dimensiones", JSON.stringify(video_dimension));
 
     const clusteringParamsString = JSON.stringify(selectedClustering);
     formData.append("datos_clustering", clusteringParamsString);
