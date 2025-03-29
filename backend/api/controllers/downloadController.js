@@ -53,16 +53,28 @@ exports.downloadMatrix = async (req, res) => {
         }
         matrix = descriptor.matriz_descriptor;
         break;
-
       case "clustering":
-        const clustering = jsonData.find(item => item.id_clustering === method);
-        if (!clustering) {
+        const filteredMatricesPath = path.join(userDir, "filteredMatrices.json");
+        const filteredData = JSON.parse(await fs.readFile(filteredMatricesPath, "utf8"));
+        
+        const clusteringEntry = jsonData.find(item => item.id_clustering === method);
+        if (!clusteringEntry) {
           return res.status(404).json({ 
             error: "Método de clustering no encontrado" 
           });
         }
-        matrix = clustering.matriz_clustering;
-        break;
+
+        matrix = [
+          ...filteredData.map(descriptor => ({
+            id_descriptor: descriptor.id_descriptor,
+            matriz_descriptor: descriptor.matriz_descriptor
+          })),
+          {
+            id_clustering: clusteringEntry.id_clustering,
+            matriz_clustering: clusteringEntry.matriz_clustering
+          }
+        ];
+        break; 
 
       case "prediction":
         matrix = method === "tensor" ? jsonData.tensor : jsonData.matriz;
