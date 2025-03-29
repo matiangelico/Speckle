@@ -11,7 +11,7 @@ const API_KEY = process.env.API_KEY
 const datos_descriptores = require('../DatosPrueba/nombredescYparametros.json');
 
 const form = new FormData();
-form.append('video_experiencia', fs.createReadStream('../matrizyvideo/bac1.avi',));
+form.append('video_experiencia', fs.createReadStream('../matrizyvideo/Mon5.avi',));
 form.append('datos_descriptores', JSON.stringify(datos_descriptores))
 
 axios.post('https://127.0.0.1:8000/descriptores', form, {
@@ -23,7 +23,7 @@ axios.post('https://127.0.0.1:8000/descriptores', form, {
 })
     .then(response => {
         const respuesta = response.data
-        fs.writeFileSync('../output/matrices_descriptores.json', JSON.stringify(respuesta.matrices_descriptores))
+        fs.writeFileSync('../output/matrices_descriptores.json', JSON.stringify(respuesta.matrices_descriptores_normalizada))
         fs.writeFileSync('../output/imagenes_descriptores.json', JSON.stringify(respuesta.imagenes_descriptores))
         console.log('Respuesta guardada en ../output/matrices_descriptores.json')
         console.log('Respuesta guardada en ../output/imagenes_descriptores.json')

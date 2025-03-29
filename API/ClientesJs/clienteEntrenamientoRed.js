@@ -10,19 +10,19 @@ const agent = new https.Agent({ rejectUnauthorized: false });
 
 const API_KEY = process.env.API_KEY
 
-const matrices_descriptores = require('../output/matrices_descriptores.json');
-const matriz_clustering = require('../DatosPrueba/kmeans.json');
+const matrices_descriptores = require('../DatosPrueba/matricesDescriptores.json');
+//const matriz_clustering = require('../DatosPrueba/kmeans.json');
 const parametros_entrenamiento = require('../DatosPrueba/parametrosEntrenamiento.json');
 
 fs.writeFileSync('descriptores_temp.json', JSON.stringify(matrices_descriptores));
-fs.writeFileSync('clustering_temp.json', JSON.stringify(matriz_clustering));
+//fs.writeFileSync('clustering_temp.json', JSON.stringify(matriz_clustering));
 
 const form = new FormData();
 form.append('matrices_descriptores', fs.createReadStream('descriptores_temp.json'));
-form.append('matriz_clustering', fs.createReadStream('clustering_temp.json'));
+//form.append('matriz_clustering', fs.createReadStream('clustering_temp.json'));
 form.append('parametros_entrenamiento', JSON.stringify(parametros_entrenamiento))
 
-axios.post('https://127.0.0.1:8000/entrenamientoRed', form, {
+axios.post('https://127.0.0.1:8000/entrenamientoArchivo', form, {
     headers: {
         'x-api-key': API_KEY,
         ...form.getHeaders()

@@ -5,7 +5,7 @@ import base64
 from io import BytesIO
 from PIL import Image
 
-'''# Decodificar base64 y convertir a imagen
+# Decodificar base64 y convertir a imagen
 def decode_base64_image(base64_string):
     image_data = base64.b64decode(base64_string)
     image = Image.open(BytesIO(image_data))
@@ -38,7 +38,7 @@ for i, imagen in enumerate(imagenes_json):
 plt.tight_layout()
 plt.show()
 
-'''
+
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -68,4 +68,3 @@ imagen_array = np.array(imagen)
 plt.imshow(imagen_array)
 plt.axis('off')  # Opcional: quitar los ejes
 plt.show()
-

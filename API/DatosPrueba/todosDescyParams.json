@@ -212,7 +212,7 @@
         ]
       },
       {
-        "paramName": "Level",
+        "paramName": "Level", 
         "paramId": "level",
         "type": "number",
         "min": "1",

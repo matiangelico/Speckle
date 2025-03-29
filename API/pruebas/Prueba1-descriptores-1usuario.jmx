@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="pruebaAPI1">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
+        <intProp name="ThreadGroup.num_threads">10</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">x-api-key</stringProp>
+              <stringProp name="Header.value">9cd55831b5a51124a3caffae687eb78e2ecb9ac2126167d81b1c6a6d8ec3ff87</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Descriptores">
+          <stringProp name="HTTPSampler.domain">127.0.01</stringProp>
+          <stringProp name="HTTPSampler.port">8000</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.path">/descriptores</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
+          <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
+            <collectionProp name="HTTPFileArgs.files">
+              <elementProp name="C:\Users\matia\Documents\Tesis\Speckle\API\matrizyvideo\moneda10.avi" elementType="HTTPFileArg">
+                <stringProp name="File.mimetype">video/avi</stringProp>
+                <stringProp name="File.path">C:\Users\matia\Documents\Tesis\Speckle\API\matrizyvideo\moneda10.avi</stringProp>
+                <stringProp name="File.paramname">video_experiencia</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="datos_descriptores" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">[   {     &quot;name&quot;: &quot;Medium Frequency Energy Band (MFEB)&quot;,     &quot;id&quot;: &quot;mfeb&quot;,     &quot;params&quot;:[       {         &quot;paramName&quot;: &quot;Fmin&quot;,         &quot;paramId&quot;: &quot;fmin&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;0.05&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;0.01&quot;,         &quot;unit&quot;: &quot;Hz&quot;       },       {         &quot;paramName&quot;: &quot;Fmax&quot;,         &quot;paramId&quot;: &quot;fmax&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;0.25&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;0.01&quot;,         &quot;unit&quot;: &quot;Hz&quot;       },       {         &quot;paramName&quot;: &quot;At paso&quot;,         &quot;paramId&quot;: &quot;atPaso&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;1&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;unit&quot;: &quot;dB&quot;       },       {         &quot;paramName&quot;: &quot;At rechazo&quot;,         &quot;paramId&quot;: &quot;atRechazo&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;40&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;unit&quot;: &quot;dB&quot;       }     ]   },   {     &quot;name&quot;: &quot;Low Frequency Energy Band (LFEB)&quot;,     &quot;id&quot;: &quot;lfeb&quot;,     &quot;params&quot;: [       {         &quot;paramName&quot;: &quot;Fmin&quot;,         &quot;paramId&quot;: &quot;fmin&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;0.015&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;0.01&quot;,         &quot;unit&quot;: &quot;Hz&quot;       },       {         &quot;paramName&quot;: &quot;Fmax&quot;,         &quot;paramId&quot;: &quot;fmax&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;0.05&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;0.01&quot;,         &quot;unit&quot;: &quot;Hz&quot;       },       {         &quot;paramName&quot;: &quot;At paso&quot;,         &quot;paramId&quot;: &quot;atPaso&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;1&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;unit&quot;: &quot;dB&quot;       },       {         &quot;paramName&quot;: &quot;At rechazo&quot;,         &quot;paramId&quot;: &quot;atRechazo&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;40&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;unit&quot;: &quot;dB&quot;       }     ]   },   {     &quot;name&quot;: &quot;High Frequency Energy Band (HFEB)&quot;,     &quot;id&quot;: &quot;hfeb&quot;,     &quot;params&quot;: [       {         &quot;paramName&quot;: &quot;Fmin&quot;,         &quot;paramId&quot;: &quot;fmin&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;0.25&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;0.01&quot;,         &quot;unit&quot;: &quot;Hz&quot;       },       {         &quot;paramName&quot;: &quot;Fmax&quot;,         &quot;paramId&quot;: &quot;fmax&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;0.4&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;0.01&quot;,         &quot;unit&quot;: &quot;Hz&quot;       },       {         &quot;paramName&quot;: &quot;At paso&quot;,         &quot;paramId&quot;: &quot;atPaso&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;1&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;unit&quot;: &quot;dB&quot;       },       {         &quot;paramName&quot;: &quot;At rechazo&quot;,         &quot;paramId&quot;: &quot;atRechazo&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;value&quot;: &quot;40&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;unit&quot;: &quot;dB&quot;       }     ]   },   {     &quot;name&quot;: &quot;Dynamic Range (DR)&quot;,     &quot;id&quot;: &quot;dr&quot;,     &quot;params&quot;: []   },   {     &quot;name&quot;: &quot;Subtraction Average of consecutive pixel intensities (SA)&quot;,     &quot;id&quot;: &quot;sa&quot;,     &quot;params&quot;: []   },   {     &quot;name&quot;: &quot;Averaged Diferences (AD)&quot;,     &quot;id&quot;: &quot;ad&quot;,     &quot;params&quot;: []   },   {     &quot;name&quot;: &quot;Weighted Generalized Diferences (WGD)&quot;,     &quot;id&quot;: &quot;wgd&quot;,     &quot;params&quot;: [       {         &quot;paramName&quot;: &quot;Weight&quot;,         &quot;paramId&quot;: &quot;weight&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;min&quot;: &quot;1&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;value&quot;: &quot;5&quot;       }     ]   },   {     &quot;name&quot;: &quot;Standard Deviation (SD)&quot;,     &quot;id&quot;: &quot;sd&quot;,     &quot;params&quot;: []   },   {     &quot;name&quot;: &quot;Temporal contrast (TC)&quot;,     &quot;id&quot;: &quot;tc&quot;,     &quot;params&quot;: []   },   {     &quot;name&quot;: &quot;Significant Changes Count (SCC)&quot;,     &quot;id&quot;: &quot;scc&quot;,     &quot;params&quot;: []   },   {     &quot;name&quot;: &quot;Autocorrelation (AC)&quot;,     &quot;id&quot;: &quot;ac&quot;,     &quot;params&quot;: []   },   {     &quot;name&quot;: &quot;Medium Frequency (MF)&quot;,     &quot;id&quot;: &quot;mf&quot;,     &quot;params&quot;: []   },   {     &quot;name&quot;: &quot;Shannon Wavelet Entropy (SWE)&quot;,     &quot;id&quot;: &quot;swe&quot;,     &quot;params&quot;: []   },   {     &quot;name&quot;: &quot;Cut off Frequency (CF)&quot;,     &quot;id&quot;: &quot;cf&quot;,     &quot;params&quot;: []   },   {     &quot;name&quot;: &quot;Wavelet Entropy (WE)&quot;,     &quot;id&quot;: &quot;we&quot;,     &quot;params&quot;: [       {         &quot;paramName&quot;: &quot;Wavelet&quot;,         &quot;paramId&quot;: &quot;wavelet&quot;,         &quot;value&quot;: &quot;db2&quot;,         &quot;type&quot;: &quot;select&quot;,         &quot;options&quot;: [           { &quot;value&quot;: &quot;db1&quot;, &quot;label&quot;: &quot;db1&quot; },           { &quot;value&quot;: &quot;db2&quot;, &quot;label&quot;: &quot;db2&quot; },           { &quot;value&quot;: &quot;db3&quot;, &quot;label&quot;: &quot;db3&quot; },           { &quot;value&quot;: &quot;db4&quot;, &quot;label&quot;: &quot;db4&quot; },           { &quot;value&quot;: &quot;db5&quot;, &quot;label&quot;: &quot;db5&quot; },           { &quot;value&quot;: &quot;db6&quot;, &quot;label&quot;: &quot;db6&quot; },           { &quot;value&quot;: &quot;db7&quot;, &quot;label&quot;: &quot;db7&quot; },           { &quot;value&quot;: &quot;db8&quot;, &quot;label&quot;: &quot;db8&quot; },           { &quot;value&quot;: &quot;db9&quot;, &quot;label&quot;: &quot;db9&quot; },           { &quot;value&quot;: &quot;db10&quot;, &quot;label&quot;: &quot;db10&quot; }         ]       },       {         &quot;paramName&quot;: &quot;Level&quot;,          &quot;paramId&quot;: &quot;level&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;min&quot;: &quot;1&quot;,         &quot;max&quot;: &quot;100&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;value&quot;: &quot;5&quot;       }     ]   },   {     &quot;name&quot;: &quot;High to Low Ratio (HLR)&quot;,     &quot;id&quot;: &quot;hlr&quot;,     &quot;params&quot;: []   },   {     &quot;name&quot;: &quot;Fuzzy Granularity (FG)&quot;,     &quot;id&quot;: &quot;fg&quot;,     &quot;params&quot;: []   } ]</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">datos_descriptores</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Clustering" enabled="true">
+          <stringProp name="HTTPSampler.domain">127.0.01</stringProp>
+          <stringProp name="HTTPSampler.port">8000</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.path">/clustering</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
+            <collectionProp name="HTTPFileArgs.files">
+              <elementProp name="C:\Users\matia\Documents\Tesis\Speckle\API\output\matrices_descriptores.json" elementType="HTTPFileArg">
+                <stringProp name="File.mimetype">application/json</stringProp>
+                <stringProp name="File.path">C:\Users\matia\Documents\Tesis\Speckle\API\output\matrices_descriptores.json</stringProp>
+                <stringProp name="File.paramname">matrices_descriptores</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="datos_clustering" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">[     {     &quot;name&quot;: &quot;Kmeans&quot;,     &quot;id&quot;: &quot;kmeans&quot;,     &quot;params&quot;: [       {         &quot;paramName&quot;: &quot;Cantidad de clusters&quot;,         &quot;paramId&quot;: &quot;nroClusters&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;min&quot;: &quot;1&quot;,         &quot;max&quot;: &quot;50&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;value&quot;: &quot;3&quot;       }     ]   },   {     &quot;name&quot;: &quot;MiniBatch Kmeans&quot;,     &quot;id&quot;: &quot;miniBatchKmeans&quot;,     &quot;params&quot;: [       {         &quot;paramName&quot;: &quot;Cantidad de clusters&quot;,         &quot;paramId&quot;: &quot;nroClusters&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;min&quot;: &quot;1&quot;,         &quot;max&quot;: &quot;50&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;value&quot;: &quot;3&quot;       }     ]   },   {     &quot;name&quot;: &quot;Bisecting Kmeans&quot;,     &quot;id&quot;: &quot;bisectingKmeans&quot;,     &quot;params&quot;: [       {         &quot;paramName&quot;: &quot;Cantidad de clusters&quot;,         &quot;paramId&quot;: &quot;nroClusters&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;min&quot;: &quot;1&quot;,         &quot;max&quot;: &quot;50&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;value&quot;: &quot;3&quot;       }     ]   },   {     &quot;name&quot;: &quot;Subtractive Clustering&quot;,     &quot;id&quot;: &quot;subtractiveClustering&quot;,     &quot;params&quot;: [       {         &quot;paramName&quot;: &quot;Radio de clustering (ra)&quot;,         &quot;paramId&quot;: &quot;ra&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;min&quot;: &quot;1&quot;,         &quot;max&quot;: &quot;100&quot;,         &quot;step&quot;: &quot;0.01&quot;,         &quot;value&quot;: &quot;0.9&quot;       },       {         &quot;paramName&quot;: &quot;Factor de reducción (rb)&quot;,         &quot;paramId&quot;: &quot;rb&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;max&quot;: &quot;100&quot;,         &quot;step&quot;: &quot;0.01&quot;,         &quot;value&quot;: &quot;1.35&quot;       },       {         &quot;paramName&quot;: &quot;Umbral de aceptación (eUp)&quot;,         &quot;paramId&quot;: &quot;eUp&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;max&quot;: &quot;100&quot;,         &quot;step&quot;: &quot;0.01&quot;,         &quot;value&quot;: &quot;0.6&quot;       },       {         &quot;paramName&quot;: &quot;Umbral de rechazo (eDown)&quot;,         &quot;paramId&quot;: &quot;eDown&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;min&quot;: &quot;0&quot;,         &quot;max&quot;: &quot;100&quot;,         &quot;step&quot;: &quot;0.01&quot;,         &quot;value&quot;: &quot;0.6&quot;       }     ]   },   {     &quot;name&quot;: &quot;Gaussian Mixture&quot;,     &quot;id&quot;: &quot;gaussianMixture&quot;,     &quot;params&quot;: [       {         &quot;paramName&quot;: &quot;Numero de componentes&quot;,         &quot;paramId&quot;: &quot;nroComponents&quot;,         &quot;type&quot;: &quot;number&quot;,         &quot;min&quot;: &quot;1&quot;,         &quot;max&quot;: &quot;50&quot;,         &quot;step&quot;: &quot;1&quot;,         &quot;value&quot;: &quot;3&quot;       }     ]   } ]</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">datos_clustering</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Entrenamiento">
+          <stringProp name="HTTPSampler.domain">127.0.0.1</stringProp>
+          <stringProp name="HTTPSampler.port">8000</stringProp>
+          <stringProp name="HTTPSampler.protocol">HTTP</stringProp>
+          <stringProp name="HTTPSampler.path">/entrenamientoRed</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
+          <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
+            <collectionProp name="HTTPFileArgs.files">
+              <elementProp name="C:\Users\matia\Documents\Tesis\Speckle\API\output\matrices_descriptores.json" elementType="HTTPFileArg">
+                <stringProp name="File.mimetype">application/json</stringProp>
+                <stringProp name="File.path">C:\Users\matia\Documents\Tesis\Speckle\API\output\matrices_descriptores.json</stringProp>
+                <stringProp name="File.paramname">matrices_descriptores</stringProp>
+              </elementProp>
+              <elementProp name="C:\Users\matia\Documents\Tesis\Speckle\API\DatosPrueba\kmeans.json" elementType="HTTPFileArg">
+                <stringProp name="File.mimetype">application/json</stringProp>
+                <stringProp name="File.path">C:\Users\matia\Documents\Tesis\Speckle\API\DatosPrueba\kmeans.json</stringProp>
+                <stringProp name="File.paramname">matriz_clustering</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="parametros_entrenamiento" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{     &quot;neuralNetworkLayers&quot;:         [             {                 &quot;neurons&quot; : &quot;8&quot;,                 &quot;batchNorm&quot; :&quot;1&quot;,                 &quot;dropout&quot; : &quot;0.1&quot;              },             {                 &quot;neurons&quot; : &quot;8&quot;,                 &quot;batchNorm&quot; :&quot;1&quot;,                 &quot;dropout&quot; : &quot;0.1&quot;              },             {                 &quot;neurons&quot; : &quot;8&quot;,                 &quot;batchNorm&quot; :&quot;1&quot;,                 &quot;dropout&quot; : &quot;0.1&quot;              }         ],     &quot;neuralNetworkParams&quot;:{             &quot;epocs&quot; : &quot;20&quot;,         &quot;batchsize&quot;: 64,         &quot;earlystopping&quot;:&quot;1&quot;     }     }</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">parametros_entrenamiento</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Consulta">
+          <stringProp name="HTTPSampler.domain">127.0.01</stringProp>
+          <stringProp name="HTTPSampler.port">8000</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.path">/prediccionRed</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
+          <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
+            <collectionProp name="HTTPFileArgs.files">
+              <elementProp name="C:\Users\matia\Documents\Tesis\Speckle\API\output\modelo_entrenado.keras" elementType="HTTPFileArg">
+                <stringProp name="File.mimetype">application/zip</stringProp>
+                <stringProp name="File.path">C:\Users\matia\Documents\Tesis\Speckle\API\output\modelo_entrenado.keras</stringProp>
+                <stringProp name="File.paramname">modelo_entrenado</stringProp>
+              </elementProp>
+              <elementProp name="C:\Users\matia\Documents\Tesis\Speckle\API\output\matrices_descriptores.json" elementType="HTTPFileArg">
+                <stringProp name="File.mimetype">application/json</stringProp>
+                <stringProp name="File.path">C:\Users\matia\Documents\Tesis\Speckle\API\output\matrices_descriptores.json</stringProp>
+                <stringProp name="File.paramname">matrices_descriptores</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

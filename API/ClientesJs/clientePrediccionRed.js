@@ -16,7 +16,7 @@ const form = new FormData();
 form.append('modelo_entrenado', fs.createReadStream('../output/modelo_entrenado.keras',));
 form.append('matrices_descriptores', fs.createReadStream('descriptores_temp.json'))
 
-axios.post('https://127.0.0.1:8000/prediccionRed', form, {
+axios.post('https://127.0.0.1:8000/prediccionRed2', form, {
     headers: {
         'x-api-key': API_KEY,
         ...form.getHeaders()
