@@ -9,13 +9,14 @@ const API_KEY = process.env.API_KEY
 
 const matrices_descriptores = require('../output/matrices_descriptores.json');
 const datos_clustering = require('../DatosPrueba/nomClus+nroClusters.json');
+const dimensiones = { 'width': '300', 'height':'300'}
 
 fs.writeFileSync('descriptores_temp.json', JSON.stringify(matrices_descriptores));
 
 const form = new FormData();
 form.append('matrices_descriptores', fs.createReadStream('descriptores_temp.json'));
 form.append('datos_clustering', JSON.stringify(datos_clustering))
-
+form.append('video_dimensiones', JSON.stringify(dimensiones))
 
 axios.post('https://127.0.0.1:8000/clustering', form, {
       headers: {

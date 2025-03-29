@@ -110,27 +110,31 @@ async def descriptores(x_api_key: str = Header(None), video_experiencia: UploadF
 
 
 @app.post("/clustering")
-async def clustering(x_api_key: str = Header(None), matrices_descriptores: UploadFile = File(), datos_clustering: str = Form(...)):
+async def clustering(x_api_key: str = Header(None), matrices_descriptores: UploadFile = File(), datos_clustering: str = Form(...),video_dimensiones: str = Form(...)):
     await validaApiKey(x_api_key)
     desc_json = await matrices_descriptores.read()
     matrices_desc = json.loads(desc_json)
 
     clust_params = json.loads(datos_clustering)
 
+    dimensiones = json.loads(video_dimensiones)
+    ancho = dimensiones['width']
+    alto = dimensiones['height']
+
     total = len(matrices_desc)
     print(f"Nro de matrices de descriptores recibidas: {total}")
     print(f"Cantidad de clustering a procesar: {len(clust_params)}")
 
     #tensor = np.zeros((len(matrices_desc[0]['matriz_descriptor']), len(matrices_desc[0]['matriz_descriptor'][0]), total))
-    tensor = np.zeros((300,300,total))
+    tensor = np.zeros((alto,ancho,total))
     print(tensor.shape)
-
+    
     for t, datos in enumerate(matrices_desc):
-        tensor[:, :, t] = np.array(datos['matriz_descriptor']).reshape(300,300)
+        tensor[:, :, t] = np.array(datos['matriz_descriptor']).reshape(alto,ancho)
 
     respuesta_imagenes = []
     respuesta_matrices = []
-
+    
     for datos in clust_params:
         id = datos['id']
         rutina = rutinas_clustering.get(id)
@@ -161,11 +165,11 @@ async def clustering(x_api_key: str = Header(None), matrices_descriptores: Uploa
             matrices = {"id_clustering": id,"matriz_clustering": m.reshape(-1).tolist(), "nro_clusters": clusters}
             respuesta_imagenes.append(imagenes)
             respuesta_matrices.append(matrices)
-
+        
     return {"matrices_clustering": respuesta_matrices, "imagenes_clustering": respuesta_imagenes}
 
 
-@app.post("/entrenamientoRed")
+@app.post("/entrenamiento")
 async def neuronal(background_tasks: BackgroundTasks, x_api_key: str = Header(None), matrices_descriptores: UploadFile = File(), matriz_clustering: UploadFile = File(), parametros_entrenamiento: str = Form(...)):
     await validaApiKey(x_api_key)
     desc_json = await matrices_descriptores.read()
@@ -232,7 +236,7 @@ async def neuronal(background_tasks: BackgroundTasks, x_api_key: str = Header(No
 
     return StreamingResponse(zip_buffer, media_type="application/zip", headers={"Content-Disposition": "attachment; filename=archivos.zip"})
 
-@app.post("/entrenamientoArchivo")
+@app.post("/entrenamientoRed")
 async def neuronal2(background_tasks: BackgroundTasks, x_api_key: str = Header(None), matrices_descriptores: UploadFile = File(), parametros_entrenamiento: str = Form(...)):
     await validaApiKey(x_api_key)
     desc_json = await matrices_descriptores.read()
@@ -296,15 +300,15 @@ async def eliminar_archivo(path: str):
     if os.path.exists(path):
         os.remove(path)
 
-@app.post("/prediccionRed")
+@app.post("/prediccion")
 async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(None), modelo_entrenado: UploadFile = File(...), matrices_descriptores: UploadFile = File()):
     await validaApiKey(x_api_key)
     model_path = "modelo_temporal.keras"
+    
     with open(model_path, "wb") as f:
         f.write(await modelo_entrenado.read())
 
-    modelo = keras.models.load_model(model_path, custom_objects={
-                                     'mse': metrics.MeanSquaredError()})
+    modelo = keras.models.load_model(model_path, custom_objects={'mse': metrics.MeanSquaredError()})
 
     desc_json = await matrices_descriptores.read()
     matrices_desc = json.loads(desc_json)
@@ -339,10 +343,16 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
     return {"matriz_prediccion": respuesta_matriz, "imagen_prediccion": respuesta_imagen, "tensor_prediccion": respuesta_tensor}
 
 
-@app.post("/prediccionRed2")
-async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(None), modelo_entrenado: UploadFile = File(...), matrices_descriptores: UploadFile = File()):
+@app.post("/prediccionRed")
+async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(None), modelo_entrenado: UploadFile = File(...), matrices_descriptores: UploadFile = File(),video_dimensiones: str = Form(...)):
     await validaApiKey(x_api_key)
     model_path = "modelo_temporal.keras"
+    
+    dimensiones = json.loads(video_dimensiones)
+    ancho = dimensiones['width']
+    alto = dimensiones['height']
+
+    
     with open(model_path, "wb") as f:
         f.write(await modelo_entrenado.read())
 
@@ -369,7 +379,7 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
 
     resultado_matriz = np.argmax(resultado, axis=-1)
 
-    resultado_matriz = resultado_matriz.reshape(512,512)
+    resultado_matriz = resultado_matriz.reshape(alto,ancho)
 
     background_tasks.add_task(eliminar_archivo, model_path)
 
