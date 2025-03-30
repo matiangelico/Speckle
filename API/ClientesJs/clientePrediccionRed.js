@@ -9,14 +9,16 @@ const agent = new https.Agent({ rejectUnauthorized: false });
 const API_KEY = process.env.API_KEY
 
 const matrices_descriptores = require('../output/matrices_descriptores.json');
+const dimensiones = { 'width': '300', 'height':'300'}
 
 fs.writeFileSync('descriptores_temp.json', JSON.stringify(matrices_descriptores));
 
 const form = new FormData();
 form.append('modelo_entrenado', fs.createReadStream('../output/modelo_entrenado.keras',));
 form.append('matrices_descriptores', fs.createReadStream('descriptores_temp.json'))
+form.append('video_dimensiones', JSON.stringify(dimensiones))
 
-axios.post('https://127.0.0.1:8000/prediccionRed2', form, {
+axios.post('https://127.0.0.1:8000/prediccionRed', form, {
     headers: {
         'x-api-key': API_KEY,
         ...form.getHeaders()

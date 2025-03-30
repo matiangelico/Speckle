@@ -118,8 +118,8 @@ async def clustering(x_api_key: str = Header(None), matrices_descriptores: Uploa
     clust_params = json.loads(datos_clustering)
 
     dimensiones = json.loads(video_dimensiones)
-    ancho = dimensiones['width']
-    alto = dimensiones['height']
+    ancho = int(dimensiones['width'])
+    alto = int(dimensiones['height'])
 
     total = len(matrices_desc)
     print(f"Nro de matrices de descriptores recibidas: {total}")
@@ -349,9 +349,8 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
     model_path = "modelo_temporal.keras"
     
     dimensiones = json.loads(video_dimensiones)
-    ancho = dimensiones['width']
-    alto = dimensiones['height']
-
+    ancho = int(dimensiones['width'])
+    alto = int(dimensiones['height'])
     
     with open(model_path, "wb") as f:
         f.write(await modelo_entrenado.read())
@@ -364,14 +363,13 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
     total = len(matrices_desc)
     print(f"Nro de matrices de descriptores recibidas: {total}")
 
-    alto = len(matrices_desc[0]['matriz_descriptor'])
+    #alto = len(matrices_desc[0]['matriz_descriptor'])
     #ancho = len(matrices_desc[0]['matriz_descriptor'][1])
 
-    matriz = np.zeros((alto, total))
+    matriz = np.zeros((len(matrices_desc[0]['matriz_descriptor']), total))
 
     for t, datos in enumerate(matrices_desc):
         matriz[:, t] = np.array(datos['matriz_descriptor'])
-
 
     print(matriz.shape)
 
