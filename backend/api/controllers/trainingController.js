@@ -24,15 +24,16 @@ const entrenamientoRed = async (req, res, next) => {
   const userTempDir = path.join(uploadsBasePath, sanitizedUserId);
 
   try {
-    const { neuralNetworkLayers, neuralNetworkParams, selectedClustering } =
-      req.body;
+    const { neuralNetworkLayers, neuralNetworkParams, selectedClustering } = req.body;
 
     const [matricesDescData, matricesClusData] = await Promise.all([
       fs.promises.readFile(path.join(userTempDir, "filteredMatrices.json")),
       fs.promises.readFile(path.join(userTempDir, "matricesClustering.json")),
     ]);
 
+    const matricesDesc = JSON.parse(matricesDescData.toString());
     const matricesClus = JSON.parse(matricesClusData.toString());
+    
     const selectedClusteringObj = matricesClus.find(
       (c) => c.id_clustering === selectedClustering
     );
@@ -41,24 +42,19 @@ const entrenamientoRed = async (req, res, next) => {
       return res.status(404).json({ error: "Clustering no encontrado" });
     }
 
+    // Unificar matrices descriptores y clustering en una sola lista
+    const combinedMatrices = [...matricesDesc, selectedClusteringObj];
+
     await fs.promises.writeFile(
       path.join(userTempDir, "filteredClustering.json"),
       JSON.stringify(selectedClusteringObj)
     );
 
     const trainingForm = new FormData();
-    trainingForm.append("matrices_descriptores", matricesDescData, {
-      filename: "descriptores.json",
+    trainingForm.append("matrices_descriptores", JSON.stringify(combinedMatrices), {
+      filename: "matrices_descriptores.json",
       contentType: "application/json",
     });
-    trainingForm.append(
-      "matriz_clustering",
-      JSON.stringify(selectedClusteringObj),
-      {
-        filename: "clustering.json",
-        contentType: "application/json",
-      }
-    );
 
     const parametrosEntrenamiento = JSON.stringify({
       neuralNetworkLayers,
@@ -85,24 +81,15 @@ const entrenamientoRed = async (req, res, next) => {
     const directory = await unzipper.Open.buffer(data);
 
     const modelFilePath = path.join(userTempDir, "modelo_entrenado.keras");
-    const modelFile = directory.files.find(
-      (file) => file.path === "modelo_entrenado.keras"
-    );
+    const modelFile = directory.files.find((file) => file.path === "modelo_entrenado.keras");
     await modelFile.stream().pipe(fs.createWriteStream(modelFilePath));
 
-    const confusionMatrixFile = directory.files.find(
-      (file) => file.path === "matriz_confusion.json"
-    );
+    const confusionMatrixFile = directory.files.find((file) => file.path === "matriz_confusion.json");
     const confusionMatrixData = await confusionMatrixFile.buffer();
-    const confusionMatrixJson = JSON.parse(
-      confusionMatrixData.toString("utf-8")
-    );
+    const confusionMatrixJson = JSON.parse(confusionMatrixData.toString("utf-8"));
 
     const confusionMatrixPath = path.join(userTempDir, "matriz_confusion.json");
-    await fs.promises.writeFile(
-      confusionMatrixPath,
-      JSON.stringify(confusionMatrixJson)
-    );
+    await fs.promises.writeFile(confusionMatrixPath, JSON.stringify(confusionMatrixJson));
 
     res.json({
       image_prediction: confusionMatrixJson.matriz_confusion,
@@ -114,6 +101,7 @@ const entrenamientoRed = async (req, res, next) => {
     res.status(500).json({ error: `Error en entrenamiento: ${error.message}` });
   }
 };
+
 
 const entrenamientoRedJSON = async (req, res) => {
   if (!req.auth?.payload?.sub) {
