@@ -364,10 +364,14 @@ export const initializeClusteringResult = (token) => {
     const filteredClustering = getState().training.clustering.filter(
       (cluster) => cluster.checked
     );
-
     const selectedDescriptors = filteredDescriptors.map(
       (descriptor) => descriptor.id
     );
+    const video = getState().training.video;
+    const videoDimension = {
+      width: video.width,
+      height: video.height,
+    };
 
     const selectedClustering = filteredClustering.map((cluster) => ({
       id: cluster.id,
@@ -380,7 +384,8 @@ export const initializeClusteringResult = (token) => {
     const results = await trainingService.getClusteringResults(
       token,
       selectedDescriptors,
-      selectedClustering
+      selectedClustering,
+      videoDimension
     );
 
     const clusteringResults = results.imagenes_clustering.map((result) => {

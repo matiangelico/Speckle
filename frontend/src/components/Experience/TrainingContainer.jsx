@@ -258,6 +258,7 @@ const TrainingContainer = () => {
             send={send}
             chekedDescriptors={chekedDescriptors}
             videoFrames={video?.frames}
+            descriptorsResults={descriptorsResults}
           />
         );
       case "SELECT_DESCRIPTOR_RESULTS": //4
@@ -271,6 +272,7 @@ const TrainingContainer = () => {
           <EditClusteringParams
             send={send}
             chekedClustering={chekedClustering}
+            clusteringResults={clusteringResults}
           />
         );
       case "SELECT_CLUSTERING_RESULTS": //7

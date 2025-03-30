@@ -13,7 +13,7 @@ const getVideoDimensions = async (token, videoFile) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    
+
     return response.data;
   } catch (error) {
     console.error("Error al subir archivo:", error);
@@ -56,11 +56,13 @@ const getDescriptorsResults = async (token, videoFile, selectedDescriptors) => {
 const getClusteringResults = async (
   token,
   selectedDescriptors,
-  selectedClustering
+  selectedClustering,
+  videoDimension
 ) => {
   const payload = {
     selectedDescriptors,
     selectedClustering,
+    videoDimension,
   };
 
   try {

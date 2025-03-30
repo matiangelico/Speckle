@@ -9,6 +9,7 @@ import {
   resetHyperparameters,
   updateHyperparameter,
 } from "../../../reducers/trainingReducer";
+import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
 
 //Commons
@@ -57,7 +58,12 @@ const StyledRow = styled.div`
   }
 `;
 
-const EditHyperparameters = ({ send, chekedDescriptors, videoFrames }) => {
+const EditHyperparameters = ({
+  send,
+  chekedDescriptors,
+  videoFrames,
+  descriptorsResults,
+}) => {
   const dispatch = useDispatch();
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
@@ -95,7 +101,6 @@ const EditHyperparameters = ({ send, chekedDescriptors, videoFrames }) => {
           break;
         }
         case "we": {
-          // Se ignora el primer parámetro y se toma el segundo
           const [, level] = hyperparameters;
           if (
             !(
@@ -148,12 +153,30 @@ const EditHyperparameters = ({ send, chekedDescriptors, videoFrames }) => {
           break;
         }
         default:
-          // Si no hay validaciones específicas, asumimos que es válido.
           break;
       }
     }
 
     return { isValid: true, message: "Parámetros válidos" };
+  };
+
+  const calculateDescriptorResults = async () => {
+    setIsLoading(true);
+    try {
+      await dispatch(initializeDescriptorsResult(token));
+      send({ type: "NEXT" });
+      dispatch(
+        createNotification(`Resultados generados correctamente.`, "success")
+      );
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error al procesar la petición:", error);
+      dispatch(
+        createNotification(`Ha ocurrido un error vuelve a intentarlo.`, "error")
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleBack = () => {
@@ -174,24 +197,22 @@ const EditHyperparameters = ({ send, chekedDescriptors, videoFrames }) => {
     }
 
     if (!tokenLoading && token) {
-      setIsLoading(true);
-      try {
-        await dispatch(initializeDescriptorsResult(token));
-        send({ type: "NEXT" });
-        dispatch(
-          createNotification(`Resultados generados correctamente.`, "success")
+      if (descriptorsResults.length !== 0) {
+        const answer = await dispatch(
+          showConfirmationAlertAsync({
+            title: `Generar resultados descriptores`,
+            message:
+              "Ya has calculado los resultados en este trenamiento. ¿Deseas volver a generar nuevos resultados? Se sobreescribiran los resultados anteriormente calculados.",
+          })
         );
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error al procesar la petición:", error);
-        dispatch(
-          createNotification(
-            `Ha ocurrido un error vuelve a intentarlo.`,
-            "error"
-          )
-        );
-      } finally {
-        setIsLoading(false);
+
+        if (answer) {
+          calculateDescriptorResults();
+        } else {
+          send({ type: "NEXT" });
+        }
+      } else {
+        calculateDescriptorResults();
       }
     }
   };

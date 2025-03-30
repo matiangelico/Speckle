@@ -5,6 +5,7 @@ import { useState } from "react";
 //Redux
 import { useDispatch } from "react-redux";
 import { initializeDescriptorsResult } from "../../../reducers/requestReducer";
+import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
 
 //Commons
@@ -52,7 +53,7 @@ const StyledRow = styled.div`
   }
 `;
 
-const EditHyperparameters = ({ send, chekedDescriptors }) => {
+const EditHyperparameters = ({ send, chekedDescriptors, descriptorsResults }) => {
   const dispatch = useDispatch();
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
@@ -65,13 +66,7 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
     send({ type: "BACK" });
   };
 
-  const handleNext = async () => {
-    if (chekedDescriptors.length === 0) {
-      send({ type: "BACK" });
-      return;
-    }
-
-    if (!tokenLoading && token) {
+  const calculateDescriptorResults = async () => {
       setIsLoading(true);
       try {
         await dispatch(initializeDescriptorsResult(token));
@@ -83,13 +78,36 @@ const EditHyperparameters = ({ send, chekedDescriptors }) => {
       } catch (error) {
         console.error("Error al procesar la petición:", error);
         dispatch(
-          createNotification(
-            `Ha ocurrido un error vuelve a intentarlo.`,
-            "error"
-          )
+          createNotification(`Ha ocurrido un error vuelve a intentarlo.`, "error")
         );
       } finally {
         setIsLoading(false);
+      }
+    };
+
+  const handleNext = async () => {
+    if (chekedDescriptors.length === 0) {
+      send({ type: "BACK" });
+      return;
+    }
+
+    if (!tokenLoading && token) {
+      if (descriptorsResults.length !== 0) {
+        const answer = await dispatch(
+          showConfirmationAlertAsync({
+            title: `Generar resultados descriptores`,
+            message:
+              "Ya has calculado los resultados en este trenamiento. ¿Deseas volver a generar nuevos resultados? Se sobreescribiran los resultados anteriormente calculados.",
+          })
+        );
+
+        if (answer) {
+          calculateDescriptorResults();
+        } else {
+          send({ type: "NEXT" });
+        }
+      } else {
+        calculateDescriptorResults();
       }
     }
   };

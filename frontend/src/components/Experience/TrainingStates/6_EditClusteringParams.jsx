@@ -9,6 +9,7 @@ import {
   initializeClusteringResult,
   resetClusteringParams,
 } from "../../../reducers/trainingReducer";
+import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
 
 //Components
@@ -54,7 +55,7 @@ const StyledRow = styled.div`
   }
 `;
 
-const EditClusteringParams = ({ send, chekedClustering }) => {
+const EditClusteringParams = ({ send, chekedClustering, clusteringResults }) => {
   const dispatch = useDispatch();
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
@@ -126,21 +127,8 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
     send({ type: "BACK" });
   };
 
-  const handleNext = async () => {
-    if (chekedClustering.length === 0) {
-      send({ type: "BACK" });
-      return;
-    }
-
-    const { isValid, message } = areParamsValid();
-
-    if (!isValid) {
-      dispatch(createNotification(`No cumple con la condicion: ${message}`));
-      return;
-    }
-
-    if (!tokenLoading && token) {
-      setIsLoading(true);
+  const calculateClusteringResults = async () => {
+    setIsLoading(true);
       try {
         await dispatch(initializeClusteringResult(token));
         send({ type: "NEXT" });
@@ -157,6 +145,39 @@ const EditClusteringParams = ({ send, chekedClustering }) => {
         );
       } finally {
         setIsLoading(false);
+      }
+  }
+
+  const handleNext = async () => {
+    if (chekedClustering.length === 0) {
+      send({ type: "BACK" });
+      return;
+    }
+
+    const { isValid, message } = areParamsValid();
+
+    if (!isValid) {
+      dispatch(createNotification(`No cumple con la condicion: ${message}`));
+      return;
+    }
+
+    if (!tokenLoading && token) {
+      if (clusteringResults.length !== 0) {
+        const answer = await dispatch(
+          showConfirmationAlertAsync({
+            title: `Generar resultados de clustering`,
+            message:
+              "Ya has calculado los resultados en este trenamiento. ¿Deseas volver a generar nuevos resultados? Se sobreescribiran los resultados anteriormente calculados.",
+          })
+        );
+
+        if (answer) {
+          calculateClusteringResults();
+        } else {
+          send({ type: "NEXT" });
+        }
+      } else {
+        calculateClusteringResults();
       }
     }
   };

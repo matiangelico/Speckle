@@ -190,6 +190,10 @@ const TrainingContainer = () => {
   const chekedDescriptors = descriptors.filter(
     (descriptor) => descriptor.checked
   );
+  //4.
+    const descriptorsResults = useSelector(
+      (state) => state.request.descriptorsResults
+    );
   // 10
   const request = useSelector((state) => state.request);
 
@@ -213,6 +217,7 @@ const TrainingContainer = () => {
           <EditHyperparameters
             send={send}
             chekedDescriptors={chekedDescriptors}
+            descriptorsResults={descriptorsResults}
           />
         );
       case "SELECT_DESCRIPTOR_RESULTS": //4

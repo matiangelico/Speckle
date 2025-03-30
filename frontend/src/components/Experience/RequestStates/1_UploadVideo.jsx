@@ -55,12 +55,6 @@ const UploadVideo = ({ send, video }) => {
         dispatch(createNotification(`Video subido correctamente.`, "success"));
       } catch (error) {
         dispatch(createNotification(`${error.message}`, "error"));
-        // dispatch(
-        //   createNotification(
-        //     `Ha ocurrido un error intentando procesar el video, vuelve a intentarlo mas tarde.`,
-        //     "error"
-        //   )
-        // );
       } finally {
         setIsLoading(false);
       }
