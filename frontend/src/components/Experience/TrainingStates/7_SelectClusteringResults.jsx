@@ -4,7 +4,11 @@ import { useState } from "react";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { selectClusteringResult } from "../../../reducers/trainingReducer";
+import {
+  selectClusteringResult,
+  setClusteringJSON,
+} from "../../../reducers/trainingReducer";
+import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
 
 //Commons
@@ -14,6 +18,7 @@ import ResultContainer from "../../common/ResultContainer";
 
 //Utils
 import ResultModal from "../ExperienceUtils/ResultModal";
+import FileDropArea from "../ExperienceUtils/FileDropArea";
 
 //Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
@@ -44,10 +49,35 @@ const ClusteringResultsContainer = styled.div`
   }
 `;
 
-const SelectClusteringResults = ({ send }) => {
+const Separator = styled.div`
+  margin: 0.5rem 0;
+  position: relative;
+  text-align: center;
+  color: var(--dark-800, #080a11);
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 2px;
+    background: var(--dark-400, #080a11);
+  }
+
+  &::before {
+    left: 0;
+  }
+
+  &::after {
+    right: 0;
+  }
+`;
+
+const SelectClusteringResults = ({ send, clusteringJSON }) => {
   const dispatch = useDispatch();
-    const { token } = useToken();
-  
+  const { token } = useToken();
+
   const clusteringResults = useSelector(
     (state) => state.training.clusteringResults
   );
@@ -57,24 +87,54 @@ const SelectClusteringResults = ({ send }) => {
     send({ type: "BACK" });
   };
 
-  const handleNext = () => {
-    const isAnyClusteringChecked = clusteringResults.some(
-      (result) => result.checked
-    );
-
-    if (isAnyClusteringChecked) {
-      send({ type: "NEXT" });
-    } else {
-      dispatch(
-        createNotification(
-          "Por favor, selecciona al menos un resultado para continuar."
-        )
+  const handleNext = async () => {
+    if (clusteringJSON !== null) {
+      const answer = await dispatch(
+        showConfirmationAlertAsync({
+          title: `Matriz de caracteristicas detectado`,
+          message:
+            "Se ha detectado una matriz de caracteristicas. ¿Deseas entrenar la red con el archivo cargado? Esto hará que el clustering seleccionado no tenga efecto en el entrenamiento.",
+        })
       );
+
+      if (answer) {
+        send({ type: "NEXT" });
+      } else {
+        dispatch(setClusteringJSON(null));
+
+        const isAnyClusteringChecked = clusteringResults.some(
+          (result) => result.checked
+        );
+
+        if (isAnyClusteringChecked) {
+          send({ type: "NEXT" });
+        } else {
+          dispatch(
+            createNotification(
+              "Por favor, selecciona al menos un resultado para continuar."
+            )
+          );
+        }
+      }
     }
   };
 
+  const handleFileDrop = async (file) => {
+    const validTypes = ["application/json"];
+
+    if (!validTypes.includes(file.type)) {
+      dispatch(
+        createNotification("Solo se permite cargar archivos .json", "error")
+      );
+      return;
+    }
+
+    dispatch(setClusteringJSON(file));
+    dispatch(createNotification(`Archivo subido correctamente.`, "success"));
+  };
+
   const openModal = (image, title, subtitle, id) => {
-    setModalInfo({ image, title, subtitle, token, type: "clustering", id  });
+    setModalInfo({ image, title, subtitle, token, type: "clustering", id });
   };
 
   const closeModal = () => {
@@ -90,11 +150,11 @@ const SelectClusteringResults = ({ send }) => {
       <div className='steps-container'>
         <h2>7. Seleccionar resultados de clustering</h2>
         <h3>
-          Examine los resultados tras aplicar los algoritmos de
-          clustering. Podrá ampliar las imágenes para ver detalles, descargar la
-          matriz resultante o imprimir la imagen correspondiente. Seleccione al
-          menos un resultado para proceder al siguiente nivel de análisis con la
-          red neuronal.
+          Examine los resultados tras aplicar los algoritmos de clustering.
+          Podrá ampliar las imágenes para ver detalles, descargar la matriz
+          resultante o imprimir la imagen correspondiente. Seleccione al menos
+          un resultado para proceder al siguiente nivel de análisis con la red
+          neuronal.
         </h3>
       </div>
 
@@ -107,10 +167,30 @@ const SelectClusteringResults = ({ send }) => {
             checked={result.checked}
             base64Image={result.image}
             handleSelect={handleResultSelected}
-            handleClickInfo={() => openModal(result.image, result.name, result.clusterCenters, result.id)}
+            handleClickInfo={() =>
+              openModal(
+                result.image,
+                result.name,
+                result.clusterCenters,
+                result.id
+              )
+            }
           />
         ))}
       </ClusteringResultsContainer>
+
+      <Separator>o</Separator>
+
+      <FileDropArea
+        message={
+          "Arrastra y suelta un archivo que contenga una matriz de caracteristicas (.json) o haz clic para seleccionar uno desde tu computadora."
+        }
+        onFileDrop={handleFileDrop}
+        fileName={clusteringJSON?.name || ""}
+        fileSize={
+          clusteringJSON ? (clusteringJSON.size / (1024 * 1024)).toFixed(2) : ""
+        }
+      />
 
       <div className='two-buttons-container'>
         <SecondaryButton
@@ -135,6 +215,7 @@ const SelectClusteringResults = ({ send }) => {
         token={modalInfo?.token}
         type={modalInfo?.type}
         methodId={modalInfo?.id}
+        clustering={true}
       />
     </>
   );

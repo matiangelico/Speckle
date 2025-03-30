@@ -17,6 +17,7 @@ export const initialTrainingState = {
   descriptors: [],
   descriptorsResults: [],
   clustering: [],
+  clusteringJSON: null,
   clusteringResults: [],
   neuralNetworkParams: [],
   neuralNetworkLayers: [],
@@ -209,6 +210,9 @@ const trainingSlice = createSlice({
         return cluster;
       });
     },
+    setClusteringJSON(state, action) {
+      return { ...state, clusteringJSON: action.payload };
+    },
     setClusteringResults(state, action) {
       state.clusteringResults = action.payload;
     },
@@ -272,6 +276,7 @@ export const {
   deselectAllClustering,
   setClusteringParams,
   updateClusteringParam,
+  setClusteringJSON,
   setClusteringResults,
   selectClusteringResult,
   setNeuralNetworkParams,
@@ -436,6 +441,46 @@ export const initializeTrainingResult = (token) => {
       neuralNetworkParams,
       selectedClustering
     );
+
+    const trainingResult = {
+      image: result.image_prediction,
+    };
+
+    dispatch(setTrainingResult(trainingResult));
+  };
+};
+
+export const changeToJSONTrainingResult = (token) => {
+  return async (dispatch, getState) => {
+    const clusteringJSON = getState().training.clusteringJSON;
+    const neuralNetworkLayers = getState().training.neuralNetworkLayers;
+    const neuralNetworkParamsArray = getState().training.neuralNetworkParams;
+
+    const neuralNetworkParams = neuralNetworkParamsArray.reduce(
+      (acc, param) => {
+        const key = param.id.toLowerCase();
+        acc[key] =
+          param.type === "number"
+            ? Number(param.value)
+            : param.value.toString();
+        return acc;
+      },
+      {}
+    );
+
+    const neuralNetwork = {
+      neuralNetworkLayers,
+      neuralNetworkParams,
+    };
+
+    const result = await trainingService.getTrainingJSONResults(
+      token,
+      neuralNetwork,
+      clusteringJSON
+    );
+
+    console.log("result", result);
+    
 
     const trainingResult = {
       image: result.image_prediction,

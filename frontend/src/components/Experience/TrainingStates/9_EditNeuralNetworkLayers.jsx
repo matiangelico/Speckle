@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import {
   setNeuralNetworkLayers,
   initializeTrainingResult,
+  changeToJSONTrainingResult,
 } from "../../../reducers/trainingReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
 
@@ -25,7 +26,14 @@ import NeuralNetworkEditor from "../ExperienceUtils/NeuralNetworkEditor";
 //Hooks
 import useToken from "../../../Hooks/useToken";
 
-const EditNeuralNetworkLayers = ({ selectedDescriptors, send, layerTemplate, layers, nroClusters }) => {
+const EditNeuralNetworkLayers = ({
+  selectedDescriptors,
+  send,
+  layerTemplate,
+  layers,
+  nroClusters,
+  clusteringJSON,
+}) => {
   const dispatch = useDispatch();
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
@@ -37,9 +45,14 @@ const EditNeuralNetworkLayers = ({ selectedDescriptors, send, layerTemplate, lay
   const handleNext = async () => {
     if (!tokenLoading && token) {
       setIsLoading(true);
+      console.log(clusteringJSON);
+      
       try {
-        await dispatch(initializeTrainingResult(token));
-        // Aquí podrías agregar validaciones adicionales para los hiperparámetros
+        if (clusteringJSON !== null) {
+          await dispatch(changeToJSONTrainingResult(token));
+        } else {
+          await dispatch(initializeTrainingResult(token));
+        }
         send({ type: "NEXT" });
         dispatch(createNotification(`Red entrenada correctamente.`, "success"));
       } catch (error) {

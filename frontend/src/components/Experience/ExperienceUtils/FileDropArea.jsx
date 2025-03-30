@@ -76,6 +76,7 @@ const StyledFileData = styled.p`
 `;
 
 const FileDropArea = ({
+  message,
   onFileDrop,
   fileName,
   fileSize,
@@ -100,7 +101,10 @@ const FileDropArea = ({
       }
     },
     multiple: false,
-    accept: { "video/avi": [".avi"] },
+    accept: {
+      "video/avi": [".avi"],
+      "application/json": [".json"],
+    },
   });
 
   return (
@@ -122,10 +126,7 @@ const FileDropArea = ({
             )}
           </>
         ) : (
-          <p>
-            Arrastra y suelta un archivo de video (.avi) o haz clic para
-            seleccionar uno desde tu computadora.
-          </p>
+          <p>{message}</p>
         )}
       </DropzoneContent>
     </StyledFileDropArea>

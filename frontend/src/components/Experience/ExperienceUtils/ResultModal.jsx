@@ -5,6 +5,7 @@ import ReactModal from "react-modal";
 //Components
 import SvgButton from "../../common/SvgButton";
 import Base64Image from "../../common/Base64Image";
+import SecondaryButton from '../../common/SecondaryButton';
 import SecondaryDownloadButton from "../../common/SecondaryDownloadButton";
 import PrimaryDownloadButton from "../../common/PrimaryDownloadButton";
 
@@ -127,6 +128,7 @@ const ResultModal = ({
   modalClassName = "Modal",
   overlayClassName = "Overlay",
   areThreeBtn = false,
+  clustering = false,
 }) => {
   const { handleDownload } = useDownload({
     token,
@@ -155,14 +157,33 @@ const ResultModal = ({
       <ModalContent>
         <Base64Image base64Image={image} title={title} />
 
-        {areThreeBtn ? (
+        {clustering ? (
+          <TwoButtonSection>
+            {isMatrixDownloadable && (
+              <SecondaryButton
+                handleClick={() => handleDownload("json", null)}
+                SVG={DownloadIcon}
+                text={"Descargar matriz de caracteristicas"}
+              />
+            )}
+
+            <PrimaryDownloadButton
+              SVG={ImageIcon}
+              onDownload={(format) => handleDownload(format, image)}
+              defaultFormat='png'
+              formats={imageAvailableFormats}
+            />
+          </TwoButtonSection>
+        ) : areThreeBtn ? (
           <ThreeButtonSection>
             {isMatrixDownloadable && (
               <>
                 <SecondaryDownloadButton
                   SVG={DownloadIcon}
                   text={"Descargar matriz original"}
-                  onDownload={(format) => handleDownload(format, null, "descriptorNormalized")}
+                  onDownload={(format) =>
+                    handleDownload(format, null, "descriptorNormalized")
+                  }
                   defaultFormat='txt'
                   formats={matrixAvailableFormats}
                 />
@@ -170,7 +191,9 @@ const ResultModal = ({
                 <SecondaryDownloadButton
                   SVG={DownloadIcon}
                   text={"Descargar matriz normalizada"}
-                  onDownload={(format) => handleDownload(format, null, "descriptorRaw")}
+                  onDownload={(format) =>
+                    handleDownload(format, null, "descriptorRaw")
+                  }
                   defaultFormat='txt'
                   formats={matrixAvailableFormats}
                 />

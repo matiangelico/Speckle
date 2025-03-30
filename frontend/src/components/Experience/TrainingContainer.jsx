@@ -216,6 +216,9 @@ const TrainingContainer = () => {
   //6.
   const chekedClustering = clustering.filter((algorithm) => algorithm.checked);
   //7.
+  const clusteringJSON = useSelector(
+    (state) => state.training.clusteringJSON
+  );
   const clusteringResults = useSelector(
     (state) => state.training.clusteringResults
   );
@@ -276,7 +279,7 @@ const TrainingContainer = () => {
           />
         );
       case "SELECT_CLUSTERING_RESULTS": //7
-        return <SelectClusteringResults send={send} />;
+        return <SelectClusteringResults send={send} clusteringJSON={clusteringJSON}/>;
       case "EDIT_NEURAL_NETWORK_PARAMS": //8
         return (
           <EditNeuralNetworkParams
@@ -292,6 +295,7 @@ const TrainingContainer = () => {
             layerTemplate={layerTemplate}
             layers={layers}
             nroClusters={chekedClusteringResults.clusterCenters}
+            clusteringJSON={clusteringJSON}
           />
         );
       case "NEURAL_NETWORK_RESULTS": //10
