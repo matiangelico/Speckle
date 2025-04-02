@@ -7,7 +7,7 @@ from keras.layers import BatchNormalization, Dropout, Dense
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from keras.callbacks import EarlyStopping
-from generaImagenMatrizConf import cmcm
+from generadorImagenes import generaImagenMatrizConf
 
 def entrenamientoRed (data, nro_clusters, params, epochs, batch_size, estopping):
 
@@ -46,7 +46,7 @@ def entrenamientoRed (data, nro_clusters, params, epochs, batch_size, estopping)
 
     conf_matrix = confusion_matrix(Y_true_classes, Y_pred_classes)
 
-    imagen_conf_matrix = cmcm(conf_matrix, Y_true_classes, Y_pred_classes)
+    imagen_conf_matrix = generaImagenMatrizConf(conf_matrix, Y_true_classes, Y_pred_classes)
 
     #print("Matriz de Confusión:")
     #print(conf_matrix)
