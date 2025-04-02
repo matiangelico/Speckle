@@ -255,7 +255,7 @@ async def neuronal2(background_tasks: BackgroundTasks, x_api_key: str = Header(N
         matriz_caracteristicas[:, t] = np.array(datos['matriz_descriptor'])
     matriz_caracteristicas[:,total-1] = np.array(matrices[total-1]['matriz_clustering'])
 
-    nro_clusters = matrices[total-1]['nro_clusters']
+    nro_clusters = (np.unique(np.array(matrices[total-1]['matriz_clustering']))).size
     print ('nro de cluster ',nro_clusters)
     print(matriz_caracteristicas.shape)
 
