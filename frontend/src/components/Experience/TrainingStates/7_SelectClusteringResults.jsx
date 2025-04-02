@@ -116,6 +116,20 @@ const SelectClusteringResults = ({ send, clusteringJSON }) => {
           );
         }
       }
+    } else {
+      const isAnyClusteringChecked = clusteringResults.some(
+        (result) => result.checked
+      );
+
+      if (isAnyClusteringChecked) {
+        send({ type: "NEXT" });
+      } else {
+        dispatch(
+          createNotification(
+            "Por favor, selecciona al menos un resultado para continuar."
+          )
+        );
+      }
     }
   };
 
