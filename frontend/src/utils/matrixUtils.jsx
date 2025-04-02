@@ -1,8 +1,12 @@
-// Función para descargar la matriz en formato .txt
 export const downloadTxt = (matrix, fileName = "matrix.txt") => {
   return new Promise((resolve, reject) => {
     try {
-      const textContent = matrix.map((row) => row.join(" ")).join("\n");
+      // Si el primer elemento es un arreglo, se asume matriz 2D, sino es 1D.
+      const is2D = Array.isArray(matrix[0]);
+      const textContent = is2D
+        ? matrix.map(row => row.join(" ")).join("\n")
+        : matrix.map(item => item.toString()).join("\n");
+
       const dataUrl = `data:text/plain;charset=utf-8,${encodeURIComponent(
         textContent
       )}`;
@@ -20,11 +24,14 @@ export const downloadTxt = (matrix, fileName = "matrix.txt") => {
   });
 };
 
-// Función para descargar la matriz en formato .csv
 export const downloadCsv = (matrix, fileName = "matrix.csv") => {
   return new Promise((resolve, reject) => {
     try {
-      const csvContent = matrix.map((row) => row.join(",")).join("\n");
+      const is2D = Array.isArray(matrix[0]);
+      const csvContent = is2D
+        ? matrix.map(row => row.join(",")).join("\n")
+        : matrix.map(item => item.toString()).join(",");
+
       const dataUrl = `data:text/csv;charset=utf-8,${encodeURIComponent(
         csvContent
       )}`;
@@ -41,6 +48,7 @@ export const downloadCsv = (matrix, fileName = "matrix.csv") => {
     }
   });
 };
+
 
 // Función para descargar la matriz en formato .json
 export const downloadJson = (matrix, fileName = "matrix.json") => {

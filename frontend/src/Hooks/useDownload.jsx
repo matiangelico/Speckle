@@ -59,9 +59,6 @@ const useDownload = ({ token, type, methodId, title }) => {
     let matrix = null;
 
     if (isMatrix) {
-      console.log("altType", altType);
-      console.log("type", type);
-
       try {
         matrix = await matrixServices.getDescriptorsMatrix(
           token,

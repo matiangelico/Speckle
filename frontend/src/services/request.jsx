@@ -2,16 +2,17 @@ import axios from "axios";
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
-const getExperiencePrediction = async (token, experienceId) => {
+const getExperiencePrediction = async (token, experienceId, videoDimension) => {
+  const payload = { videoDimension };
+
   try {
     const response = await axios.post(
       `${baseUrl}/prediction/${experienceId}`,
-      null,
+      payload,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-
     return response.data;
   } catch (error) {
     console.error("Error en la predicción de experiencia:", error);
@@ -21,6 +22,7 @@ const getExperiencePrediction = async (token, experienceId) => {
     );
   }
 };
+
 
 const experienceServices = {
   getExperiencePrediction,

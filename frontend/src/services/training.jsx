@@ -13,7 +13,7 @@ const getVideoDimensions = async (token, videoFile) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    
+
     return response.data;
   } catch (error) {
     console.error("Error al subir archivo:", error);
@@ -56,11 +56,13 @@ const getDescriptorsResults = async (token, videoFile, selectedDescriptors) => {
 const getClusteringResults = async (
   token,
   selectedDescriptors,
-  selectedClustering
+  selectedClustering,
+  videoDimension
 ) => {
   const payload = {
     selectedDescriptors,
     selectedClustering,
+    videoDimension,
   };
 
   try {
@@ -104,7 +106,28 @@ const getTrainingResults = async (
     console.error("Error en training:", error);
     throw new Error(
       error.response?.data?.error ||
-        "Error al procesar la solicitud de training."
+        "Error al procesar la solicitud de entrenamiento."
+    );
+  }
+};
+
+const getTrainingJSONResults = async (token, neuralNetwork, file) => {
+  const formData = new FormData();
+  formData.append("characteristicMatrix", file);
+  formData.append("neuralNetwork", JSON.stringify(neuralNetwork));
+
+  try {
+    const response = await axios.post(`${baseUrl}/training/json`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error en training JSON:", error);
+    throw new Error(
+      error.response?.data?.error ||
+        "Error al procesar la solicitud de entrenamiento JSON."
     );
   }
 };
@@ -114,6 +137,7 @@ const trainingExperienceServices = {
   getDescriptorsResults,
   getClusteringResults,
   getTrainingResults,
+  getTrainingJSONResults,
 };
 
 export default trainingExperienceServices;

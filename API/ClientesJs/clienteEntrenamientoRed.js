@@ -10,7 +10,7 @@ const agent = new https.Agent({ rejectUnauthorized: false });
 
 const API_KEY = process.env.API_KEY
 
-const matrices_descriptores = require('../DatosPrueba/matricesDescriptores.json');
+const matrices_descriptores = require('../DatosPrueba/matricesDescriptores+Clus.json');
 //const matriz_clustering = require('../DatosPrueba/kmeans.json');
 const parametros_entrenamiento = require('../DatosPrueba/parametrosEntrenamiento.json');
 
@@ -22,7 +22,7 @@ form.append('matrices_descriptores', fs.createReadStream('descriptores_temp.json
 //form.append('matriz_clustering', fs.createReadStream('clustering_temp.json'));
 form.append('parametros_entrenamiento', JSON.stringify(parametros_entrenamiento))
 
-axios.post('https://127.0.0.1:8000/entrenamientoArchivo', form, {
+axios.post('https://127.0.0.1:8000/entrenamientoRed', form, {
     headers: {
         'x-api-key': API_KEY,
         ...form.getHeaders()

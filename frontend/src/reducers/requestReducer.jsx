@@ -113,19 +113,11 @@ export default requestSlice.reducer;
 
 // 1.
 export const getVideoData = (token, videoFile) => {
-  return async (dispatch, getState) => {
-    const oldVideo = getState().request.oldVideo;
-
+  return async (dispatch) => {
     const result = await trainingService.getVideoDimensions(token, videoFile);
 
     if (!result?.width || !result?.height) {
       throw new Error("Error: Dimensiones del video no disponibles");
-    }
-
-    if (result.width != oldVideo.width || result.height != oldVideo.height) {
-      throw new Error(
-        `Las dimensiones de ambos videos deben coincidir. Las dimensiones del video insertado son ${result.width}x${result.height}.`
-      );
     }
 
     const videoWithDimensions = {
@@ -193,10 +185,17 @@ export const initializeDescriptorsResult = (token) => {
 export const initializeRequestResult = (token) => {
   return async (dispatch, getState) => {
     const trainingId = await getState().request.id;
+    const video = getState().request.newVideo;
+
+    const videoDimension = {
+      width: video.width,
+      height: video.height,
+    };
 
     const result = await requestServices.getExperiencePrediction(
       token,
-      trainingId
+      trainingId,
+      videoDimension
     );
 
     const trainingResult = {
