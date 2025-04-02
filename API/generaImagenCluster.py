@@ -19,8 +19,8 @@ def colorMap(matriz):
 
     # Crear una lista de puntos vacíos con la leyenda a la derecha
     legend_handles = [plt.Line2D([0], [0], marker='o', color='w', markersize=10, 
-                                 markerfacecolor=color, label=f"{int(valor)}") 
-                      for i, (color, valor) in enumerate(zip(colores, valores_unicos), start=1)]
+                                 markerfacecolor=color, label=f"{int(valor+1)}") 
+                      for i, (color, valor) in enumerate(zip(colores, valores_unicos+1), start=1)]
 
     # Agregar la leyenda fuera de la imagen, a la derecha
     ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1.05, 0.5), 
