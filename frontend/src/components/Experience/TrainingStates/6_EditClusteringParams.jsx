@@ -55,7 +55,11 @@ const StyledRow = styled.div`
   }
 `;
 
-const EditClusteringParams = ({ send, chekedClustering, clusteringResults }) => {
+const EditClusteringParams = ({
+  send,
+  chekedClustering,
+  clusteringResults,
+}) => {
   const dispatch = useDispatch();
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
@@ -129,24 +133,35 @@ const EditClusteringParams = ({ send, chekedClustering, clusteringResults }) => 
 
   const calculateClusteringResults = async () => {
     setIsLoading(true);
-      try {
-        await dispatch(initializeClusteringResult(token));
-        send({ type: "NEXT" });
-        dispatch(
-          createNotification(`Resultados generados correctamente.`, "success")
-        );
-      } catch (error) {
-        console.error("Error al procesar la petición:", error);
-        dispatch(
-          createNotification(
-            `Ha ocurrido un error vuelve a intentarlo.`,
-            "error"
-          )
-        );
-      } finally {
-        setIsLoading(false);
-      }
-  }
+    try {
+      await dispatch(initializeClusteringResult(token));
+
+      // console.log(clusteringResults.length);
+      // console.log(chekedClustering.length);
+
+      // if (clusteringResults.length < chekedClustering.length) {
+      //   await dispatch(
+      //     showConfirmationAlertAsync({
+      //       title: `Subtractive Clustering`,
+      //       message:
+      //         "ADVERTENCIA: El algortimo ha superado el limite (20) permitido de centros de clusters.",
+      //     })
+      //   );
+      // }
+
+      send({ type: "NEXT" });
+      dispatch(
+        createNotification(`Resultados generados correctamente.`, "success")
+      );
+    } catch (error) {
+      console.error("Error al procesar la petición:", error);
+      dispatch(
+        createNotification(`Ha ocurrido un error vuelve a intentarlo.`, "error")
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleNext = async () => {
     if (chekedClustering.length === 0) {
@@ -210,7 +225,7 @@ const EditClusteringParams = ({ send, chekedClustering, clusteringResults }) => 
     <>
       {isLoading ? (
         <div className='steps-container'>
-          <Loader stepTitle='Generando resultados de clustering'/>
+          <Loader stepTitle='Generando resultados de clustering' />
         </div>
       ) : (
         <>

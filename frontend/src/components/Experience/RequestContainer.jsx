@@ -191,11 +191,11 @@ const TrainingContainer = () => {
     (descriptor) => descriptor.checked
   );
   //4.
-    const descriptorsResults = useSelector(
-      (state) => state.request.descriptorsResults
-    );
+  const descriptorsResults = useSelector(
+    (state) => state.request.descriptorsResults
+  );
   // 10
-  const request = useSelector((state) => state.request);
+  const requestResult = useSelector((state) => state.request.requestResult);
 
   useEffect(() => {
     if (!tokenLoading && token && requestStatus === "idle") {
@@ -221,9 +221,22 @@ const TrainingContainer = () => {
           />
         );
       case "SELECT_DESCRIPTOR_RESULTS": //4
-        return <SelectDescriptorsResults send={send} />;
+        return (
+          <SelectDescriptorsResults
+            send={send}
+            descriptorsResults={descriptorsResults}
+            video={{ width: newVideo.width, height: newVideo.height }}
+          />
+        );
       case "REQUEST_RESULTS": //5
-        return <RequestResults send={send} request={request} />;
+        return (
+          <RequestResults
+            send={send}
+            result={requestResult}
+            trainingName={trainingName}
+            video={{ width: newVideo.width, height: newVideo.height }}
+          />
+        );
       default:
         return null;
     }

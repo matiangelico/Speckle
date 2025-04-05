@@ -82,10 +82,6 @@ const SelectClusteringResults = ({
 }) => {
   const dispatch = useDispatch();
   const { token } = useToken();
-
-  // const clusteringResults = useSelector(
-  //   (state) => state.training.clusteringResults
-  // );
   const [modalInfo, setModalInfo] = useState(null);
 
   const handleBack = () => {

@@ -305,7 +305,7 @@ const TrainingContainer = () => {
             send={send}
             layerTemplate={layerTemplate}
             layers={layers}
-            nroClusters={chekedClusteringResults.clusterCenters}
+            nroClusters={chekedClusteringResults?.clusterCenters}
             clusteringJSON={clusteringJSON}
           />
         );

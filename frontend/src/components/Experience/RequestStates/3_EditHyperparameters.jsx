@@ -53,7 +53,11 @@ const StyledRow = styled.div`
   }
 `;
 
-const EditHyperparameters = ({ send, chekedDescriptors, descriptorsResults }) => {
+const EditHyperparameters = ({
+  send,
+  chekedDescriptors,
+  descriptorsResults,
+}) => {
   const dispatch = useDispatch();
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
@@ -67,23 +71,23 @@ const EditHyperparameters = ({ send, chekedDescriptors, descriptorsResults }) =>
   };
 
   const calculateDescriptorResults = async () => {
-      setIsLoading(true);
-      try {
-        await dispatch(initializeDescriptorsResult(token));
-        send({ type: "NEXT" });
-        dispatch(
-          createNotification(`Resultados generados correctamente.`, "success")
-        );
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error al procesar la petición:", error);
-        dispatch(
-          createNotification(`Ha ocurrido un error vuelve a intentarlo.`, "error")
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    setIsLoading(true);
+    try {
+      await dispatch(initializeDescriptorsResult(token));
+      send({ type: "NEXT" });
+      dispatch(
+        createNotification(`Resultados generados correctamente.`, "success")
+      );
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error al procesar la petición:", error);
+      dispatch(
+        createNotification(`Ha ocurrido un error vuelve a intentarlo.`, "error")
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleNext = async () => {
     if (chekedDescriptors.length === 0) {
@@ -116,7 +120,7 @@ const EditHyperparameters = ({ send, chekedDescriptors, descriptorsResults }) =>
     <>
       {isLoading ? (
         <div className='steps-container'>
-          <Loader />
+          <Loader stepTitle='Generando resultados de descriptores'/>
         </div>
       ) : (
         <>

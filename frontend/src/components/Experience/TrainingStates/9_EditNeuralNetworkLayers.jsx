@@ -27,11 +27,11 @@ import NeuralNetworkEditor from "../ExperienceUtils/NeuralNetworkEditor";
 import useToken from "../../../Hooks/useToken";
 
 const EditNeuralNetworkLayers = ({
-  selectedDescriptors,
+  selectedDescriptors = 0,
   send,
   layerTemplate,
   layers,
-  nroClusters,
+  nroClusters = 0,
   clusteringJSON,
 }) => {
   const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const EditNeuralNetworkLayers = ({
     if (!tokenLoading && token) {
       setIsLoading(true);
       console.log(clusteringJSON);
-      
+
       try {
         if (clusteringJSON !== null) {
           await dispatch(changeToJSONTrainingResult(token));
@@ -110,7 +110,7 @@ const EditNeuralNetworkLayers = ({
     <>
       {isLoading ? (
         <div className='steps-container'>
-          <Loader stepTitle='Entrenando red neuronal'/>
+          <Loader stepTitle='Entrenando red neuronal' />
         </div>
       ) : (
         <>
@@ -123,12 +123,19 @@ const EditNeuralNetworkLayers = ({
             </h3>
           </div>
 
-          <NeuralNetworkEditor
-            descriptores={selectedDescriptors}
-            layers={layers}
-            updateLayer={handleUpdateLayer}
-            nroClusters={nroClusters}
-          />
+          {clusteringJSON ? (
+            <NeuralNetworkEditor
+              layers={layers}
+              updateLayer={handleUpdateLayer}
+            />
+          ) : (
+            <NeuralNetworkEditor
+              descriptores={selectedDescriptors}
+              layers={layers}
+              updateLayer={handleUpdateLayer}
+              nroClusters={nroClusters}
+            />
+          )}
 
           <div className='two-buttons-container'>
             <SecondaryButton

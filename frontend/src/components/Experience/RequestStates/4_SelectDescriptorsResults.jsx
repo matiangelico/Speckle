@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 
 //Redux
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { createNotification } from "../../../reducers/notificationReducer";
 import { initializeRequestResult } from "../../../reducers/requestReducer";
 
@@ -45,13 +45,10 @@ const DescriptorResultsContainer = styled.div`
   }
 `;
 
-const SelectDescriptorsResults = ({ send }) => {
+const SelectDescriptorsResults = ({ send, descriptorsResults, video }) => {
   const dispatch = useDispatch();
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
-  const descriptorsResults = useSelector(
-    (state) => state.request.descriptorsResults
-  );
   const [modalInfo, setModalInfo] = useState(null);
 
   const handleBack = () => {
@@ -94,7 +91,7 @@ const SelectDescriptorsResults = ({ send }) => {
     <>
       {isLoading ? (
         <div className='steps-container'>
-          <Loader />
+          <Loader stepTitle='Realizando predicción del modelo' />
         </div>
       ) : (
         <>
@@ -144,6 +141,8 @@ const SelectDescriptorsResults = ({ send }) => {
             token={modalInfo?.token}
             type={modalInfo?.type}
             methodId={modalInfo?.id}
+            videoWidth={video?.width}
+            videoHeight={video?.height}
             areThreeBtn={true}
           />
         </>

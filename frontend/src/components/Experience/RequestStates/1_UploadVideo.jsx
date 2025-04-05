@@ -65,7 +65,7 @@ const UploadVideo = ({ send, video }) => {
     <>
       {isLoading ? (
         <div className='steps-container'>
-          <Loader />
+          <Loader stepTitle='Analizando video' />
         </div>
       ) : (
         <>
@@ -78,6 +78,9 @@ const UploadVideo = ({ send, video }) => {
           </div>
 
           <FileDropArea
+            message={
+              "Arrastra y suelta un archivo de video (.avi) o haz clic para seleccionar uno desde tu computadora."
+            }
             onFileDrop={handleFileDrop}
             fileName={video?.file.name || ""}
             fileSize={video ? (video.file.size / (1024 * 1024)).toFixed(2) : ""}

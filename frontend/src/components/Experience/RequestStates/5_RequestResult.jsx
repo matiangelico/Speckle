@@ -37,7 +37,7 @@ const CenterContainer = styled.div`
   }
 `;
 
-const RequestResults = ({ send, request }) => {
+const RequestResults = ({ send, result, trainingName, video }) => {
   const [modalInfo, setModalInfo] = useState(null);
   const { token } = useToken();
   const { handleDownload } = useDownload({
@@ -46,9 +46,6 @@ const RequestResults = ({ send, request }) => {
     methodId: "tensor",
     title: "Descargar tensor",
   });
-
-  const result = request.requestResult;
-  const trainingName = request.name;
 
   const handleBack = () => {
     send({ type: "BACK" });
@@ -69,9 +66,7 @@ const RequestResults = ({ send, request }) => {
           <h2>5. Visualizar resultado de la consulta</h2>
           <h3>
             Visualice los resultados finales de la consulta. Podra ampliar la
-            imagen, descargar la matriz resultante o imprimir la imagen. Para
-            iniciar una nueva consulta, simplemente presione el botón “Reiniciar
-            consulta”.
+            imagen, descargar la matriz resultante o imprimir la imagen.
           </h3>
         </div>
 
@@ -111,6 +106,8 @@ const RequestResults = ({ send, request }) => {
           token={modalInfo?.token}
           type={modalInfo?.type}
           methodId={modalInfo?.id}
+          videoWidth={video?.width}
+          videoHeight={video?.height}
         />
       </>
     </>
