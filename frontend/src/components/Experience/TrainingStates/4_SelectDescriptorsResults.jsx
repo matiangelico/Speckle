@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 
 //Redux
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { selectDescriptorResult } from "../../../reducers/trainingReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
 
@@ -44,13 +44,9 @@ const DescriptorResultsContainer = styled.div`
   }
 `;
 
-const SelectDescriptorsResults = ({ send }) => {
+const SelectDescriptorsResults = ({ send, descriptorsResults, video }) => {
   const dispatch = useDispatch();
   const { token } = useToken();
-
-  const descriptorsResults = useSelector(
-    (state) => state.training.descriptorsResults
-  );
   const [modalInfo, setModalInfo] = useState(null);
 
   const handleBack = () => {
@@ -73,7 +69,7 @@ const SelectDescriptorsResults = ({ send }) => {
     }
   };
 
-  const openModal = (image, title, id) => {    
+  const openModal = (image, title, id) => {
     setModalInfo({ image, title, token, type: "descriptor", id });
   };
 
@@ -106,7 +102,9 @@ const SelectDescriptorsResults = ({ send }) => {
             checked={result.checked}
             base64Image={result.image}
             handleSelect={handleResultSelected}
-            handleClickInfo={() => openModal(result.image, result.name, result.id)}
+            handleClickInfo={() =>
+              openModal(result.image, result.name, result.id)
+            }
           />
         ))}
       </DescriptorResultsContainer>
@@ -133,6 +131,8 @@ const SelectDescriptorsResults = ({ send }) => {
         token={modalInfo?.token}
         type={modalInfo?.type}
         methodId={modalInfo?.id}
+        videoWidth={video?.width}
+        videoHeight={video?.height}
         areThreeBtn={true}
       />
     </>

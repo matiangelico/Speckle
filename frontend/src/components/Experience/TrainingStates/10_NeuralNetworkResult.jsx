@@ -42,14 +42,18 @@ const CenterContainer = styled.div`
   }
 `;
 
-const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
+const NeuralNetworkResult = ({
+  send,
+  result,
+  trainingName,
+  createdAt,
+  chekedDescriptors,
+  video,
+}) => {
   const dispatch = useDispatch();
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
   const [modalInfo, setModalInfo] = useState(null);
-
-  const result = training.trainingResult;
-  const trainingName = training.name;
 
   const handleBack = () => {
     send({ type: "BACK" });
@@ -73,12 +77,12 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
 
       const newTraining = {
         name: trainingName,
-        date: convertToTimestamp(training.createdAt),
+        date: convertToTimestamp(createdAt),
         video: {
-          name: training.video.file.name,
-          width: training.video?.width,
-          height: training.video?.height,
-          frames: training.video?.frames,
+          name: video.file.name,
+          width: video?.width,
+          height: video?.height,
+          frames: video?.frames,
         },
         selectedDescriptors: chekedDescriptors.map((d) => {
           return {
@@ -121,21 +125,20 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
     <>
       {isLoading ? (
         <div className='steps-container'>
-          <Loader />
+          <Loader stepTitle='Guardando entrenamiento'/>
         </div>
       ) : (
         <>
           <div className='steps-container'>
             <h2>
-              9. Visualizar resultado del entrenamiento de la red neuronal
+              10. Visualizar resultado del entrenamiento de la red neuronal
             </h2>
             <h3>
               Visualice los resultados finales del entrenamiento de la red
               neuronal. Además de poder ampliar la imagen, descargar la matriz
               resultante o imprimir la imagen, tendrá la opción de guardar el
               entrenamiento para futuras consultas. Para iniciar un nuevo ciclo
-              de entrenamiento, presione el botón “Nuevo
-              entrenamiento”.
+              de entrenamiento, presione el botón “Nuevo entrenamiento”.
             </h3>
           </div>
 
@@ -172,6 +175,8 @@ const NeuralNetworkResult = ({ send, training, chekedDescriptors }) => {
             isOpen={!!modalInfo}
             onClose={closeModal}
             isMatrixDownloadable={false}
+            videoWidth={video?.width}
+            videoHeight={video?.height}
           />
         </>
       )}

@@ -48,7 +48,6 @@ const EditNeuralNetworkParams = ({ send, networkParams }) => {
   };
 
   const handleNext = () => {
-    // ALGUNA VALIDACION DE HIPERPARAMETROS?
     send({ type: "NEXT" });
   };
 

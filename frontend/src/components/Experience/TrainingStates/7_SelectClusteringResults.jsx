@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 
 //Redux
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   selectClusteringResult,
   setClusteringJSON,
@@ -74,13 +74,18 @@ const Separator = styled.div`
   }
 `;
 
-const SelectClusteringResults = ({ send, clusteringJSON }) => {
+const SelectClusteringResults = ({
+  send,
+  clusteringJSON,
+  clusteringResults,
+  video,
+}) => {
   const dispatch = useDispatch();
   const { token } = useToken();
 
-  const clusteringResults = useSelector(
-    (state) => state.training.clusteringResults
-  );
+  // const clusteringResults = useSelector(
+  //   (state) => state.training.clusteringResults
+  // );
   const [modalInfo, setModalInfo] = useState(null);
 
   const handleBack = () => {
@@ -229,6 +234,8 @@ const SelectClusteringResults = ({ send, clusteringJSON }) => {
         token={modalInfo?.token}
         type={modalInfo?.type}
         methodId={modalInfo?.id}
+        videoWidth={video?.width}
+        videoHeight={video?.height}
         clustering={true}
       />
     </>
