@@ -110,7 +110,7 @@ const EditNeuralNetworkLayers = ({
     <>
       {isLoading ? (
         <div className='steps-container'>
-          <Loader />
+          <Loader stepTitle='Entrenando red neuronal'/>
         </div>
       ) : (
         <>

@@ -5,7 +5,7 @@ import ReactModal from "react-modal";
 //Components
 import SvgButton from "../../common/SvgButton";
 import Base64Image from "../../common/Base64Image";
-import SecondaryButton from '../../common/SecondaryButton';
+import SecondaryButton from "../../common/SecondaryButton";
 import SecondaryDownloadButton from "../../common/SecondaryDownloadButton";
 import PrimaryDownloadButton from "../../common/PrimaryDownloadButton";
 
@@ -124,6 +124,8 @@ const ResultModal = ({
   token = null,
   type,
   methodId,
+  videoWidth,
+  videoHeight,
   isMatrixDownloadable = true,
   modalClassName = "Modal",
   overlayClassName = "Overlay",
@@ -136,6 +138,8 @@ const ResultModal = ({
     type,
     methodId,
     title,
+    videoWidth,
+    videoHeight,
   });
 
   if (!image) return null; // No renderizar si no hay imagen

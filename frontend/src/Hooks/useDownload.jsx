@@ -51,7 +51,14 @@ const downloadByFormat = (format, data, title) => {
   }
 };
 
-const useDownload = ({ token, type, methodId, title }) => {
+const useDownload = ({
+  token,
+  type,
+  methodId,
+  title,
+  videoWidth,
+  videoHeight,
+}) => {
   const dispatch = useDispatch();
 
   const handleDownload = async (format, image, altType = null) => {
@@ -63,7 +70,9 @@ const useDownload = ({ token, type, methodId, title }) => {
         matrix = await matrixServices.getDescriptorsMatrix(
           token,
           altType === null ? type : altType,
-          methodId
+          methodId,
+          videoWidth,
+          videoHeight
         );
       } catch (error) {
         console.error("Error:", error);
@@ -81,7 +90,7 @@ const useDownload = ({ token, type, methodId, title }) => {
       .then(() => {
         dispatch(
           createNotification(
-            `${format.toUpperCase()} descargado correctamente.`,
+            `${format.toUpperCase()} generado correctamente.`,
             "success"
           )
         );
@@ -89,7 +98,7 @@ const useDownload = ({ token, type, methodId, title }) => {
       .catch(() => {
         dispatch(
           createNotification(
-            `Error al descargar el ${format.toUpperCase()}.`,
+            `Error al generar el ${format.toUpperCase()}.`,
             "error"
           )
         );

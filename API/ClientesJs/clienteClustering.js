@@ -9,7 +9,7 @@ const API_KEY = process.env.API_KEY
 
 const matrices_descriptores = require('../output/matrices_descriptores.json');
 const datos_clustering = require('../DatosPrueba/nomClus+nroClusters.json');
-const dimensiones = { 'width': '300', 'height':'300'}
+const dimensiones = { 'width': '512', 'height':'512'}
 
 fs.writeFileSync('descriptores_temp.json', JSON.stringify(matrices_descriptores));
 

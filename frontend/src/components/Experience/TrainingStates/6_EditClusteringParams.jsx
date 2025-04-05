@@ -210,7 +210,7 @@ const EditClusteringParams = ({ send, chekedClustering, clusteringResults }) => 
     <>
       {isLoading ? (
         <div className='steps-container'>
-          <Loader />
+          <Loader stepTitle='Generando resultados de clustering'/>
         </div>
       ) : (
         <>

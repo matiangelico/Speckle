@@ -68,7 +68,7 @@ const UploadVideo = ({ send, video }) => {
     <>
       {isLoading ? (
         <div className='steps-container'>
-          <Loader />
+          <Loader stepTitle='Analizando video'/>
         </div>
       ) : (
         <>

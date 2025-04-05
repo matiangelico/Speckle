@@ -15,8 +15,7 @@ import numpy as np
 from normalizar import normalizar
 import json
 import aviamat
-import generaImagenDescriptor as gid
-import generaImagenCluster as gic
+from generadorImagenes import generaImagenCluster,generaImagenDescriptor,generaImagenPrediccion
 from clustering import kmeans, minibatchKmeans, sustractivo, bisectingKMeans, gaussianMixture
 import entrenamiento as train
 import os
@@ -98,9 +97,9 @@ async def descriptores(x_api_key: str = Header(None), video_experiencia: UploadF
                 next((param['value'] for param in params if param['paramId'] == 'level'), None))
 
         matriz = rutina(tensor, *parametros)
-        matrices = {"id_descriptor": id, "matriz_descriptor": matriz.reshape(-1).tolist()}
+        matrices = {"id_descriptor": id, "matriz_descriptor": matriz.tolist()}
         matriz = normalizar(matriz)
-        imagenes = {"id_descriptor": id,"imagen_descriptor": gid.colorMap(matriz)}
+        imagenes = {"id_descriptor": id,"imagen_descriptor": generaImagenDescriptor.colorMap(matriz)}
         matrices_normalizadas = {"id_descriptor": id, "matriz_descriptor": matriz.reshape(-1).tolist()}
         respuesta_imagenes.append(imagenes)
         respuesta_matrices.append(matrices)
@@ -161,7 +160,7 @@ async def clustering(x_api_key: str = Header(None), matrices_descriptores: Uploa
         
         if respuesta is not None:
             m, clusters = respuesta
-            imagenes = {"id_clustering": id, "imagen_clustering": gic.colorMap(m), "nro_clusters": clusters}
+            imagenes = {"id_clustering": id, "imagen_clustering": generaImagenCluster.colorMap(m), "nro_clusters": clusters}
             matrices = {"id_clustering": id,"matriz_clustering": m.reshape(-1).tolist(), "nro_clusters": clusters}
             respuesta_imagenes.append(imagenes)
             respuesta_matrices.append(matrices)
@@ -338,7 +337,7 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
 
     respuesta_matriz = {"matriz": resultado_matriz.tolist()}
     respuesta_tensor = {"tensor": resultado.tolist()}
-    respuesta_imagen = {"imagen": gic.colorMap(resultado_matriz.tolist())}
+    respuesta_imagen = {"imagen": generaImagenPrediccion.colorMap(resultado_matriz.tolist())}
 
     return {"matriz_prediccion": respuesta_matriz, "imagen_prediccion": respuesta_imagen, "tensor_prediccion": respuesta_tensor}
 
@@ -363,9 +362,6 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
     total = len(matrices_desc)
     print(f"Nro de matrices de descriptores recibidas: {total}")
 
-    #alto = len(matrices_desc[0]['matriz_descriptor'])
-    #ancho = len(matrices_desc[0]['matriz_descriptor'][1])
-
     matriz = np.zeros((len(matrices_desc[0]['matriz_descriptor']), total))
 
     for t, datos in enumerate(matrices_desc):
@@ -383,7 +379,7 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
 
     respuesta_matriz = {"matriz": resultado_matriz.tolist()}
     respuesta_tensor = {"tensor": resultado.tolist()}
-    respuesta_imagen = {"imagen": gic.colorMap(resultado_matriz.tolist())}
+    respuesta_imagen = {"imagen": generaImagenPrediccion.colorMap(resultado_matriz.tolist())}
 
     return {"matriz_prediccion": respuesta_matriz, "imagen_prediccion": respuesta_imagen, "tensor_prediccion": respuesta_tensor}
 

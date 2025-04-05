@@ -2,13 +2,22 @@ import axios from "axios";
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
-const getDescriptorsMatrix = async (token, type, methodId) => {
+const getDescriptorsMatrix = async (
+  token,
+  type,
+  methodId,
+  videoWidth,
+  videoHeight
+) => {
   try {
-    const response = await axios.get(`${baseUrl}/download/?type=${type}&method=${methodId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-      responseType: "text",
-    });
-    
+    const response = await axios.get(
+      `${baseUrl}/download/?type=${type}&method=${methodId}&width=${videoWidth}&height=${videoHeight}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: "text",
+      }
+    );
+
     return JSON.parse(response.data);
   } catch (error) {
     console.error("Error al descargar matriz:", error);

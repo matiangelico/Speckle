@@ -40,7 +40,13 @@ def subtractive_clustering(data, ra, rb, Eup, Edown, max_clusters = 20):
         max_potential_value = np.max(potential)
         max_potential_index = np.argmax(potential)
 
-    return np.array(cluster_centers) if not supero20 else None
+    if (len(cluster_centers)==0)or supero20:
+        if supero20:
+            print('mas de 20')
+        else:
+            print ('No clusters')
+        return None
+    return np.array(cluster_centers)
 
 @njit(parallel=True)
 def compute_potential(data, ra):
@@ -72,6 +78,7 @@ def classify_points(data, a, b, cluster_centers):
 def sub(tensor, ra,rb,Eup,Edown):
     a,b,c = tensor.shape
     data = tensor.reshape(-1, c)
+    print(data.shape)
     cluster_centers = subtractive_clustering(data,ra,rb,Eup,Edown)
     if cluster_centers is not None:
         resultado = classify_points(data, a, b, cluster_centers) 
