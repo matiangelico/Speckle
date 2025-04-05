@@ -40,7 +40,7 @@ exports.calculateClustering = async (req, res) => {
   );
 
   try {
-    const matricesPath = path.join(userTempDir, "matrices_descriptores.json");
+    const matricesPath = path.join(userTempDir, "matrices_descriptores_normalizada.json");
 
     if (!fs.existsSync(matricesPath)) {
       return res

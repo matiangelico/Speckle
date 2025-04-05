@@ -3,7 +3,7 @@ const fs = require("fs").promises;
 
 exports.downloadMatrix = async (req, res) => {
   try {
-    const { type, method } = req.query;
+    const { type, method, width, height } = req.query;
     const userId = req.auth.payload.sub;
 
     // Validación de parámetros actualizada
@@ -48,10 +48,29 @@ exports.downloadMatrix = async (req, res) => {
         const descriptor = jsonData.find(item => item.id_descriptor === method);
         if (!descriptor) {
           return res.status(404).json({ 
-            error: `Descriptor ${method} no encontrado en ${type}`
+            error: `Descriptor ${method} no encontrado en ${type}` 
           });
         }
         matrix = descriptor.matriz_descriptor;
+
+        // Si se reciben width y height, se reestructura el vector a una matriz 2D.
+        if (width && height) {
+          const w = parseInt(width, 10);
+          const h = parseInt(height, 10);
+          
+          if (matrix.length !== w * h) {
+            return res.status(400).json({ 
+              error: "El tamaño de la matriz no coincide con las dimensiones especificadas"
+            });
+          }
+
+          const reshapedMatrix = [];
+          for (let i = 0; i < h; i++) {
+            const start = i * w;
+            reshapedMatrix.push(matrix.slice(start, start + w));
+          }
+          matrix = reshapedMatrix;
+        }
         break;
       case "clustering":
         const filteredMatricesPath = path.join(userDir, "filteredMatrices.json");
