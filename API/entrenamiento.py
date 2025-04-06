@@ -46,7 +46,7 @@ def entrenamientoRed (data, nro_clusters, params, epochs, batch_size, estopping)
 
     conf_matrix = confusion_matrix(Y_true_classes, Y_pred_classes)
 
-    imagen_conf_matrix = generaImagenMatrizConf(conf_matrix, Y_true_classes, Y_pred_classes)
+    imagen_conf_matrix = generaImagenMatrizConf.cmcm(conf_matrix, Y_true_classes, Y_pred_classes)
 
     #print("Matriz de Confusión:")
     #print(conf_matrix)
