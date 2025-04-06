@@ -40,10 +40,8 @@ exports.experiencePrediction = async (req, res) => {
       sanitizedUserId
     );
 
-    // Crear directorio de forma asíncrona
     await fsp.mkdir(userTempDir, { recursive: true });
 
-    // Buscar experiencia
     const experience = await Experience.findOne({ _id: experienceId, userId });
     if (!experience) {
       return res.status(404).json({
@@ -51,12 +49,10 @@ exports.experiencePrediction = async (req, res) => {
       });
     }
 
-    // Leer matrices
-    const matricesDescriptorPath = path.join(userTempDir, "matrices_descriptores.json");
+    const matricesDescriptorPath = path.join(userTempDir, "matrices_descriptores_normalizada.json");
     const matricesData = await fsp.readFile(matricesDescriptorPath, "utf8");
     const matrices_descriptores = JSON.parse(matricesData);
 
-    // Validar y escribir modelo
     if (!experience.trainedModel || !Buffer.isBuffer(experience.trainedModel)) {
       return res.status(400).json({
         error: "Modelo entrenado no disponible o formato inválido.",
