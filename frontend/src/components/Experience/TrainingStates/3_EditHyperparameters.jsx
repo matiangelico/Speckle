@@ -202,7 +202,7 @@ const EditHyperparameters = ({
           showConfirmationAlertAsync({
             title: `Generar resultados descriptores`,
             message:
-              "Ya has calculado los resultados en este trenamiento. ¿Deseas volver a generar nuevos resultados? Se sobreescribiran los resultados anteriormente calculados.",
+              "Ya has calculado los resultados en este entrenamiento. ¿Deseas volver a generar nuevos resultados? Se sobreescribiran los resultados anteriormente calculados.",
           })
         );
 
