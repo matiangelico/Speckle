@@ -97,10 +97,10 @@ async def descriptores(x_api_key: str = Header(None), video_experiencia: UploadF
                 next((param['value'] for param in params if param['paramId'] == 'level'), None))
 
         matriz = rutina(tensor, *parametros)
-        matrices = {"id_descriptor": id, "matriz_descriptor": matriz.reshape(-1).tolist()}
+        matrices = {"id_descriptor": id, "matriz_descriptor": matriz.tolist()}
         matriz = normalizar(matriz)
         imagenes = {"id_descriptor": id,"imagen_descriptor": generaImagenDescriptor.colorMap(matriz)}
-        matrices_normalizadas = {"id_descriptor": id, "matriz_descriptor": matriz.tolist()}
+        matrices_normalizadas = {"id_descriptor": id, "matriz_descriptor": matriz.reshape(-1).tolist()}
         respuesta_imagenes.append(imagenes)
         respuesta_matrices.append(matrices)
         respuesta_matrices_normalizada.append(matrices_normalizadas)
