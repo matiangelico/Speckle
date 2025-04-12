@@ -63,9 +63,8 @@ exports.uploadVideo = async (req, res) => {
     formData.append(
       "datos_descriptores",
       JSON.stringify(descriptors.selectedDescriptors)
-    ); // Envía solo el array
+    ); 
 
-    //const response = await axios.post(`https://127.0.0.1:8000/descriptores`, formData, {
     const response = await axios.post(`${API_URL}/descriptores`, formData, {
       headers: {
         "x-api-key": API_KEY,
@@ -100,7 +99,6 @@ exports.uploadVideo = async (req, res) => {
   } catch (error) {
     console.error("Error al procesar la solicitud:", error.message);
 
-    // Manejo específico de errores de JSON
     if (error instanceof SyntaxError) {
       return res.status(400).json({
         error: "Archivo selectedDescriptors con formato JSON inválido",
@@ -109,6 +107,12 @@ exports.uploadVideo = async (req, res) => {
 
     res.status(500).json({
       error: error.response?.data?.message || error.message,
+    });
+  }
+  finally {
+    fs.unlink(videoPath, (err) => {
+      if (err) console.error("Error al eliminar el archivo de video:", err);
+      else console.log("Archivo de video eliminado:", videoPath);
     });
   }
 };
