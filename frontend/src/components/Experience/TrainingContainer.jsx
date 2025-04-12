@@ -192,6 +192,7 @@ const TrainingContainer = () => {
   const { token, loading: tokenLoading } = useToken();
 
   //0.
+  const requestStatus = useSelector((state) => state.request.status);
   const trainingStatus = useSelector((state) => state.training.status);
   const trainingName = useSelector((state) => state.training.name);
   const createdAt = useSelector((state) => state.training.createdAt);
@@ -241,10 +242,15 @@ const TrainingContainer = () => {
   const training = useSelector((state) => state.training);
 
   useEffect(() => {
-    if (!tokenLoading && token && trainingStatus === "idle") {
+    if (
+      !tokenLoading &&
+      token &&
+      requestStatus === "idle" &&
+      trainingStatus === "idle"
+    ) {
       dispatch(initializeTrainingAsync(token));
     }
-  }, [tokenLoading, token, trainingStatus, dispatch]);
+  }, [tokenLoading, token, requestStatus, trainingStatus, dispatch]);
 
   // Renderiza el estado actual
   const renderState = () => {

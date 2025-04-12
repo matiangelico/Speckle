@@ -200,7 +200,7 @@ const EditHyperparameters = ({
       if (descriptorsResults.length !== 0) {
         const answer = await dispatch(
           showConfirmationAlertAsync({
-            title: `Generar resultados descriptores`,
+            title: `Calculando descriptores`,
             message:
               "Ya has calculado los resultados en este entrenamiento. ¿Deseas volver a generar nuevos resultados? Se sobreescribiran los resultados anteriormente calculados.",
           })

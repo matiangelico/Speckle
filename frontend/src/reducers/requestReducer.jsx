@@ -66,7 +66,16 @@ const requestSlice = createSlice({
         oldVideo: savedTraining.video,
         descriptors: state.descriptors.map((descriptor) => ({
           ...descriptor,
-          checked: selectedDescriptorIds.includes(descriptor.id), // Marcar como checked si está en selectedDescriptors
+          hyperparameters: descriptor.hyperparameters.map((param) => {
+            const updatedParam = savedTraining.selectedDescriptors
+              .find((desc) => desc.id === descriptor.id)
+              ?.params.find((p) => p.paramId === param.paramId);
+
+            return updatedParam
+              ? { ...param, value: updatedParam.value }
+              : param;
+          }),
+          checked: selectedDescriptorIds.includes(descriptor.id),
         })),
       };
     },
@@ -111,6 +120,16 @@ export const {
 
 export default requestSlice.reducer;
 
+// 0.
+export const initializeSavedTraining = (token, id) => {
+  return async (dispatch) => {
+    const training = await savedTrainingService.getTraining(token, id);
+
+    // dispatch(resetRequest());
+    dispatch(setTraining(training));
+  };
+};
+
 // 1.
 export const getVideoData = (token, videoFile) => {
   return async (dispatch) => {
@@ -128,16 +147,6 @@ export const getVideoData = (token, videoFile) => {
     };
 
     dispatch(setNewVideo(videoWithDimensions));
-  };
-};
-
-// 0.
-export const initializeSavedTraining = (token, id) => {
-  return async (dispatch) => {
-    const training = await savedTrainingService.getTraining(token, id);
-
-    // dispatch(resetRequest());
-    dispatch(setTraining(training));
   };
 };
 

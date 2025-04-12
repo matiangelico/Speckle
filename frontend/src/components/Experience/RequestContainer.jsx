@@ -6,11 +6,9 @@ import { useEffect } from "react";
 import { useMachine } from "@xstate/react";
 import RequestMachine from "../../machines/RequestMachine.jsx";
 
-//Redux
+// Redux
 import { useDispatch, useSelector } from "react-redux";
 import {
-  // resetRequest,
-  // setName,
   initializeRequestAsync,
   resetRequest,
 } from "../../reducers/requestReducer.jsx";
@@ -31,7 +29,7 @@ import SecondaryButton from "../common/SecondaryButton.jsx";
 // Icons
 import RefreshIcon from "../../assets/svg/icon-refresh-ccw.svg?react";
 
-//Utils
+// Utils
 import { convertToReadableDateAndHour } from "../../utils/dateUtils";
 
 // Hooks
@@ -179,6 +177,7 @@ const TrainingContainer = () => {
 
   //0.
   const requestStatus = useSelector((state) => state.request.status);
+  const trainingStatus = useSelector((state) => state.training.status);
   const trainingName = useSelector((state) => state.request.name);
   const createdAt = useSelector((state) => state.request.createdAt);
   const oldVideo = useSelector((state) => state.request.oldVideo);
@@ -198,10 +197,10 @@ const TrainingContainer = () => {
   const requestResult = useSelector((state) => state.request.requestResult);
 
   useEffect(() => {
-    if (!tokenLoading && token && requestStatus === "idle") {
+    if (!tokenLoading && token && requestStatus === "idle" && trainingStatus === "idle") {
       dispatch(initializeRequestAsync(token));
     }
-  }, [tokenLoading, token, requestStatus, dispatch]);
+  }, [tokenLoading, token, requestStatus, trainingStatus, dispatch]);
 
   // Renderiza el estado actual
   const renderState = () => {
@@ -225,6 +224,7 @@ const TrainingContainer = () => {
           <SelectDescriptorsResults
             send={send}
             descriptorsResults={descriptorsResults}
+            result={requestResult}
             video={{ width: newVideo.width, height: newVideo.height }}
           />
         );

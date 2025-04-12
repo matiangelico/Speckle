@@ -5,6 +5,7 @@ import { useState } from "react";
 //Redux
 import { useDispatch } from "react-redux";
 import { createNotification } from "../../../reducers/notificationReducer";
+import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 import { initializeRequestResult } from "../../../reducers/requestReducer";
 
 //Commons
@@ -45,7 +46,12 @@ const DescriptorResultsContainer = styled.div`
   }
 `;
 
-const SelectDescriptorsResults = ({ send, descriptorsResults, video }) => {
+const SelectDescriptorsResults = ({
+  send,
+  descriptorsResults,
+  result,
+  video,
+}) => {
   const dispatch = useDispatch();
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
@@ -55,26 +61,46 @@ const SelectDescriptorsResults = ({ send, descriptorsResults, video }) => {
     send({ type: "BACK" });
   };
 
+  const generateRequestResult = async () => {
+    setIsLoading(true);
+    try {
+      await dispatch(initializeRequestResult(token));
+      send({ type: "NEXT" });
+      dispatch(
+        createNotification(`Resultado generado correctamente.`, "success")
+      );
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error al procesar la petición:", error);
+      dispatch(
+        createNotification(
+          `Ha ocurrido un error vuelve a intentarlo mas tarde.`,
+          "error"
+        )
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleNext = async () => {
     if (!tokenLoading && token) {
-      setIsLoading(true);
-      try {
-        await dispatch(initializeRequestResult(token));
-        send({ type: "NEXT" });
-        dispatch(
-          createNotification(`Resultado generado correctamente.`, "success")
+      if (result !== null) {
+        const answer = await dispatch(
+          showConfirmationAlertAsync({
+            title: `Realizar consulta`,
+            message:
+              "Ya has realizado la consulta anteriormente. ¿Deseas volver a generar un nuevo resultado? Se sobreescribira el resultado anteriormente calculado.",
+          })
         );
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error al procesar la petición:", error);
-        dispatch(
-          createNotification(
-            `Ha ocurrido un error vuelve a intentarlo mas tarde.`,
-            "error"
-          )
-        );
-      } finally {
-        setIsLoading(false);
+
+        if (answer) {
+          generateRequestResult();
+        } else {
+          send({ type: "NEXT" });
+        }
+      } else {
+        generateRequestResult();
       }
     }
   };

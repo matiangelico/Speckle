@@ -2,28 +2,28 @@ import styled from "styled-components";
 
 import { useState } from "react";
 
-//Redux
+// Redux
 import { useDispatch } from "react-redux";
 import { initializeDescriptorsResult } from "../../../reducers/requestReducer";
 import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
 
-//Commons
+// Commons
 import Input from "../../common/Input";
 import EmptyContainer from "../../common/EmptyContainer";
 import PrimaryButton from "../../common/PrimaryButton";
 import SecondaryButton from "../../common/SecondaryButton";
 import Loader from "../../common/Loader";
 
-//Icons
+// Icons
 import ArrowRightIcon from "../../../assets/svg/icon-arrow-right.svg?react";
 import ArrowLeftIcon from "../../../assets/svg/icon-arrow-left.svg?react";
 
-//Utils
+// Utils
 import { extractTextBetweenParentheses } from "../../../utils/stringUtils";
 import Select from "../../common/Select";
 
-//Hooks
+// Hooks
 import useToken from "../../../Hooks/useToken";
 
 const HyperparametersContainer = styled.div`
@@ -99,7 +99,7 @@ const EditHyperparameters = ({
       if (descriptorsResults.length !== 0) {
         const answer = await dispatch(
           showConfirmationAlertAsync({
-            title: `Generar resultados descriptores`,
+            title: `Calculando descriptores`,
             message:
               "Ya has calculado los resultados en esta consulta. ¿Deseas volver a generar nuevos resultados? Se sobreescribiran los resultados anteriormente calculados.",
           })
@@ -120,7 +120,7 @@ const EditHyperparameters = ({
     <>
       {isLoading ? (
         <div className='steps-container'>
-          <Loader stepTitle='Generando resultados de descriptores'/>
+          <Loader stepTitle='Generando resultados de descriptores' />
         </div>
       ) : (
         <>
@@ -139,7 +139,7 @@ const EditHyperparameters = ({
                   descriptor.hyperparameters?.length > 0 && (
                     <StyledRow key={index}>
                       {descriptor.hyperparameters.map((param, paramIndex) =>
-                        param.type === "select" ? (
+                        param.paramId === "wavelet" ? (
                           <Select
                             key={paramIndex}
                             primaryLabel={param.paramName}

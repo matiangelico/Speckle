@@ -196,7 +196,7 @@ const Select = ({
   options = [],
   error,
   searchable = true,
-  editable = true,
+  isEditable = true,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -207,7 +207,7 @@ const Select = ({
   );
 
   const handleSelect = (option) => {
-    if (!editable) return;
+    if (!isEditable) return;
     onChange(option.value);
     setIsOpen(false);
     setSearchTerm("");
@@ -230,7 +230,7 @@ const Select = ({
   }, []);
 
   const handleKeyDown = (e) => {
-    if (!editable) return;
+    if (!isEditable) return;
     if (e.key === "Enter" || e.key === " ") {
       setIsOpen(!isOpen);
     } else if (e.key === "Escape") {
@@ -250,7 +250,7 @@ const Select = ({
         id={id}
         name={name}
         onClick={() => {
-          if (editable) setIsOpen(!isOpen);
+          if (isEditable) setIsOpen(!isOpen);
         }}
         onKeyDown={handleKeyDown}
         data-is-invalid={error}
@@ -258,7 +258,7 @@ const Select = ({
         data-has-value={!!selectedOption}
         aria-expanded={isOpen}
         aria-haspopup='listbox'
-        disabled={!editable}
+        disabled={!isEditable}
       >
         <span>{selectedOption ? selectedOption.label : placeholder}</span>
         <ChevronDownIcon />
@@ -274,7 +274,7 @@ const Select = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onClick={(e) => e.stopPropagation()}
-              disabled={!editable}
+              disabled={!isEditable}
             />
           </SearchContainer>
         )}
