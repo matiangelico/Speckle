@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useMachine } from "@xstate/react";
 import TrainingMachine from "../../machines/trainingMachine";
 
-//Redux
+// Redux
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetTraining,
@@ -35,7 +35,7 @@ import EditableTitle from "../common/EditableTitle";
 // Icons
 import NewExperienceIcon from "../../assets/svg/icon-lus-circle.svg?react";
 
-//Utils
+// Utils
 import { convertToReadableDateAndHour } from "../../utils/dateUtils";
 
 // Hooks
@@ -192,7 +192,6 @@ const TrainingContainer = () => {
   const { token, loading: tokenLoading } = useToken();
 
   //0.
-  const requestStatus = useSelector((state) => state.request.status);
   const trainingStatus = useSelector((state) => state.training.status);
   const trainingName = useSelector((state) => state.training.name);
   const createdAt = useSelector((state) => state.training.createdAt);
@@ -242,15 +241,10 @@ const TrainingContainer = () => {
   const training = useSelector((state) => state.training);
 
   useEffect(() => {
-    if (
-      !tokenLoading &&
-      token &&
-      requestStatus === "idle" &&
-      trainingStatus === "idle"
-    ) {
+    if (!tokenLoading && token && trainingStatus === "idle") {
       dispatch(initializeTrainingAsync(token));
     }
-  }, [tokenLoading, token, requestStatus, trainingStatus, dispatch]);
+  }, [tokenLoading, token, trainingStatus, dispatch]);
 
   // Renderiza el estado actual
   const renderState = () => {

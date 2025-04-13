@@ -177,7 +177,6 @@ const TrainingContainer = () => {
 
   //0.
   const requestStatus = useSelector((state) => state.request.status);
-  const trainingStatus = useSelector((state) => state.training.status);
   const trainingName = useSelector((state) => state.request.name);
   const createdAt = useSelector((state) => state.request.createdAt);
   const oldVideo = useSelector((state) => state.request.oldVideo);
@@ -197,10 +196,14 @@ const TrainingContainer = () => {
   const requestResult = useSelector((state) => state.request.requestResult);
 
   useEffect(() => {
-    if (!tokenLoading && token && requestStatus === "idle" && trainingStatus === "idle") {
+    if (!tokenLoading && token && requestStatus === "idle") {
       dispatch(initializeRequestAsync(token));
     }
-  }, [tokenLoading, token, requestStatus, trainingStatus, dispatch]);
+  }, [tokenLoading, token, requestStatus, dispatch]);
+
+  useEffect(() => {
+    send({ type: "RESET" });
+  }, [send, oldVideo]);
 
   // Renderiza el estado actual
   const renderState = () => {

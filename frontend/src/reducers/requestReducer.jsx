@@ -8,7 +8,7 @@ import trainingService from "../services/training";
 // Redux
 import { initializeDefaultValues } from "./defaultValuesReducer";
 
-// Estado inicial de training
+// Estado inicial de request
 export const initialRequestState = {
   id: null,
   name: " ",
@@ -57,6 +57,8 @@ const requestSlice = createSlice({
       const selectedDescriptorIds = savedTraining.selectedDescriptors.map(
         (desc) => desc.id
       );
+
+      console.log("dentro de setTraining", state);
 
       return {
         ...state,
@@ -125,8 +127,26 @@ export const initializeSavedTraining = (token, id) => {
   return async (dispatch) => {
     const training = await savedTrainingService.getTraining(token, id);
 
+    await dispatch(resetRequestFromDefault());
+    await dispatch(setTraining(training));
+  };
+};
+
+export const resetRequestFromDefault = () => {
+  return async (dispatch, getState) => {
+    const defaultValues = await getState().defaultValues;
+
     // dispatch(resetRequest());
-    dispatch(setTraining(training));
+
+    if (defaultValues?.descriptors) {
+      const descriptors = defaultValues.descriptors.map((descriptor) => ({
+        id: descriptor.id,
+        name: descriptor.name,
+        checked: false,
+        hyperparameters: descriptor.params,
+      }));
+      dispatch(setDescriptors(descriptors));
+    }
   };
 };
 
