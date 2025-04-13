@@ -15,8 +15,8 @@ def colorMap(matriz):
     colores = [imagen.cmap(imagen.norm(v)) for v in valores_unicos]
 
     legend_handles = [plt.Line2D([0], [0], marker='o', color='w', markersize=10, 
-                                 markerfacecolor=color, label=f"{int(valor+1)}") 
-                      for i, (color, valor) in enumerate(zip(colores, valores_unicos+1), start=1)]
+                                 markerfacecolor=color, label=f"{int(valor)}") 
+                      for i, (color, valor) in enumerate(zip(colores, valores_unicos), start=0)]
     
     ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1.05, 0.5), 
               title="Ref", fontsize=10, borderaxespad=0.)

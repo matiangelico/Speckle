@@ -19,4 +19,6 @@ def km(tensor,nro_clusters):
                         algorithm='lloyd').fit(data)
     labels = kmeans.labels_.reshape(a,b)
 
+    labels +=1  
+
     return labels, nro_clusters

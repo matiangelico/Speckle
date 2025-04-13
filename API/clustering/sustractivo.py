@@ -82,6 +82,7 @@ def sub(tensor, ra,rb,Eup,Edown):
     cluster_centers = subtractive_clustering(data,ra,rb,Eup,Edown)
     if cluster_centers is not None:
         resultado = classify_points(data, a, b, cluster_centers) 
+        resultado +=1
         return (resultado, len(cluster_centers)) if resultado is not None else None  
     else:
         return None

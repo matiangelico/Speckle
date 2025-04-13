@@ -41,15 +41,13 @@ def entrenamientoRed (data, nro_clusters, params, epochs, batch_size, estopping)
     model.fit(X_train, Y_train, validation_data=(X_val, Y_val), epochs=epochs, batch_size=batch_size, verbose=1, callbacks=callbacks)
 
     Y_pred = model.predict(X_test)
+
     Y_pred_classes = np.argmax(Y_pred, axis=1)  
     Y_true_classes = Y_test  
 
     conf_matrix = confusion_matrix(Y_true_classes, Y_pred_classes)
 
     imagen_conf_matrix = generaImagenMatrizConf.cmcm(conf_matrix, Y_true_classes, Y_pred_classes)
-
-    #print("Matriz de Confusión:")
-    #print(conf_matrix)
 
     return model, imagen_conf_matrix
 

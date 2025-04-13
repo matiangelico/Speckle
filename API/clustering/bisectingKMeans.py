@@ -59,8 +59,5 @@ def bKm(tensor, nro_clusters):
     labels = bi.labels_ 
 
     n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-    
- 
-    
-    
+    labels+=1
     return labels.reshape(a,b), n_clusters_
