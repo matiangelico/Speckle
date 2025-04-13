@@ -58,8 +58,6 @@ const requestSlice = createSlice({
         (desc) => desc.id
       );
 
-      console.log("dentro de setTraining", state);
-
       return {
         ...state,
         id: savedTraining._id,

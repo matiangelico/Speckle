@@ -220,9 +220,9 @@ const TrainingContainer = () => {
   const clusteringResults = useSelector(
     (state) => state.training.clusteringResults
   );
-  const [chekedClusteringResults] = clusteringResults.filter(
-    (algorithm) => algorithm.checked
-  );
+  // const [chekedClusteringResults] = clusteringResults.filter(
+  //   (algorithm) => algorithm.checked
+  // );
   //8.
   const neuralNetworkParams = useSelector(
     (state) => state.training.neuralNetworkParams
@@ -230,6 +230,12 @@ const TrainingContainer = () => {
   // 9
   const layerTemplate = useSelector((state) => state.training.layersTemplate);
   const layers = useSelector((state) => state.training.neuralNetworkLayers);
+  const numberOfSelectedDescriptors = useSelector(
+    (state) => state.training.numberOfSelectedDescriptors
+  );
+  const numberOfClusters = useSelector(
+    (state) => state.training.numberOfClusters
+  );
   // 10
   const trullyCheckedDescriptors = chekedDescriptors.filter((descriptor) => {
     const result = chekedDescriptorsResults.find(
@@ -301,11 +307,11 @@ const TrainingContainer = () => {
       case "EDIT_NEURAL_NETWORK_LAYERS": //9
         return (
           <EditNeuralNetworkLayers
-            selectedDescriptors={chekedDescriptorsResults.length}
+            selectedDescriptors={numberOfSelectedDescriptors}
             send={send}
             layerTemplate={layerTemplate}
             layers={layers}
-            nroClusters={chekedClusteringResults?.clusterCenters}
+            nroClusters={numberOfClusters}
             clusteringJSON={clusteringJSON}
           />
         );

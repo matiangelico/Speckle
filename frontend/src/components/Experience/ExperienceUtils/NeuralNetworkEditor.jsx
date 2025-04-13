@@ -169,15 +169,15 @@ const ExtraNeurons = styled.div`
 `;
 
 const NeuralNetworkEditor = ({
-  descriptores = 0,
+  selectedDescriptors,
   layers,
   updateLayer,
-  nroClusters = 0,
+  nroClusters,
 }) => {
   return (
     <EditorContainer>
       <VisualContainer>
-        <span>{descriptores} descriptores selec.</span>
+        <span>{selectedDescriptors} descriptores selec.</span>
         <ImageIcon />
         <ArrowRightIcon />
         {layers.map((layer, index) => (

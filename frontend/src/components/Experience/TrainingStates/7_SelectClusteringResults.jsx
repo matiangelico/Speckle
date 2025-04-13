@@ -5,8 +5,10 @@ import { useState } from "react";
 //Redux
 import { useDispatch } from "react-redux";
 import {
-  selectClusteringResult,
   setClusteringJSON,
+  selectClusteringResult,
+  setNumberOfClusters,
+  getFeaturedMatrixData,
 } from "../../../reducers/trainingReducer";
 import { showConfirmationAlertAsync } from "../../../reducers/alertReducer";
 import { createNotification } from "../../../reducers/notificationReducer";
@@ -88,6 +90,25 @@ const SelectClusteringResults = ({
     send({ type: "BACK" });
   };
 
+  const setClusteringSettings = () => {
+    const isAnyClusteringChecked = clusteringResults.some(
+      (result) => result.checked
+    );
+
+    if (isAnyClusteringChecked) {
+      const selectedCluster = clusteringResults.find(result => result.checked === true);
+
+      dispatch(setNumberOfClusters(selectedCluster.clusterCenters));
+      send({ type: "NEXT" });
+    } else {
+      dispatch(
+        createNotification(
+          "Por favor, selecciona al menos un resultado para continuar."
+        )
+      );
+    }
+  };
+
   const handleNext = async () => {
     if (clusteringJSON !== null) {
       const answer = await dispatch(
@@ -103,34 +124,10 @@ const SelectClusteringResults = ({
       } else {
         dispatch(setClusteringJSON(null));
 
-        const isAnyClusteringChecked = clusteringResults.some(
-          (result) => result.checked
-        );
-
-        if (isAnyClusteringChecked) {
-          send({ type: "NEXT" });
-        } else {
-          dispatch(
-            createNotification(
-              "Por favor, selecciona al menos un resultado para continuar."
-            )
-          );
-        }
+        setClusteringSettings();
       }
     } else {
-      const isAnyClusteringChecked = clusteringResults.some(
-        (result) => result.checked
-      );
-
-      if (isAnyClusteringChecked) {
-        send({ type: "NEXT" });
-      } else {
-        dispatch(
-          createNotification(
-            "Por favor, selecciona al menos un resultado para continuar."
-          )
-        );
-      }
+      setClusteringSettings();
     }
   };
 
@@ -144,7 +141,7 @@ const SelectClusteringResults = ({
       return;
     }
 
-    dispatch(setClusteringJSON(file));
+    dispatch(getFeaturedMatrixData(file));
     dispatch(createNotification(`Archivo subido correctamente.`, "success"));
   };
 

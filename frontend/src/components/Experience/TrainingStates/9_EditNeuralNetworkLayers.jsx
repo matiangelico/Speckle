@@ -38,6 +38,9 @@ const EditNeuralNetworkLayers = ({
   const { token, loading: tokenLoading } = useToken();
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log("selectedDescriptors", selectedDescriptors);
+  console.log("nroClusters", nroClusters);
+
   const handleBack = () => {
     send({ type: "BACK" });
   };
@@ -45,7 +48,6 @@ const EditNeuralNetworkLayers = ({
   const handleNext = async () => {
     if (!tokenLoading && token) {
       setIsLoading(true);
-      console.log(clusteringJSON);
 
       try {
         if (clusteringJSON !== null) {
@@ -123,19 +125,12 @@ const EditNeuralNetworkLayers = ({
             </h3>
           </div>
 
-          {clusteringJSON ? (
-            <NeuralNetworkEditor
-              layers={layers}
-              updateLayer={handleUpdateLayer}
-            />
-          ) : (
-            <NeuralNetworkEditor
-              descriptores={selectedDescriptors}
-              layers={layers}
-              updateLayer={handleUpdateLayer}
-              nroClusters={nroClusters}
-            />
-          )}
+          <NeuralNetworkEditor
+            selectedDescriptors={selectedDescriptors}
+            layers={layers}
+            updateLayer={handleUpdateLayer}
+            nroClusters={nroClusters}
+          />
 
           <div className='two-buttons-container'>
             <SecondaryButton

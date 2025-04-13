@@ -8,6 +8,7 @@ import { initializeDefaultValues } from "./defaultValuesReducer";
 
 // Utils
 import { convertToTimestamp } from "../utils/dateUtils";
+import { readFileAndProcess } from "../utils/featureMatrix";
 
 // Estado inicial de training
 export const initialTrainingState = {
@@ -18,6 +19,8 @@ export const initialTrainingState = {
   descriptorsResults: [],
   clustering: [],
   clusteringJSON: null,
+  numberOfSelectedDescriptors: 0,
+  numberOfClusters: 0,
   clusteringResults: [],
   neuralNetworkParams: [],
   neuralNetworkLayers: [],
@@ -211,7 +214,22 @@ const trainingSlice = createSlice({
       });
     },
     setClusteringJSON(state, action) {
-      return { ...state, clusteringJSON: action.payload };
+      return {
+        ...state,
+        clusteringJSON: action.payload,
+      };
+    },
+    setNumberOfSelectedDescriptors(state, action) {
+      return {
+        ...state,
+        numberOfSelectedDescriptors: action.payload,
+      };
+    },
+    setNumberOfClusters(state, action) {
+      return {
+        ...state,
+        numberOfClusters: action.payload,
+      };
     },
     setClusteringResults(state, action) {
       state.clusteringResults = action.payload;
@@ -277,6 +295,8 @@ export const {
   setClusteringParams,
   updateClusteringParam,
   setClusteringJSON,
+  setNumberOfSelectedDescriptors,
+  setNumberOfClusters,
   setClusteringResults,
   selectClusteringResult,
   setNeuralNetworkParams,
@@ -363,6 +383,7 @@ export const resetClusteringParams = () => {
 // 7.
 export const initializeClusteringResult = (token) => {
   return async (dispatch, getState) => {
+    const descriptorResults = await getState().training.descriptorsResults;
     const filteredDescriptors = getState().training.descriptorsResults.filter(
       (descriptor) => descriptor.checked
     );
@@ -407,7 +428,22 @@ export const initializeClusteringResult = (token) => {
       };
     });
 
+    const chekedDescriptorsResults = descriptorResults.filter(
+      (descriptor) => descriptor.checked
+    );
+
     dispatch(setClusteringResults(clusteringResults));
+    dispatch(setNumberOfSelectedDescriptors(chekedDescriptorsResults.length));
+  };
+};
+
+export const getFeaturedMatrixData = (file) => {
+  return async (dispatch) => {
+    const result = await readFileAndProcess(file);
+
+    dispatch(setClusteringJSON(file));
+    dispatch(setNumberOfSelectedDescriptors(result.count));
+    dispatch(setNumberOfClusters(result.maxClusteringValue));
   };
 };
 
@@ -480,7 +516,6 @@ export const changeToJSONTrainingResult = (token) => {
     );
 
     console.log("result", result);
-    
 
     const trainingResult = {
       image: result.image_prediction,
