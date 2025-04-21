@@ -10,7 +10,7 @@ from keras.callbacks import EarlyStopping
 from generadorImagenes import generaImagenMatrizConf
 
 def entrenamientoRed (data, nro_clusters, params, epochs, batch_size, estopping):
-
+    
     X = data[:,:-1]
     Y = data[:,-1] 
 

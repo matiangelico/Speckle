@@ -255,6 +255,7 @@ async def neuronal2(background_tasks: BackgroundTasks, x_api_key: str = Header(N
     matriz_caracteristicas[:,total-1] = np.array(matrices[total-1]['matriz_clustering'])
 
     nro_clusters = (np.unique(np.array(matrices[total-1]['matriz_clustering']))).size
+    matriz_caracteristicas[:,total-1] +=-1
     print ('nro de cluster ',nro_clusters)
     print(matriz_caracteristicas.shape)
 
@@ -374,6 +375,8 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
     resultado_matriz = np.argmax(resultado, axis=-1)
 
     resultado_matriz = resultado_matriz.reshape(alto,ancho)
+
+    resultado_matriz +=1
 
     background_tasks.add_task(eliminar_archivo, model_path)
 
