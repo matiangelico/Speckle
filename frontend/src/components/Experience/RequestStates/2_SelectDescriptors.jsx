@@ -48,7 +48,7 @@ const SelectDescriptors = ({ send, descriptors }) => {
   return (
     <>
       <div className='steps-container'>
-        <h2>2. Descriptores utilizados</h2>
+        <h2>3. Descriptores utilizados</h2>
         <h3>
           A continuacion se muestran los detalles de los descriptores con los
           cuales procesado el video del entrenamiento.

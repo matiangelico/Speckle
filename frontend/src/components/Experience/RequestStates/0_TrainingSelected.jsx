@@ -29,7 +29,7 @@ const TrainingSelected = ({ send, video }) => {
   return (
     <>
       <div className='steps-container'>
-        <h2>0. Seleccionar entrenamiento</h2>
+        <h2>1. Seleccionar entrenamiento</h2>
         <h3>
           A continuación se muestran los detalles del video con el cual fue
           entrenada la red neuronal.

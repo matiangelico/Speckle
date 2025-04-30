@@ -70,7 +70,7 @@ const UploadVideo = ({ send, video }) => {
       ) : (
         <>
           <div className='steps-container'>
-            <h2>1. Subir nuevo video</h2>
+            <h2>2. Subir nuevo video</h2>
             <h3>
               Adjunte el archivo de video que servirá como entrada para la
               consulta.

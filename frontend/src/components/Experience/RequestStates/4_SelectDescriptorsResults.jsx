@@ -122,7 +122,7 @@ const SelectDescriptorsResults = ({
       ) : (
         <>
           <div className='steps-container'>
-            <h2>4. Resultados de descriptores para la consulta</h2>
+            <h2>5. Resultados de descriptores para la consulta</h2>
             <h3>
               Revise los resultados generados por los descriptores utilizados en
               el entrenamiento utilizando como parametro el video insertado como

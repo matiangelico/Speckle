@@ -63,7 +63,7 @@ const RequestResults = ({ send, result, trainingName, video }) => {
     <>
       <>
         <div className='steps-container'>
-          <h2>5. Visualizar resultado de la consulta</h2>
+          <h2>6. Visualizar resultado de la consulta</h2>
           <h3>
             Visualice los resultados finales de la consulta. Podra ampliar la
             imagen, descargar la matriz resultante o imprimir la imagen.

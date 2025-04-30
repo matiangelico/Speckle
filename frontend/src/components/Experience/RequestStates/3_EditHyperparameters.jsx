@@ -125,7 +125,7 @@ const EditHyperparameters = ({
       ) : (
         <>
           <div className='steps-container'>
-            <h2>3. Hiperparámetros utilizados</h2>
+            <h2>4. Hiperparámetros utilizados</h2>
             <h3>
               A continuacion se muestran los detalles de los hiperparametros
               correspondientes a los descriptores utilizados.
