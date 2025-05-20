@@ -41,22 +41,47 @@ export const downloadJpg = (base64Data, fileName = "downloaded-image.jpg") => {
 // Función para descargar una imagen en formato SVG
 export const downloadSvg = (base64Data, fileName = "downloaded-image.svg") => {
   return new Promise((resolve, reject) => {
-    try {
-      // Asegúrate de que el base64Data sea realmente de un SVG. Si no incluye el prefijo, agrégalo:
-      const base64WithPrefix = base64Data.startsWith("data:")
-        ? base64Data
-        : `data:image/svg+xml;base64,${base64Data}`;
+    // 1) Aseguramos que sea un data URI válido
+    const dataUri = base64Data.startsWith("data:")
+      ? base64Data
+      : `data:image/png;base64,${base64Data}`;
+
+    // 2) Cargamos la imagen para saber su tamaño
+    const img = new Image();
+    img.onload = () => {
+      const { naturalWidth: w, naturalHeight: h } = img;
+
+      // 3) Montamos el string SVG
+      const svgString = `
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="${w}" height="${h}"
+             viewBox="0 0 ${w} ${h}">
+          <image href="${dataUri}" width="${w}" height="${h}" />
+        </svg>
+      `.trim();
+
+      // 4) Lo convertimos a Blob y forzamos descarga
+      const blob = new Blob([svgString], {
+        type: "image/svg+xml;charset=utf-8",
+      });
+      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.href = base64WithPrefix;
+      link.href = url;
       link.download = fileName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      // 5) Liberamos el URL
+      URL.revokeObjectURL(url);
       resolve();
-    } catch (error) {
-      console.error("Error descargando SVG:", error);
-      reject(error);
-    }
+    };
+
+    img.onerror = (err) => {
+      reject(new Error("No se pudo cargar la imagen Base64: " + err.message));
+    };
+
+    img.src = dataUri;
   });
 };
 
