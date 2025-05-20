@@ -37,6 +37,7 @@ const upload = multer({
       "video/x-msvideo",
       "video/msvideo",
       "video/vnd.avi",
+      "application/octet-stream"
     ];
 
     if (allowedTypes.includes(file.mimetype)) {

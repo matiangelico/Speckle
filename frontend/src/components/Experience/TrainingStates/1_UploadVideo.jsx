@@ -34,7 +34,7 @@ const UploadVideo = ({ send, video }) => {
   };
 
   const handleFileDrop = async (file) => {
-    const validTypes = ["video/avi"]; // Tipo MIME para archivos .avi
+    const validTypes = ["video/avi", "video/x-msvideo", "application/octet-stream"]; // Tipo MIME para archivos .avi
 
     if (!validTypes.includes(file.type)) {
       dispatch(
