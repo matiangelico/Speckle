@@ -4,7 +4,7 @@ import base64
 
 def colorMap(matriz): 
     
-    imagen = plt.imshow(matriz, cmap='jet')
+    imagen = plt.imshow(matriz, cmap='jet', interpolation='nearest',aspect='auto')
     plt.colorbar(imagen) 
 
     buf = BytesIO()

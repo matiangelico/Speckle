@@ -5,6 +5,7 @@ from io import BytesIO
 
 def cmcm(conf_matrix, Y_true, Y_pred):
     etiquetas_clases = sorted(set(Y_true).union(set(Y_pred)))
+    etiquetas_clases = [et + 1 for et in etiquetas_clases]
     n_clases = len(etiquetas_clases)  # Número de clases
 
     # Evitar divisiones por cero (cuando una fila de conf_matrix es toda ceros)
