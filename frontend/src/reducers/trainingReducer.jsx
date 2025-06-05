@@ -325,8 +325,8 @@ export const getVideoData = (token, videoFile) => {
 // 3.
 export const resetHyperparameters = () => {
   return (dispatch, getState) => {
-    const defaultValuesDescriptors = getState().defaultValues.descriptors;
-
+    const defaultValuesDescriptors = getState().defaultValues.defaultValues.descriptors;
+    
     dispatch(setHyperparameters(defaultValuesDescriptors));
   };
 };
@@ -374,7 +374,7 @@ export const initializeDescriptorsResult = (token) => {
 // 6.
 export const resetClusteringParams = () => {
   return (dispatch, getState) => {
-    const defaultValuesClustering = getState().defaultValues.clustering;
+    const defaultValuesClustering = getState().defaultValues.defaultValues.clustering;
 
     dispatch(setClusteringParams(defaultValuesClustering));
   };

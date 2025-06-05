@@ -235,7 +235,7 @@ const EditHyperparameters = ({
     <>
       {isLoading ? (
         <div className='steps-container'>
-          <Loader stepTitle='Generando resultados de descriptores'/>
+          <Loader stepTitle='Generando resultados de descriptores' />
         </div>
       ) : (
         <>

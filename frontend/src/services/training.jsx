@@ -43,6 +43,7 @@ const getDescriptorsResults = async (token, videoFile, selectedDescriptors) => {
         Authorization: `Bearer ${token}`,
       },
     });
+    
     return response.data;
   } catch (error) {
     console.error("Error al subir archivos:", error);

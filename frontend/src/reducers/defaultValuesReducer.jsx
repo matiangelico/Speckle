@@ -15,10 +15,16 @@ const defaultValuesSlice = createSlice({
     },
     updateDefaultValue(state, action) {
       const valueChanged = action.payload;
+
+      if (!Array.isArray(state.defaultValues)) {
+        return;
+      }
+
       state.defaultValues = state.defaultValues.map((value) =>
         value.id === valueChanged.id ? valueChanged : value
       );
     },
+
     setLoadingDefaultValues(state, action) {
       state.loading = action.payload;
     },
@@ -38,7 +44,7 @@ export const initializeDefaultValues =
     const currentState = getState().defaultValues.defaultValues;
     const isLoading = getState().defaultValues.loading;
 
-    if (currentState !== null || isLoading) {
+    if ((currentState !== null && currentState.length > 0) || isLoading) {
       return currentState;
     }
 
@@ -46,6 +52,9 @@ export const initializeDefaultValues =
 
     try {
       const defaultValues = await defaultValuesServices.getAll(token);
+
+      console.log("defaultValues", defaultValues);
+
       dispatch(setDefaultValues(defaultValues));
       return defaultValues;
     } catch (error) {

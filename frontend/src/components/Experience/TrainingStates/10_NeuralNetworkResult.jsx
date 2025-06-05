@@ -96,7 +96,7 @@ const NeuralNetworkResult = ({
         await dispatch(saveTraining(token, newTraining));
 
         dispatch(
-          createNotification(`Experiencia guardada correctamente.`, "success")
+          createNotification(`Entrenamiento guardada correctamente.`, "success")
         );
         // send({ type: "RESET" });
       } catch (error) {

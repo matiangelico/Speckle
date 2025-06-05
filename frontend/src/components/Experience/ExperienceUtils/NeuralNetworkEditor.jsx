@@ -128,6 +128,18 @@ const Layer = styled.div`
   }
 `;
 
+const ExtraNeurons = styled.div`
+  color: var(--dark-800);
+  font-feature-settings: "calt" off;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 170%
+  letter-spacing: -0.14px;
+  margin-top: 5px;
+`;
+
 const Neuron = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "dropout" && prop !== "batchNorm",
 })`
@@ -154,18 +166,6 @@ const Neuron = styled.div.withConfig({
           getBatchColor(dropout !== undefined ? dropout : 0)};
       }
     `}
-`;
-
-const ExtraNeurons = styled.div`
-  color: var(--dark-800);
-  font-feature-settings: "calt" off;
-  font-family: Inter;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 170%
-  letter-spacing: -0.14px;
-  margin-top: 5px;
 `;
 
 const NeuralNetworkEditor = ({
@@ -216,7 +216,9 @@ const NeuralNetworkEditor = ({
               max='128'
               step='1'
               placeholder='Neuronas'
-              value={layer.neurons !== undefined ? layer.neurons : 0}
+              value={
+                layer.neurons !== undefined ? layer.neurons.toString() : ""
+              }
               setValue={(value) =>
                 updateLayer(
                   index,
