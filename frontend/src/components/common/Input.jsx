@@ -92,27 +92,37 @@ const Input = ({
   isEditable = true,
 }) => {
   const handleChange = (e) => {
-    let newValue = e.target.value;
+    setValue(e.target.value);
+  };
 
-    // Si el tipo es numérico, parseamos el valor y lo truncamos según los límites
-    if (type === "number") {
-      if (newValue === "") {
-        setValue("");
-        return;
-      }
-      const parsedValue = Number(newValue);
-      if (isNaN(parsedValue)) return;
+  const handleBlur = (e) => {
+    if (type !== "number") return;
 
-      if (typeof min !== "undefined" && parsedValue < min) {
-        newValue = min;
-      } else if (typeof max !== "undefined" && parsedValue > max) {
-        newValue = max;
-      } else {
-        newValue = parsedValue;
-      }
+    let raw = e.target.value;
+
+    if (raw === "") {
+      return;
     }
 
-    setValue(newValue);
+    raw = raw.replace(/^0+(?=\d)/, "");
+
+    const num = Number(raw);
+
+    if (isNaN(num)) {
+      setValue("");
+      return;
+    }
+
+    if (typeof min !== "undefined" && num < min) {
+      setValue(String(min));
+      return;
+    }
+    if (typeof max !== "undefined" && num > max) {
+      setValue(String(max));
+      return;
+    }
+
+    setValue(String(num));
   };
 
   return (
@@ -129,13 +139,10 @@ const Input = ({
         placeholder={placeholder}
         value={value}
         onChange={isEditable ? handleChange : undefined}
+        onBlur={isEditable ? handleBlur : undefined}
         readOnly={!isEditable}
         data-is-invalid={error}
-        {...(type === "number" && {
-          min,
-          max,
-          step,
-        })}
+        {...(type === "number" && { min, max, step })}
       />
 
       {error && <ErrorText>{error}</ErrorText>}
