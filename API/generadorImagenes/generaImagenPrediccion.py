@@ -5,11 +5,10 @@ from io import BytesIO
 import base64
 import seaborn as sns  # Necesario para generar la paleta de colores
 
-def colorMap(matriz): 
-    valores_unicos = np.unique(matriz)
-
-    n_clases = len(valores_unicos)
-
+def colorMap(matriz,capa_salida): 
+    valores_unicos = [x+1 for x in range(capa_salida)] #np.unique(matriz)
+    n_clases = capa_salida#len(valores_unicos)
+    
     # Generar al menos 30 colores bien diferenciados
     colores = sns.color_palette("hsv", n_clases)
     cmap = ListedColormap(colores)
@@ -22,21 +21,22 @@ def colorMap(matriz):
     fig, ax = plt.subplots()
     imagen = ax.imshow(matriz, cmap=cmap, norm=norm, interpolation='nearest', aspect='auto')
 
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_xticklabels([])
-    ax.set_yticklabels([])
-    ax.tick_params(length=0)
+   # Crear leyenda con círculos de colores y etiquetas
+    legend_handles = [
+        plt.Line2D([0], [0], marker='o', color='w', markersize=10,
+                   markerfacecolor=cmap(i), label=f"{int(v)}")
+        for i, v in enumerate(valores_unicos)
+    ]
+    ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1.05, 0.5),
+              title="Ref", fontsize=10, borderaxespad=0.)
 
-    # Agregar barra de color con etiquetas
-    cbar = plt.colorbar(imagen, ticks=valores_unicos, ax=ax)
-    cbar.ax.set_yticklabels([str(int(v)) for v in valores_unicos])
+    fig.tight_layout()
 
-    # Guardar la imagen como base64
+    # Convertir la imagen a base64
     buf = BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0.2)
+    plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0.1)
     buf.seek(0)
-
+    
     imagen64 = base64.b64encode(buf.read()).decode('utf-8')
     
     buf.close()

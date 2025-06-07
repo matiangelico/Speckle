@@ -246,6 +246,9 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
 
     modelo = keras.models.load_model(model_path, custom_objects={'mse': metrics.MeanSquaredError()})
 
+    capa_salida = (modelo.layers[-1]).units
+
+
     desc_json = await matrices_descriptores.read()
     matrices_desc = json.loads(desc_json)
 
@@ -271,7 +274,7 @@ async def prediccion(background_tasks: BackgroundTasks, x_api_key: str = Header(
 
     respuesta_matriz = {"matriz": resultado_matriz.tolist()}
     respuesta_tensor = {"tensor": resultado.tolist()}
-    respuesta_imagen = {"imagen": generaImagenPrediccion.colorMap(resultado_matriz.tolist())}
+    respuesta_imagen = {"imagen": generaImagenPrediccion.colorMap(resultado_matriz.tolist(),capa_salida)}
 
     return {"matriz_prediccion": respuesta_matriz, "imagen_prediccion": respuesta_imagen, "tensor_prediccion": respuesta_tensor}
 

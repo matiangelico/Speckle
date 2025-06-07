@@ -44,8 +44,7 @@ def entrenamientoRed (data, nro_clusters, params, epochs, batch_size, estopping)
 
     Y_pred_classes = np.argmax(Y_pred, axis=1)  
     Y_true_classes = Y_test  
-
-    conf_matrix = confusion_matrix(Y_true_classes, Y_pred_classes)
+    conf_matrix = confusion_matrix(Y_true_classes, Y_pred_classes, labels=range(nro_clusters))
 
     imagen_conf_matrix = generaImagenMatrizConf.cmcm(conf_matrix, Y_true_classes, Y_pred_classes)
 

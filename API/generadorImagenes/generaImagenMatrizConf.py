@@ -4,9 +4,8 @@ import seaborn as sns
 from io import BytesIO
 
 def cmcm(conf_matrix, Y_true, Y_pred):
-    etiquetas_clases = sorted(set(Y_true).union(set(Y_pred)))
-    etiquetas_clases = [et + 1 for et in etiquetas_clases]
-    n_clases = len(etiquetas_clases)  # Número de clases
+    n_clases = conf_matrix.shape[0]
+    etiquetas_clases = [x+1 for x in range(n_clases)]
 
     # Evitar divisiones por cero (cuando una fila de conf_matrix es toda ceros)
     conf_matrix_percentage = np.nan_to_num(conf_matrix.astype(float) / conf_matrix.sum(axis=1, keepdims=True))
@@ -45,12 +44,12 @@ def cmcm(conf_matrix, Y_true, Y_pred):
                     fontsize=font_size_small, color="white")
 
     # Etiquetas de los ejes
-    ax.set_xlabel("Prediction", fontsize=14)
+    ax.set_xlabel(f"Prediction  -  Accuracy: {accuracy*100:.2f}% ({total_aciertos}/{total_muestras})", fontsize=14)
     ax.set_ylabel("True label", fontsize=14)
 
     # Agregar la leyenda de Accuracy
-    plt.figtext(0.5, 0.15, f'Accuracy: {accuracy*100:.2f}% ({total_aciertos}/{total_muestras})', 
-                fontsize=16, ha='center', va='center', backgroundcolor='white')
+    #plt.figtext(0.5, 0.25, f'Accuracy: {accuracy*100:.2f}% ({total_aciertos}/{total_muestras})', 
+    #            fontsize=16, ha='center', va='center', backgroundcolor='white')
 
     # Ajustar márgenes
     plt.subplots_adjust(left=0.15, right=0.85, top=0.9, bottom=0.2)
