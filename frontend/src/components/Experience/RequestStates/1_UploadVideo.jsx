@@ -79,7 +79,7 @@ const UploadVideo = ({ send, video }) => {
 
           <FileDropArea
             message={
-              "Arrastra y suelta un archivo de video (.avi) o haz clic para seleccionar uno desde tu computadora."
+              "Haz clic para seleccionar un archivo de video (.avi) desde tu computadora."
             }
             onFileDrop={handleFileDrop}
             fileName={video?.file.name || ""}
