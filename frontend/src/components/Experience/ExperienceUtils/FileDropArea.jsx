@@ -1,7 +1,5 @@
 import { styled } from "styled-components";
 
-import { useDropzone } from "react-dropzone";
-
 //Redux
 import { useDispatch } from "react-redux";
 import { createNotification } from "../../../reducers/notificationReducer";
@@ -85,33 +83,37 @@ const FileDropArea = ({
   videoFrames,
 }) => {
   const dispatch = useDispatch();
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: (acceptedFiles) => {
-      if (acceptedFiles.length > 0) {
-        const file = acceptedFiles[0];
 
-        onFileDrop(file);
-      } else {
-        dispatch(
-          createNotification(
-            "No se seleccionó ningún archivo o el formato no es el correcto.",
-            "error"
-          )
-        );
-      }
-    },
-    multiple: false,
-    accept: {
-      "video/avi": [".avi"],
-      "application/json": [".json"],
-    },
-  });
+  // Función para manejar la selección del archivo
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      onFileDrop(file);
+    } else {
+      dispatch(
+        createNotification(
+          "No se seleccionó ningún archivo o el formato no es el correcto.",
+          "error"
+        )
+      );
+    }
+  };
 
   return (
-    <StyledFileDropArea {...getRootProps()}>
-      <input {...getInputProps()} aria-label='Cargar video' />
-      <DropzoneContent>
+    <StyledFileDropArea>
+      <input
+        type="file"
+        onChange={handleFileChange}
+        aria-label="Cargar video"
+        accept=".avi, .json"
+        style={{ display: "none" }}
+        id="file-upload"
+      />
+      <label htmlFor="file-upload" className="select-button">
         <UploadFileIcon />
+        Seleccionar archivo
+      </label>
+      <DropzoneContent>
         {fileName ? (
           <>
             <p>{fileName}</p>
