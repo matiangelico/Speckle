@@ -115,7 +115,7 @@ const Header = ({ userName, userEmail, userImage }) => {
     <StyledHeader>
       <LogoContainer>
         <SpeckleLogo />
-        <LogoTitle>Speckle.</LogoTitle>
+        <LogoTitle>Speckle. LABI.</LogoTitle>
       </LogoContainer>
       <NavigationContainer>
         <NavItem
